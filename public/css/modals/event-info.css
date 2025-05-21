@@ -1,0 +1,26 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+
+.description-section {
+    background-color: #eaeaea; /* Slightly darker gray background for event description */
+    padding: 15px !important;
+    margin: 15px !important; /* Added margin for separation from the edges */
+    border-radius: 5px !important;
+}
+
+.info-section {
+    background-color: #e0f2f1; /* Light blue background for event info */
+    padding: 15px !important;
+    margin: 15px !important; /* Added margin for separation from the edges */
+    border-radius: 5px !important;
+}
+
+.description-section pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-align: left;
+}
+
+.companions {
+    width: 65px !important;
+}

@@ -1,0 +1,31 @@
+name: Check PR Title
+
+on:
+  pull_request:
+    types:
+      - opened     # When a PR is opened
+      - edited     # When a PR title is edited
+      - synchronize # When a commit is pushed to an existing PR
+
+jobs:
+  check-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate PR title
+        uses: amannn/action-semantic-pull-request@v5
+        with:
+          types: |
+            feat
+            fix
+            chore
+            refactor
+            docs
+            style
+            test
+            ci
+            perf
+          requireScope: false
+          subjectPattern: ".*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    "tag" => "Tag",
+    "del_tag" => "Delete the tag",
+    "del_tag_warning" => "Are you sure that you want to delete the tag?",
+    "del_used_tag_warning" => "This tag is being used.<br>Are you sure you want to delete it?<br>The tag will be removed from any record that has it assigned. This action cannot be undone.",
+    "add_tag" => "Add a tag",
+    "add_attendance_tag" => "Add a customized response",
+    "update_tag" => "Edit a tag",
+    "invalid_name" => "Tag name is invalid.",
+    "tag_exist" => "Another tag with the same name already exists.",
+    "tag_added" => "Tag has been added.",
+    "tag_updated" => "Tag has been updated.",
+    "tag_deleted" => "Tag has been deleted.",
+    "btn_delete_dissabled" => "This tag is being used.",
+    "event_tags" => "Event tags",
+    "add_tag_event" => "Add an event tag",
+    "update_event_tag" => "Edit an event tag",
+    "update_attendance_tag" => "Edit an attendance tag",
+    "not_tags" => "No tags have been added yet.",
+    "not_castellers_tags" => "No member tags have been added yet.",
+    "not_events_tags" => "No event tags have been added yet.",
+    "not_attendance_tags" => "No customized response has been added yet.",
+    "not_position_tags" => "No position has been added yet.",
+    "all_tags" => "All tags",
+];

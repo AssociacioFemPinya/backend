@@ -1,0 +1,14 @@
+//
+// Font Awesome 6.x Overrides
+// --------------------------------------------------
+
+// Variables Override
+$fa-font-path: "../fonts/fontawesome6" !default;
+
+// Import Font Awesome 5
+@import 'fontawesome6/fontawesome';
+@import 'fontawesome6/regular';
+@import 'fontawesome6/solid';
+@import 'fontawesome6/brands';
+@import 'fontawesome6/v4-shims';
+
