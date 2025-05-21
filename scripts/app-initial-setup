@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+pushd "$SCRIPT_DIR/.." &> /dev/null
+
+echo Generating new application key...
+php artisan key:generate
+
+echo Preparing a fresh database...
+php artisan migrate:fresh --seed --seeder=PermissionsSeeder
+
+echo Initial setup complete.
+
+popd &> /dev/null

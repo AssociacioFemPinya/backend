@@ -1,0 +1,7 @@
+
+{
+    "The :attribute must contain at least one uppercase and one lowercase letter.": "El camp :attribute ha de contenir almenys una lletra en minúscula i una en majúscula",
+    "The :attribute must contain at least one letter.": "El camp :attribute ha de contenir almenys una lletra.",
+    "The :attribute must contain at least one symbol.": "El camp :attribute ha de contenir almenys un símbol.",
+    "The :attribute must contain at least one number.": "El camp :attribute ha de contenir almenys un número."
+}

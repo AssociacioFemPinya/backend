@@ -1,0 +1,24 @@
+// https://aka.ms/devcontainer.json
+{
+	"name": "FemPinya",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "app",
+	"workspaceFolder": "/var/www/html",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"editorconfig.editorconfig",
+				"xdebug.php-debug"
+			],
+			"settings": {}
+		}
+	},
+	"containerEnv": {
+		"XDEBUG_CONFIG": "client_host=localhost"
+	},
+	"remoteUser": "sail",
+	"initializeCommand": ["./scripts/sail-initial-setup"],
+	"postCreateCommand": ["./.devcontainer/post-create.sh"]
+}

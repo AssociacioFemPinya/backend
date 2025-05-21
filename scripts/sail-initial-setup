@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+pushd "$SCRIPT_DIR/.." &> /dev/null
+
+if [ ! -f ".env" ]; then
+    echo Creating .env file from .env.example...
+    cp .env.example .env
+else
+    echo .env file is already present.
+fi
+
+if [ ! -f "./vendor/laravel/sail/runtimes/8.1/Dockerfile" ]; then
+    # Reference: https://laravel.com/docs/10.x/sail#installing-composer-dependencies-for-existing-projects
+    echo Installing Laravel Sail...
+    docker run --rm \
+        -u "1000:1000" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php81-composer:latest \
+        composer install --ignore-platform-reqs
+else
+    echo Laravel Sail is already installed.
+fi
+
+popd &> /dev/null

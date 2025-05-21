@@ -1,0 +1,27 @@
+<?php
+
+return [
+    "tag" => "Etiquette",
+    "del_tag" => "Supprime l'étiquette",
+    "del_tag_warning" => "Es-tu sûr de vouloir supprimer cette étiquette?",
+    "del_used_tag_warning" => "Aquesta etiqueta està sent usada.<br>Segur que la voleu suprimir?<br>S'eliminarà l'etiqueta de qualsevol registre que la tingués assignada. Aquesta acció no es pot desfer.",
+    "add_tag" => "Ajoute une étiquette",
+    "add_attendance_tag" => "Ajoute une réponse personnalisée",
+    "update_tag" => "Edite une étiquette",
+    "invalid_name" => "Le nom de l'étiquette n'est pas valide''.",
+    "tag_exist" => "Il y a une autre étiquette du même nom.",
+    "tag_added" => "L'étiquette a été ajoutée.",
+    "tag_updated" => "L'étiquette a été actualisée.",
+    "tag_deleted" => "L'étiquette a été supprimée.",
+    "btn_delete_dissabled" => "Cette étiquette est déjà utilisée.",
+    "event_tags" => "Etiquettes des événements",
+    "add_tag_event" => "Ajoute une étiquette d'événement",
+    "update_event_tag" => "Edite une étiquette d'événement",
+    "update_attendance_tag" => "Edite une etiquette de participation",
+    "not_tags" => "Il n'y a pas encore d'étiquette.",
+    "not_castellers_tags" => "Il n'y a pas encore d'étiquette de personne. ",
+    "not_events_tags" => "Il n'y a pas encore d'étiquette d'évênements.",
+    "not_attendance_tags" => "Vous n'avez pas encore ajouté de réponse personnalisée.",
+    "not_position_tags" => "Vous n'avez pas encore ajouté de position.",
+    "all_tags" => "Toutes les étiquettes",
+];

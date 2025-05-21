@@ -1,0 +1,50 @@
+<?php
+
+return [
+
+    "profile" => "Mon profil",
+    "name" => "Nom complet",
+    "language" => "Langue",
+    "choose_language" => "Choisis la langue",
+    "help_password" => "Les mots de passe doivent contenir des lettres et des numéros et doivent avoir 8 caractères au minimum.",
+    "user_profile" => "Profil:",
+    "user_updated" => "Il faut mettre à jour le profil.",
+    "change_password" => "Change le mot de passe",
+    "current_password" => "Ancien mot de passe",
+    "new_password" => "Nouveau mot de passe",
+    "confirm_new_password" => "Confirme le nouveau mot de passe",
+    "confirm_password" => "Confirme le mot de passe",
+    "password" => "Mot de passe",
+    "user_password_not_correct" => "El mot de passe est incorrect.",
+    "user_password_not_equals" => "Les mots de passe ne correspondent pas.",
+    "user_password_updated" => "Le mot de passe a été correctement mis à jour.",
+    "my_colla" => "Ma colla",
+    "permissions" => "Permis",
+    "config_colla" => "Configuration de la colla",
+    "profile_colla" => "Profil de la colla",
+    "translations" => "Traductions",
+    "add_user" => "Ajoute un nouvel utilisateur",
+    "select_permission_type" => "sélectionne une autorisation",
+    "colla_user" => "Utilisateur de la colla",
+    "permission_no_acces" => "Sans accès",
+    "permission_denied" => "Refuser l'accès",
+    "permission_admin" => "Administrateur du systeme",
+    "permission_manage"  => "Gérer",
+    "permission_colla" => "Colla",
+    "permission_bbdd" => "BBDD",
+    "permission_events" => "Evénements",
+    "permission_boards" => "Pinyes",
+    "permission_notifications" => "Notifications",
+    "permission_telegram" => "Telegram",
+    "permission_casteller_config" => "Apps",
+    "permission_casteller_personals" => "Données personelles",
+    "role" => "Rôle",
+
+
+    "permission_read" => "Lecture",
+    "permission_write" => "Ecriture",
+    "permission_read_write" => "Lecture et écriture",
+    "user_added" => "L'utilisateur a été ajouté.",
+    "not_logging" => "Il n'a pas encore ouvert de session."
+
+];
