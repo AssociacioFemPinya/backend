@@ -108,7 +108,7 @@ class ScheduledNotification extends Model
     }
 
     /** Get the userID who created the Notification */
-    public function getUserId(): string
+    public function getUserId(): int
     {
         return $this->getAttribute('user_id');
     }

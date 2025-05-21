@@ -74,6 +74,15 @@
             <div class="col-md-6">
             </div>
         </div>
+
+        <div class="row form-group">
+            <div class="col-md-12">
+                <label class="control-label"><i class="fa fa-exclamation-triangle text-warning mr-1"></i> {!! trans('admin.banner_notification_message') !!}</label>
+                <input type="text" class="form-control" id="banner_notification_message" name="banner_notification_message" value="@if(isset($colla) && $colla->getBannerNotificationMessage() !== null){!! $colla->getBannerNotificationMessage() !!}@endif" placeholder="{!! trans('admin.banner_notification_placeholder') !!}">
+                <input type="hidden" name="banner_notification_message_submitted" value="1">
+                <small class="form-text text-muted">{!! trans('admin.banner_notification_help') !!}</small>
+            </div>
+        </div>
           {{--  Desactivat fins aprovacio al grup  --}}
         {{--  <div class="row form-group">
             <div class="col-md-10">

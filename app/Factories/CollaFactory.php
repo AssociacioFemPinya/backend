@@ -76,6 +76,11 @@ class CollaFactory
             }
         }
 
+        if ($bag->has('banner_notification_message_submitted')) {
+            $message = $bag->get('banner_notification_message');
+            $colla->setAttribute('banner_notification_message', $message === '' ? null : $message);
+        }
+
         return $colla;
     }
 

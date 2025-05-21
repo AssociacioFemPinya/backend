@@ -162,6 +162,18 @@ class EventsFilter extends BaseFilter
         return $this;
     }
 
+    public function findDuplicateByNameAndDate(string $name, string $startDate, ?int $excludeEventId = null): self
+    {
+        $this->eloquentBuilder->where('name', $name)
+            ->where('start_date', $startDate);
+
+        if ($excludeEventId !== null) {
+            $this->eloquentBuilder->where('id_event', '!=', $excludeEventId);
+        }
+
+        return $this;
+    }
+
     private function getEventsIDByTags(array $includedTags, string $includedSearchType): QueryBuilder
     {
         $event_tags = DB::table('event_tag')

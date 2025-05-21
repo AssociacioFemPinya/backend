@@ -19,11 +19,20 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotificationService
 {
-    private static function notify(Colla $colla, string $title, string $data, string $template, array $castellers_ids, int $type = NotificationTypeEnum::MESSAGE, $visible = true, $userId = null, $castellerId = null): Notification
-    {
+    private static function notify(
+        Colla $colla,
+        string $title,
+        array $data,
+        string $template,
+        array $castellersIds,
+        int $type = NotificationTypeEnum::MESSAGE,
+        bool $visible = true,
+        ?int $userId = null,
+        ?int $castellerId = null
+    ): Notification {
         $bag = new ParameterBag([
             'title' => $title,
-            'data' => $data,
+            'data' => serialize($data),
             'template' => $template,
             'type' => $type,
             'visible' => $visible,
@@ -34,41 +43,67 @@ class NotificationService
         $notificationRepository = new NotificationRepository();
         $notificationManager = new NotificationsManager($notificationRepository);
         $notification = $notificationManager->createNotification($colla, $bag);
-        event(new NotificationReady($notification, $castellers_ids));
+
+        event(new NotificationReady($notification, $castellersIds));
 
         return $notification;
     }
 
-    public static function SendMessage(Colla $colla, string $title, string $message, $userId = null, $castellerId = null, array $tags = [], string $includedSearchType = FilterSearchTypesEnum::AND, int $type = NotificationTypeEnum::MESSAGE): Notification
-    {
+    public static function sendMessage(
+        Colla $colla,
+        string $title,
+        string $message,
+        ?int $userId = null,
+        ?int $castellerId = null,
+        array $tags = [],
+        string $includedSearchType = FilterSearchTypesEnum::AND,
+        int $type = NotificationTypeEnum::MESSAGE
+    ): Notification {
+        $castellersIds = Casteller::filter($colla)
+            ->withTags($tags, $includedSearchType)
+            ->withStatus(CastellersStatusEnum::ActiveAll())
+            ->getCastellerIds();
+
         return self::notify(
             colla: $colla,
             title: $title,
-            data: serialize(['message' => $message]),
+            data: ['message' => $message],
             template: 'message',
-            castellers_ids: Casteller::filter($colla)->withTags($tags, $includedSearchType)->withStatus(CastellersStatusEnum::ActiveAll())->getCastellerIds(),
+            castellersIds: $castellersIds,
             type: $type,
             userId: $userId,
-            castellerId: $castellerId,
+            castellerId: $castellerId
         );
     }
 
-    public static function SendAttendanceReminder(Event $event, ?Casteller $casteller = null, array $tags = [], ?string $custom_message = null, ?User $user = null)
-    {
+    public static function sendAttendanceReminder(
+        Event $event,
+        ?Casteller $casteller = null,
+        array $tags = [],
+        ?string $customMessage = null,
+        ?User $user = null
+    ): Notification {
+        $castellersIds = Casteller::filter($event->getColla())
+            ->withMissingAttendance($event)
+            ->withTags($tags)
+            ->withStatus(CastellersStatusEnum::ActiveAll())
+            ->getCastellerIds();
+
         $notification = self::notify(
             colla: $event->getColla(),
             title: trans('notifications.you_have_got_one_event_missing_attendance').': '.$event->getName(),
-            data: serialize([
+            data: [
+                'eventId' => $event->getId(),
                 'eventName' => $event->getName(),
                 'eventStartDate' => $event->getStartDate(),
                 'eventCloseDate' => $event->getCloseDate(),
-                'customMessage' => $custom_message,
-            ]),
+                'customMessage' => $customMessage,
+            ],
             template: 'event_missing_attendance_reminder',
-            castellers_ids: Casteller::filter($event->getColla())->withMissingAttendance($event)->withTags($tags)->withStatus(CastellersStatusEnum::ActiveAll())->getCastellerIds(),
+            castellersIds: $castellersIds,
             type: NotificationTypeEnum::REMINDER,
-            userId: $user ? $user->getId() : null,
-            castellerId: $casteller ? $casteller->getId() : null,
+            userId: $user?->getId(),
+            castellerId: $casteller?->getId()
         );
 
         $event->notifications()->attach($notification->getId());

@@ -154,6 +154,10 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit event
     Route::get('events/tags', 'TagsController@getListEvents')->name('events.tags');
     Route::get('events/answers', 'TagsController@getListAttendance')->name('events.answers');
 
+    // Multievent routes
+    Route::get('multievents/list', 'MultieventController@getList')->name('multievents.list');
+    Route::post('multievents/list-ajax', 'MultieventController@postListAjax')->name('multievents.list-ajax');
+
     // Attendance
     Route::get('event/attendance/{event}', 'EventAttendanceController@getIndex')->where('event', '[0-9]+')->name('event.attendance');
     Route::get('event/attendance/list-attenders-csv/{event}', 'EventAttendanceController@listAttendersCsv')->where('event', '[0-9]+')->name('event.attendance.list-attenders-csv');
@@ -171,18 +175,23 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit event
 Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit events'], function()
 {
     Route::get('events/create', 'EventsController@getCreate')->name('events.create');
-    Route::get('events/create-group', 'EventsController@getCreateGroup')->name('events.create-group');
     Route::post('events/add', 'EventsController@postStoreEvent')->name('events.add');
-    Route::post('events/add-group', 'EventsController@postStoreEventGroup')->name('events.add-group');
     Route::get('events/edit/{event}', 'EventsController@getEditEvent')->where('event', '[0-9]+')->name('events.edit');
     Route::post('events/update/{event}', 'EventsController@postUpdateEvent')->where('event', '[0-9]+')->name('events.update');
     Route::post('events/destroy/{event}', 'EventsController@postDestroyEvent')->where('event', '[0-9]+')->name('events.destroy');
+
+    // multievents
+    Route::get('multievents/create', 'MultieventController@getCreateMultievent')->name('multievents.create');
+    Route::post('multievents/add', 'MultieventController@postStoreMultievent')->name('multievents.add');
+    Route::get('multievents/edit/{multievent}', 'MultieventController@getEditMultievent')->where('multievent', '[0-9]+')->name('multievents.edit');
+    Route::post('multievents/update/{multievent}', 'MultieventController@postUpdateMultievent')->where('multievent', '[0-9]+')->name('multievents.update');
+    Route::post('multievents/destroy/{multievent}', 'MultieventController@postDestroyMultievent')->where('multievent', '[0-9]+')->name('multievents.destroy');
 
     //events tags
     Route::post('events/tags/add', 'TagsController@postAddEventTag')->name('events.tags.add');
     Route::get('events/answers/add-answer-modal/{type}', 'TagsController@getAddTagModalAjax')->name('events.answers.add-modal');
     Route::post('events/answers/add', 'TagsController@postAddAttendanceTag')->name('events.answers.add');
-
+    Route::post('events/assign-to-multievent', [EventsController::class, 'postAssignToMultievent'])->name('events.assign-to-multievent');
 });
 
 // BOARDS [todo]

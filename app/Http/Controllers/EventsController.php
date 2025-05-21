@@ -8,6 +8,8 @@ use App\Enums\TypeTags;
 use App\Event;
 use App\Helpers\Humans;
 use App\Managers\EventsManager;
+use App\Managers\MultieventManager;
+use App\Multievent;
 use App\Period;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -37,6 +39,7 @@ class EventsController extends Controller
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['boardsColla'] = $colla->getBoards();
         $data_content['tags_event_type'] = Event::getTypes();
+        $data_content['multievents'] = $colla->multievents()->orderBy('name')->get();
 
         return view('events.list', $data_content);
     }
@@ -95,6 +98,7 @@ class EventsController extends Controller
             ->with('boardsEvent')
             ->with('tags')
             ->with('colla')
+            ->with('multievent')
             ->get();
 
         /** @var Event $event */
@@ -102,8 +106,27 @@ class EventsController extends Controller
             $array_event = [];
 
             $eventId = $event->getId();
+            $array_event['id_event'] = $eventId;
+            $array_event['id_multievent'] = $event->getMultieventId();
 
-            $array_event['name'] = $event->getName().'
+            $namePrefix = '';
+            if ($event->belongsToMultievent() && $event->getMultievent()) {
+                $multieventId = $event->getMultievent()->getId();
+                $multieventName = $event->getMultievent()->getName();
+
+                if ($user->can('edit events')) {
+                    $url = route('multievents.edit', $multieventId);
+                    $namePrefix = '<a href="'.$url.'" class="multievent-badge" data-toggle="tooltip" title="'.trans('multievent.belongs_to_multievent').$multieventName.'">
+                                    <i class="fa fa-link multievent-icon"></i>
+                                  </a>';
+                } else {
+                    $namePrefix = '<span class="multievent-badge" data-toggle="tooltip" title="'.trans('multievent.belongs_to_multievent').$multieventName.'">
+                                    <i class="fa fa-link multievent-icon"></i>
+                                  </span>';
+                }
+            }
+
+            $array_event['name'] = $namePrefix.$event->getName().'
                                                     <span class="text-success"><i class="fa-solid fa-check-double"></i>'.$event->countAttenders()['verified_ok'].'</span>
                                                     <span class="text-success"><i class="fa-solid fa-check"></i>'.$event->countAttenders()['ok'].'</span>
                                                     <span class="text-danger"><i class="fa-solid fa-close"></i>'.$event->countAttenders()['nok'].'</span>
@@ -111,7 +134,7 @@ class EventsController extends Controller
             $array_event['type'] = $event->getTypeName();
             $array_event['tags'] = Humans::readEventColumn($event, 'tags', 'right');
             $array_event['casteller_tags'] = Humans::readEventColumn($event, 'casteller_tags', 'right');
-            $array_event['start_date'] = $event->getStartDate()->isoFormat('dddd, D MMMM \d\e OY \a \l\e\s HH:mm');
+            $array_event['start_date'] = Humans::parseDate($event->getStartDate());
 
             $now = Carbon::now();
 
@@ -161,128 +184,12 @@ class EventsController extends Controller
         return view('events.create', $data_content);
     }
 
-    /** form create group of events*/
-    public function getCreateGroup(): View
-    {
-
-        $user = $this->user();
-
-        if (! $user->can('edit events')) {
-            abort(404);
-        }
-
-        $colla = $this->user()->getColla();
-
-        $data_content['type_add'] = 'GROUP';
-        $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
-        $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        $data_content['attendance_answers'] = $colla->getTags(TypeTags::ATTENDANCE);
-        $data_content['types'] = Event::getTypes();
-
-        return view('events.create', $data_content);
-    }
-
-    /**
-     * TODO refactor on manager->factory
-     * Store group of Events
-     */
-    public function postStoreEventGroup(EventsManager $eventsManager, Request $request): RedirectResponse
-    {
-
-        $user = $this->user();
-
-        if (! $user->can('edit events')) {
-            abort(404);
-        }
-        $request->validate([
-            'name' => 'required|max:100|min:3',
-            'address' => 'nullable|max:255|min:3',
-            'duration' => 'required|numeric',
-            'hour' => 'required|numeric',
-            'min' => 'required|numeric',
-            'location_link' => 'nullable|url',
-        ]);
-
-        $colla = Colla::getCurrent();
-
-        $array_dates = explode(',', $request->input('start_dates'));
-
-        foreach ($array_dates as $date) {
-            $startDate = substr($date, 0, strpos($date, '('));
-            $startDate = Carbon::parse($startDate);
-            $startDate = $startDate->format('Y-m-d').' '.$request->hour.':'.$request->min.':00';
-
-            //open date
-            if ($request->open_date_select === 'now') {
-                $openDate = Carbon::now()->toDateTimeString();
-            } else {
-                switch ($request->open_date_mode) {
-                    case 'months':
-                        $openDate = Carbon::parse($startDate)->subMonths(intval($request->open_date_time));
-                        break;
-                    case 'weeks':
-                        $openDate = Carbon::parse($startDate)->subWeeks(intval($request->open_date_time));
-                        break;
-                    case 'days':
-                        $openDate = Carbon::parse($startDate)->subDays(intval($request->open_date_time));
-                        break;
-                    case 'hours':
-                        $openDate = Carbon::parse($startDate)->subHours(intval($request->open_date_time));
-                        break;
-                }
-
-                $openDate = $openDate->toDateTimeString();
-            }
-
-            //close date
-            if ($request->close_date_select === 'when_starts') {
-                $closeDate = $startDate;
-            } else {
-                switch ($request->close_date_mode) {
-                    case 'months':
-                        $closeDate = Carbon::parse($startDate)->subMonths(intval($request->close_date_time));
-                        break;
-                    case 'weeks':
-                        $closeDate = Carbon::parse($startDate)->subWeeks(intval($request->close_date_time));
-                        break;
-                    case 'days':
-                        $closeDate = Carbon::parse($startDate)->subDays(intval($request->close_date_time));
-                        break;
-                    case 'hours':
-                        $closeDate = Carbon::parse($startDate)->subHours(intval($request->close_date_time));
-                        break;
-                }
-
-                $closeDate = $closeDate->toDateTimeString();
-            }
-
-            if ($closeDate < $openDate) {
-                Session::flash('status_ko', trans('event.close_cant_be_before_open'));
-
-                return redirect()->route('events.list');
-            }
-
-            $bag = new ParameterBag($request->except('_token'));
-            (! $bag->has('visibility')) ? $bag->set('visibility', 0) : $bag->set('visibility', 1);
-            (! $bag->has('companions')) ? $bag->set('companions', 0) : $bag->set('companions', 1);
-            $bag->set('start_date', $startDate);
-            $bag->set('open_date', $openDate);
-            $bag->set('close_date', $closeDate);
-            $eventsManager->createEvent($colla, $bag);
-        }
-
-        Session::flash('status_ok', trans('event.group_events_added'));
-
-        return redirect()->route('events.list');
-    }
-
     /**
      * TODO Refactor manager->factory
      * Store a single Event
      */
     public function postStoreEvent(EventsManager $eventsManager, Request $request): RedirectResponse
     {
-
         $user = $this->user();
 
         if (! $user->can('edit events')) {
@@ -354,6 +261,17 @@ class EventsController extends Controller
 
         if ($closeDate < $openDate) {
             Session::flash('status_ko', trans('event.close_cant_be_before_open'));
+
+            return redirect()->back()->withInput();
+        }
+
+        $duplicateEvent = Event::filter($colla)
+            ->findDuplicateByNameAndDate($request->name, $startDate)
+            ->eloquentBuilder()
+            ->first();
+
+        if ($duplicateEvent) {
+            Session::flash('status_ko', trans('event.duplicate_event'));
 
             return redirect()->back()->withInput();
         }
@@ -398,7 +316,6 @@ class EventsController extends Controller
      */
     public function postUpdateEvent(EventsManager $eventsManager, Request $request, Event $event): RedirectResponse
     {
-
         $user = $this->user();
 
         if (! $user->can('edit events')) {
@@ -474,6 +391,17 @@ class EventsController extends Controller
             return redirect()->back()->withInput();
         }
 
+        $duplicateEvent = Event::filter($event->getColla())
+            ->findDuplicateByNameAndDate($request->name, $startDate, $event->getId())
+            ->eloquentBuilder()
+            ->first();
+
+        if ($duplicateEvent) {
+            Session::flash('status_ko', trans('event.duplicate_event'));
+
+            return redirect()->back()->withInput();
+        }
+
         $bag = new ParameterBag($request->except('_token'));
 
         (! $bag->has('visibility')) ? $bag->set('visibility', 0) : $bag->set('visibility', 1);
@@ -503,6 +431,82 @@ class EventsController extends Controller
         $event->delete();
 
         Session::flash('status_ok', trans('event.event_destroyed'));
+
+        return redirect()->route('events.list');
+    }
+
+    public function postAssignToMultievent(Request $request, MultieventManager $multieventManager): RedirectResponse
+    {
+        $user = $this->user();
+
+        if (! $user->can('edit events')) {
+            abort(404);
+        }
+
+        $colla = Colla::getCurrent();
+        $selectedEvents = json_decode($request->selected_events, true);
+
+        if (empty($selectedEvents)) {
+            Session::flash('status_ko', trans('event.no_events_selected'));
+
+            return redirect()->route('events.list');
+        }
+
+        $events = Event::whereIn('id_event', $selectedEvents)
+            ->where('colla_id', $colla->getId())
+            ->get();
+
+        if ($events->isEmpty()) {
+            Session::flash('status_ko', trans('event.no_valid_events_found'));
+
+            return redirect()->route('events.list');
+        }
+
+        $referenceEvent = $events->first();
+
+        if ($request->multievent_option === 'new') {
+            $multieventBag = new ParameterBag();
+            $multieventBag->set('name', $request->multievent_name);
+            $multieventBag->set('address', $referenceEvent->getAddress());
+            $multieventBag->set('location_link', $referenceEvent->getLocationLink());
+            $multieventBag->set('comments', $referenceEvent->getComments());
+            $multieventBag->set('duration', $referenceEvent->getDuration());
+            $multieventBag->set('companions', $referenceEvent->getCompanions());
+            $multieventBag->set('visibility', $referenceEvent->getVisibility());
+            $multieventBag->set('type', $referenceEvent->getType());
+            $multieventBag->set('photo', $referenceEvent->getPhoto());
+
+            $time = $referenceEvent->getStartDate()->format('H:i:s');
+            $multieventBag->set('time', $time);
+
+            if ($referenceEvent->hasTags()) {
+                $multieventBag->set('tags', $referenceEvent->getTags()->pluck('value')->toArray());
+            }
+
+            if ($referenceEvent->hasCastellerTags()) {
+                $multieventBag->set('tags_casteller', $referenceEvent->getCastellerTags()->pluck('value')->toArray());
+            }
+
+            $multievent = $multieventManager->createMultievent($colla, $multieventBag);
+
+            $successMessage = trans('event.events_assigned_to_new_multievent');
+        } else {
+            $multievent = Multievent::find($request->existing_multievent_id);
+
+            if (! $multievent) {
+                Session::flash('status_ko', trans('event.multievent_not_found'));
+
+                return redirect()->route('events.list');
+            }
+
+            $successMessage = trans('event.events_assigned_to_existing_multievent');
+        }
+
+        foreach ($events as $event) {
+            $event->assignToMultievent($multievent);
+        }
+
+        Session::flash('status_ok', $successMessage);
 
         return redirect()->route('events.list');
     }

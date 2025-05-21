@@ -29,4 +29,7 @@ return [
     "do_admin" => "Make them an admin",
     "max_members" => "Maximum active members",
     "max_members_abreviat" => "Max. active",
+    "banner_notification_message" => "Banner notification message",
+    "banner_notification_placeholder" => "Enter the message to display in the banner",
+    "banner_notification_help" => "This message will be displayed in a yellow banner at the top of all pages. Leave blank to hide the banner.",
 ];

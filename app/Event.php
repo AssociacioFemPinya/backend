@@ -3,6 +3,8 @@
 namespace App;
 
 use App\Enums\TypeTags;
+use App\Managers\EventsManager;
+use App\Repositories\EventRepository;
 use App\Traits\FilterableTrait;
 use App\Traits\TimeStampsGetterTrait;
 use Carbon\Carbon;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class Event extends Model
 {
@@ -256,6 +259,11 @@ final class Event extends Model
         return $this->belongsTo(Colla::class, 'colla_id', 'id_colla');
     }
 
+    public function multievent(): BelongsTo
+    {
+        return $this->belongsTo(Multievent::class, 'id_multievent', 'id_multievent');
+    }
+
     public function boards(): ?BelongsToMany
     {
         return $this->belongsToMany(Board::class, 'board_event', 'event_id', 'board_id')->withTimestamps();
@@ -315,6 +323,62 @@ final class Event extends Model
     public function getColla(): Colla
     {
         return $this->getAttribute('colla');
+    }
+
+    public function getMultievent(): ?Multievent
+    {
+        return $this->getAttribute('multievent');
+    }
+
+    public function getMultieventId(): ?int
+    {
+        return $this->getAttribute('id_multievent');
+    }
+
+    public function belongsToMultievent(): bool
+    {
+        return $this->id_multievent !== null;
+    }
+
+    public function assignToMultievent(Multievent $multievent): bool
+    {
+        $bag = new ParameterBag();
+
+        $bag->set('id_multievent', $multievent->getId());
+
+        $bag->set('name', $multievent->getName());
+        $bag->set('address', $multievent->getAddress());
+        $bag->set('location_link', $multievent->getLocationLink());
+        $bag->set('comments', $multievent->getComments());
+        $bag->set('duration', $multievent->getDuration());
+        $bag->set('companions', $multievent->getCompanions());
+        $bag->set('visibility', $multievent->getVisibility());
+        $bag->set('type', $multievent->getType());
+
+        if ($this->getStartDate() && $multievent->getTime()) {
+            $eventDate = $this->getStartDate()->format('Y-m-d');
+            $bag->set('start_date', $eventDate.' '.$multievent->getTime());
+        }
+
+        if ($multievent->hasCastellerTags()) {
+            $bag->set('tags_casteller', $multievent->getCastellerTags()->pluck('value')->toArray());
+        }
+
+        $eventsManager = new EventsManager(new EventRepository());
+        $eventsManager->updateEvent($this, $bag);
+
+        return true;
+    }
+
+    public function detachFromMultievent(): bool
+    {
+        if ($this->getMultieventId()) {
+            $this->id_multievent = null;
+
+            return $this->save();
+        }
+
+        return true;
     }
 
     public function getTags(): Collection

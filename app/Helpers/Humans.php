@@ -37,7 +37,7 @@ class Humans
             }
             $start_date = Carbon::parse($event->start_date);
 
-            return $start_date->isoFormat('dddd, D MMMM \d\e OY \a \l\e\s HH:mm');
+            return self::parseDate($start_date);
         } else {
             return $event->{$column};
         }
@@ -274,7 +274,7 @@ class Humans
             if ($shortDate) {
                 return $dateParsed->format('d/m/Y H:i');
             } else {
-                return $dateParsed->isoFormat('dddd, D MMMM \d\e OY \a \l\e\s HH:mm');
+                return $dateParsed->isoFormat('dddd, D MMMM OY, HH:mm');
             }
         }
     }

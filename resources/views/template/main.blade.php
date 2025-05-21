@@ -47,6 +47,7 @@
 
 </head>
 <body>
+    @include('template.partials.banner-notification')
     <div id="page-container" class="sidebar-o sidebar-inverse enable-page-overlay side-scroll main-content-boxed " >
 
         @include('template.partials.sidebar-left')

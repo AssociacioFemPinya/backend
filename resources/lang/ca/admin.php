@@ -29,6 +29,8 @@ return [
     "do_admin" => "Fes que administri el sistema",
     "max_members" => "Màxim membres actius",
     "max_members_abreviat" => "Màx. actius",
-
+    "banner_notification_message" => "Missatge de notificació del banner",
+    "banner_notification_placeholder" => "Introdueix el missatge que es mostrarà al banner",
+    "banner_notification_help" => "Aquest missatge es mostrarà en un banner groc a la part superior de totes les pàgines. Deixa-ho en blanc per no mostrar cap banner.",
 
 ];

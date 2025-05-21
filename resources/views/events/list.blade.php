@@ -1,41 +1,49 @@
 @extends('template.main')
 
-@section('title', trans('general.attendance'))
+@section('title', trans('general.events'))
 @section('css_before')
     <style>
         #resetFilter {
             cursor: pointer;
+        }
+        .select-checkbox {
+            width: 30px !important;
+        }
+        #btn-assign-to-multievent {
+            width: auto;
+            height: auto;
+            margin-left: 10px;
+        }
+        .switcher-cell {
+            text-align: center !important;
+            vertical-align: middle !important;
+            width: 30px !important;
+        }
+        .js-switchery {
+            margin: 0 auto;
         }
     </style>
     <link rel="stylesheet" href="{!! asset('js/plugins/select2/css/select2.min.css') !!}">
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.css') }}">
     <link rel="stylesheet" href="{!! asset('js/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') !!}">
+    <link rel="stylesheet" href="{{ asset('js/plugins/cloudflare-switchery/css/switchery.min.css') }}">
     <link href="{{ asset('css/modals/action_buttons_datatables.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
 
 <div class="block">
-
     <div class="block-header block-header-default">
         <div class="block-title">
             <h3 class="block-title"><b>{!! trans('general.events') !!}</b></h3>
         </div>
         <div class="block-options">
-
-
             <div class="btn-group" role="group">
                 @can('edit events')
-                    <button type="button" class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-calendar-plus-o"></i> {!! trans('event.add_events') !!}</button>
-                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <a class="dropdown-item" href="{!! route('events.create') !!}">
-                            {!! trans('event.add_event') !!}
-                        </a>
-                        <a class="dropdown-item" href="{!! route('events.create-group') !!}">
-                            {!! trans('event.add_multiple_events') !!}
-                        </a>
-                    </div>
+                    <a href="{!! route('events.create') !!}" class="btn btn-primary"><i class="fa fa-calendar-plus-o"></i> {!! trans('event.add_events') !!}</a>
+                    <button id="btn-assign-to-multievent" class="btn btn-primary" disabled><i class="fa fa-calendar-o"></i> {!! trans('event.assign_to_multievent') !!}</button>
+
                 @endcan
             </div>
 
@@ -98,12 +106,13 @@
                     <table class="table table-hover table-bordered table-striped table-vcenter" style="width: 100%;" id="events_upcoming">
                         <thead>
                         <tr>
+                            <th></th>
                             <th>{!! trans('general.name') !!}</th>
                             <th>{!! trans('general.type') !!}</th>
                             <th>{!! trans('general.tags') !!}</th>
                             <th>{!! trans('event.event_tags_casteller') !!}</th>
                             <th>{!! trans('general.date') !!}</th>
-                            <th>#</th>
+                            <th>{!! trans('general.actions') !!}</th>
                         </tr>
                         </thead>
                     </table>
@@ -122,13 +131,14 @@
                 <table class="table table-hover table-bordered table-striped table-vcenter" style="width: 100%;" id="events_past">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>{!! trans('general.name') !!}</th>
                         <th>{!! trans('general.type') !!}</th>
                         <th>{!! trans('general.tags') !!}</th>
                         <th>{!! trans('event.event_tags_casteller') !!}</th>
                         <th>{!! trans('general.date') !!}</th>
-                        <th>#</th>
-                    </tr>
+                        <th>{!! trans('general.actions') !!}</th>
+                        </tr>
                     </thead>
                 </table>
         </div>
@@ -136,6 +146,8 @@
 </div>
 
 @include('events.modals.modal-attach-board')
+@include('events.modals.modal-assign-to-multievent')
+@include('events.modals.modal-duplicate-date-warning')
 
 @endsection
 
@@ -147,6 +159,7 @@
     <script src="{{ asset('js/plugins/datatables/buttons/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables/buttons/buttons.html5.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/cloudflare-switchery/js/switchery.js') }}"></script>
 
     <script type="text/javascript" src="{!! asset('js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') !!}"></script>
     @if (Auth()->user()->getLanguage() === 'ca')
@@ -173,15 +186,19 @@
             let currentPeriod = parseInt({{ (isset($currentPeriod)) ? $currentPeriod->getId() : '0' }});
             let events_upcoming;
             let events_past;
+            let selectedEvents = [];
 
-            function drawEventsTable()
-            {
+            function drawEventsTable() {
+                selectedEvents = [];
                 events_upcoming = $("#events_upcoming").DataTable({
                     "language": {!! trans('datatables.translation') !!},
                     "processing": true,
                     "serverSide": true,
                     "stateSave": true,
                     "stateDuration": -1,
+                    "stateLoadParams": function (settings, data) {
+                        data.select = undefined;
+                    },
                     "ajax": {
                         "url": "{{ route('events.list-ajax', 'upcoming') }}",
                         "type": "POST",
@@ -193,26 +210,53 @@
                                 "tags_event_type": $('#tags_event_type').val(),
                                 "search_period": $('#search_period').val(),
                             } );
+                        },
+                        "dataSrc": function(json) {
+                            for (var i = 0; i < json.data.length; i++) {
+                                json.data[i].DT_RowId = 'event-' + json.data[i].id_event;
+                                json.data[i].DT_RowData = {
+                                    "id_event": json.data[i].id_event,
+                                    "id_multievent": json.data[i].id_multievent
+                                };
+                            }
+                            return json.data;
                         }
                     },
-                    "ordering":'true',
-                    "order": [4, 'asc'],
+                    "ordering": true,
+                    "order": [5, 'asc'],
                     "columns": [
-                        { "data": "name", "name": "name"},
-                        { "data": "type", "name": "type"},
-                        { "data": "tags", "name": "tags", "orderable": false },
-                        { "data": "casteller_tags", "name": "casteller_tags", "orderable": false },
-                        { "data": "start_date", "name": "start_date" },
-                        { "data": "buttons", "name": "buttons", "orderable": false }
+                        {
+                            "data": null,
+                            "defaultContent": '',
+                            "className": 'switcher-cell',
+                            "orderable": false,
+                            "width": "30px",
+                            "render": function(data, type, row) {
+                                return '<input type="checkbox" data-event-id="' + row.id_event + '" class="js-switchery event-switcher">';
+                            }
+                        },
+                        { "data": "name", "name": "name", "width": "25%" },
+                        { "data": "type", "name": "type", "width": "10%" },
+                        { "data": "tags", "name": "tags", "orderable": false, "width": "15%" },
+                        { "data": "casteller_tags", "name": "casteller_tags", "orderable": false, "width": "15%" },
+                        { "data": "start_date", "name": "start_date", "width": "20%" },
+                        { "data": "buttons", "name": "buttons", "orderable": false, "width": "210px" }
                     ],
-                    "columnDefs": [
-                        { "width": "27%", "targets": 0 },
-                        { "width": "10%", "targets": 1 },
-                        { "width": "15%", "targets": 2 },
-                        { "width": "15%", "targets": 3 },
-                        { "width": "20%", "targets": 4 },
-                        { "width": "210", "targets": 5 },
-                    ]
+                    "drawCallback": function() {
+                            var elems = Array.prototype.slice.call(document.querySelectorAll('#events_upcoming .event-switcher'));
+                            elems.forEach(function(html) {
+                                if (!html.switchery) {
+                                    var switchery = new Switchery(html, { size: 'small' });
+                                    var eventId = parseInt(html.getAttribute('data-event-id'));
+                                    if (selectedEvents.includes(eventId)) {
+                                        if (!html.checked) {
+                                            html.checked = true;
+                                            if (switchery) switchery.setPosition(true);
+                                        }
+                                    }
+                                }
+                            });
+                    }
                 });
 
                 events_past = $("#events_past").DataTable({
@@ -221,39 +265,88 @@
                     "serverSide": true,
                     "stateSave": true,
                     "stateDuration": -1,
+                    "stateLoadParams": function (settings, data) {
+                        data.select = undefined;
+                    },
                     "ajax": {
                         "url": "{{ route('events.list-ajax', 'past') }}",
                         "type": "POST",
                         "data": function ( d ) {
-                            return $.extend( {}, d, {
+                            return $.extend({}, d, {
                                 "tags": $('#tags').val(),
                                 "casteller_tags": $('#casteller_tags').val(),
                                 "filter_search_type": $('#filter_search_type').val(),
                                 "tags_event_type": $('#tags_event_type').val(),
                                 "search_period": $('#search_period').val(),
-                            } );
+                            });
+                        },
+                        "dataSrc": function(json) {
+                            for (var i = 0; i < json.data.length; i++) {
+                                json.data[i].DT_RowId = 'event-' + json.data[i].id_event;
+                                json.data[i].DT_RowData = {
+                                    "id_event": json.data[i].id_event,
+                                    "id_multievent": json.data[i].id_multievent
+                                };
+                            }
+                            return json.data;
                         }
                     },
-                    "ordering":'true',
-                    "order": [4, 'desc'],
+                    "ordering": true,
+                    "order": [5, 'desc'],
                     "columns": [
-                        { "data": "name", "name": "name"},
-                        { "data": "type", "name": "type"},
-                        { "data": "tags", "name": "tags", "orderable": false },
-                        { "data": "casteller_tags", "name": "casteller_tags", "orderable": false },
-                        { "data": "start_date", "name": "start_date" },
-                        { "data": "buttons", "name": "buttons", "orderable": false }
+                        {
+                            "data": null,
+                            "defaultContent": '',
+                            "className": 'switcher-cell',
+                            "orderable": false,
+                            "width": "30px",
+                            "render": function(data, type, row) {
+                                return '<input type="checkbox" data-event-id="' + row.id_event + '" class="js-switchery event-switcher">';
+                            }
+                        },
+                        { "data": "name", "name": "name", "width": "25%" },
+                        { "data": "type", "name": "type", "width": "10%" },
+                        { "data": "tags", "name": "tags", "orderable": false, "width": "15%" },
+                        { "data": "casteller_tags", "name": "casteller_tags", "orderable": false, "width": "15%" },
+                        { "data": "start_date", "name": "start_date", "width": "20%" },
+                        { "data": "buttons", "name": "buttons", "orderable": false, "width": "210px" }
                     ],
-                    "columnDefs": [
-                        { "width": "27%", "targets": 0 },
-                        { "width": "10%", "targets": 1 },
-                        { "width": "15%", "targets": 2 },
-                        { "width": "15%", "targets": 3 },
-                        { "width": "20%", "targets": 4 },
-                        { "width": "210", "targets": 5 },
-                    ]
+                    "drawCallback": function() {
+                        try {
+                            var elems = Array.prototype.slice.call(document.querySelectorAll('#events_past .event-switcher'));
+                            elems.forEach(function(html) {
+                                if (!html.switchery) {
+                                    var switchery = new Switchery(html, { size: 'small' });
+
+                                    var eventId = parseInt(html.getAttribute('data-event-id'));
+                                    if (selectedEvents.includes(eventId)) {
+                                        if (!html.checked) {
+                                            html.checked = true;
+                                            if (switchery) switchery.setPosition(true);
+                                        }
+                                    }
+                                }
+                            });
+                        } catch(e) {
+                            console.error("Error initializing switchers:", e);
+                        }
+                    }
                 });
             }
+
+            $(document).on('change', '.event-switcher', function() {
+                const eventId = parseInt($(this).attr('data-event-id'));
+
+                if (this.checked) {
+                    if (!selectedEvents.includes(eventId)) {
+                        selectedEvents.push(eventId);
+                    }
+                } else {
+                    selectedEvents = selectedEvents.filter(id => id !== eventId);
+                }
+
+                updateAssignButton();
+            });
 
             function initFilters(){
 
@@ -288,6 +381,128 @@
                 $('#search_period').val(currentPeriod).trigger('change');
                 $('#tags_event_type').val(0).trigger('change');
             }
+
+            function updateAssignButton() {
+                if (selectedEvents.length > 0) {
+                    let hasEventInMultievent = false;
+                    selectedEvents.forEach(function(eventId) {
+                        events_upcoming.rows().every(function() {
+                            const data = this.data();
+                            if (data.id_event === eventId && data.id_multievent) {
+                                hasEventInMultievent = true;
+                                return false;
+                            }
+                        });
+
+                        if (!hasEventInMultievent) {
+                            events_past.rows().every(function() {
+                                const data = this.data();
+                                if (data.id_event === eventId && data.id_multievent) {
+                                    hasEventInMultievent = true;
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+
+                    if (hasEventInMultievent) {
+                        $('#btn-assign-to-multievent').prop('disabled', true);
+                        $('#btn-assign-to-multievent').attr('title', '{!! trans("event.events_already_in_multievent") !!}');
+                        $('#btn-assign-to-multievent').tooltip({placement: 'bottom'});
+                    } else {
+                        $('#btn-assign-to-multievent').prop('disabled', false);
+                        $('#btn-assign-to-multievent').removeAttr('title');
+                        $('#btn-assign-to-multievent').tooltip('dispose');
+                    }
+                } else {
+                    $('#btn-assign-to-multievent').prop('disabled', true);
+                    $('#btn-assign-to-multievent').removeAttr('title');
+                    $('#btn-assign-to-multievent').tooltip('dispose');
+                }
+            }
+
+            function findEventDate(eventId, dataTable) {
+                let foundDate = null;
+                dataTable.rows().every(function() {
+                    const data = this.data();
+                    if (data.id_event === eventId) {
+                        foundDate = data.start_date;
+                        return false;
+                    }
+                });
+                return foundDate;
+            }
+
+            function checkDuplicateDates() {
+                const eventDates = {};
+                const duplicateDates = {};
+
+                selectedEvents.forEach(function(eventId) {
+                    const eventDate = findEventDate(eventId, events_upcoming) || findEventDate(eventId, events_past);
+
+                    if (eventDate) {
+                        const dateOnly = eventDate.split(' ')[0];
+                        if (eventDates[dateOnly]) {
+                            if (!duplicateDates[dateOnly]) {
+                                duplicateDates[dateOnly] = [
+                                    eventDates[dateOnly],
+                                    { id: eventId, date: eventDate }
+                                ];
+                            } else {
+                                duplicateDates[dateOnly].push({ id: eventId, date: eventDate });
+                            }
+                        } else {
+                            eventDates[dateOnly] = { id: eventId, date: eventDate };
+                        }
+                    }
+                });
+
+                if (Object.keys(duplicateDates).length > 0) {
+                    $('#modalDuplicateDateWarning').modal('show');
+                    return true;
+                }
+
+                return false;
+            }
+
+            $('#btn-assign-to-multievent').on('click', function() {
+                if (selectedEvents.length > 0) {
+                    if (!checkDuplicateDates()) {
+                        $('#selected_events_input').val(JSON.stringify(selectedEvents));
+                        $('#selected_events_count').text(selectedEvents.length);
+                        $('#modalAssignToMultievent').modal('show');
+                    }
+                }
+            });
+
+            $('input[name="multievent_option"]').on('change', function() {
+                const option = $('input[name="multievent_option"]:checked').val();
+
+                if (option === 'new') {
+                    $('#new_multievent_options').show();
+                    $('#existing_multievent_options').hide();
+                } else {
+                    $('#new_multievent_options').hide();
+                    $('#existing_multievent_options').show();
+                }
+            });
+
+            $('#formAssignToMultievent').on('submit', function(e) {
+                e.preventDefault();
+                const option = $('input[name="multievent_option"]:checked').val();
+
+                if (option === 'new' && !$('#multievent_name').val()) {
+                    alert('{!! trans("event.multievent_name_required") !!}');
+                    return false;
+                }
+
+                if (option === 'existing' && !$('#existing_multievent_id').val()) {
+                    alert('{!! trans("event.multievent_selection_required") !!}');
+                    return false;
+                }
+
+                this.submit();
+            });
 
             initFilters();
             drawEventsTable();

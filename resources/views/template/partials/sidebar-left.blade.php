@@ -119,9 +119,9 @@
                 @can ('view events')
                     {{-- START: EVENTS --}}
 
-                        <li @if(Request::segment(1)=='events') class="open" @endif>
+                        <li @if(Request::segment(1)=='events' || Request::segment(1)=='multievents') class="open" @endif>
 
-                            @if(Request::segment(1)=='events')
+                            @if(Request::segment(1)=='events' || Request::segment(1)=='multievents')
                                 <a class="active nav-submenu" data-toggle="nav-submenu" href="{!! route('events.list') !!}">
                             @else
                                 <a class="nav-submenu" data-toggle="nav-submenu" href="{!! route('events.list') !!}">
@@ -133,6 +133,9 @@
                                 <ul>
                                     <li>
                                         <a @if(Request::segment(1)=='events' && Request::segment(2)=='list') class="active" @endif  href="{!! route('events.list') !!}"><span class="sidebar-mini-hide">{!! trans('general.events') !!}</span></a>
+                                    </li>
+                                    <li>
+                                        <a @if(Request::segment(1)=='multievents' && Request::segment(2)=='list') class="active" @endif  href="{!! route('multievents.list') !!}"><span class="sidebar-mini-hide">{!! trans('general.multievents') !!}</span></a>
                                     </li>
                                     <li>
                                         {{--  <a @if(Request::segment(2)=='events') class="active" @endif href="{!! route('admin.users') !!}">{!! trans('general.users') !!}</a>  --}}

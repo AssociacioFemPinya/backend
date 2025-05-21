@@ -437,7 +437,7 @@ class EventAttendanceController extends Controller
         }
 
         $custom_message = $request->input('customMessage');
-        NotificationService::SendAttendanceReminder($event, custom_message: $custom_message, user: $user);
+        NotificationService::SendAttendanceReminder($event, customMessage: $custom_message, user: $user);
     }
 
     public function getVerifyAttendance(Event $event)

@@ -50,4 +50,6 @@ return [
     "reminders" => "Recordatoris",
     "messages" => "Missatges inmediats",
     "scheduled_message" => "Missatge programat",
+    "firebase_new_message_received" => "Tens un nou missatge pendent de llegir!",
+    "firebase_new_reminder_received" => "Tens un esdeveniment pendent de respondre:",
 ];

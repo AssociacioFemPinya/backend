@@ -19,6 +19,8 @@ return [
     "error" => "Error.",
     "logout" => "Cierra la sessión",
     "date" => "Fecha",
+    "dates" => "Fechas",
+    "actions" => "Acciones",
 
     "users" => "Usuarios",
     "config" => "Configurar Apps",
@@ -64,6 +66,7 @@ return [
     "pinyes" => "Pinyes",
     "templates" => "Plantillas",
     "events" => "Eventos",
+    "multievents" => "Multieventos",
     "calendar" => "Agenda",
     "castellers" => "Miembros",
     "notifications" => "Notificaciones",

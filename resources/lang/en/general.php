@@ -19,6 +19,8 @@ return [
     "error" => "Error!",
     "logout" => "Log out",
     "date" => "Date",
+    "dates" => "Dates",
+    "actions" => "Actions",
 
     "users" => "Users",
     "config" => "Apps settings",
@@ -65,6 +67,7 @@ return [
     "pinyes" => "Pinyes",
     "templates" => "Templates",
     "events" => "Events",
+    "multievents" => "Multievents",
     "calendar" => "Agenda",
     "castellers" => "Castellers",
     "notifications" => "Notifications",
