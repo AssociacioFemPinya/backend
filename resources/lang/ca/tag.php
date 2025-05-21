@@ -1,0 +1,27 @@
+<?php
+
+return [
+    "tag" => "Etiqueta",
+    "del_tag" => "Suprimeix l'etiqueta",
+    "del_tag_warning" => "Segur que voleu suprimir l'etiqueta?",
+    "del_used_tag_warning" => "Aquesta etiqueta està sent usada.<br>Segur que la voleu suprimir?<br>S'eliminarà l'etiqueta de qualsevol registre que la tingués assignada. Aquesta acció no es pot desfer.",
+    "add_tag" => "Afegeix una etiqueta",
+    "add_attendance_tag" => "Afegeix una resposta personalitzada",
+    "update_tag" => "Edita una etiqueta",
+    "invalid_name" => "El nom de l'etiqueta no és vàlid.",
+    "tag_exist" => "Hi ha una altra etiqueta amb aquest mateix nom.",
+    "tag_added" => "S'ha afegit l'etiqueta.",
+    "tag_updated" => "S'ha actualitzat l'etiqueta.",
+    "tag_deleted" => "S'ha suprimit l'etiqueta.",
+    "btn_delete_dissabled" => "Aquesta etiqueta S'està fent servir.",
+    "event_tags" => "Etiquetes dels esdeveniments",
+    "add_tag_event" => "Afegeix una etiqueta d'esdeveniment",
+    "update_event_tag" => "Edita una etiqueta d'esdeveniment",
+    "update_attendance_tag" => "Edita una etiqueta d'assistència",
+    "not_tags" => "Encara no heu afegit cap etiqueta.",
+    "not_castellers_tags" => "Encara no heu afegit cap etiqueta de persona. ",
+    "not_events_tags" => "Encara no heu afegit cap etiqueta d'esdeveniments.",
+    "not_attendance_tags" => "Encara no heu afegit cap resposta personalitzada.",
+    "not_position_tags" => "Encara no heu afegit cap posició.",
+    "all_tags" => "Totes les etiquetes",
+];

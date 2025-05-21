@@ -1,0 +1,16 @@
+/node_modules/
+/public/media/colles/
+/public/media/users/
+/storage/
+/vendor/
+/.idea
+/.vagrant
+/.vscode/*
+/.discovery
+/nbproject/
+.env
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+.phpunit.result.cache
+
