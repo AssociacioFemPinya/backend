@@ -18,7 +18,7 @@
             </div>
             <!-- Logo -->
             <div class="content-header-item logo-container">
-                <a class="link-effect font-w700" href="{!! route('home') !!}">
+                <a class="link-effect font-w700" href="{!! route('dashboard') !!}">
                     <img src="{!! asset('media/img/logo.svg') !!}" alt="FemPinya" style="width: 20px;" class="mb-2">
                     <span class="font-size-xl text-dual-primary-dark">Fem</span><span class="font-size-xl text-warning-light">Pinya</span>
                 </a>

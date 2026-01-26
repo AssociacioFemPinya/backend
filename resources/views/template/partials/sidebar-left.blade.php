@@ -13,7 +13,7 @@
             <!-- Mini Mode -->
             <div class="content-header-section sidebar-mini-visible-b">
                 <!-- Logo -->
-                <a class=" font-w700" href="{!! route('home') !!}">
+                <a class=" font-w700" href="{!! route('dashboard') !!}">
                     <img class="pb-5" src="{!! asset('media/img/logo.svg') !!}" alt="FemPinya" width="60">
                 </a>
                 <!-- END Logo -->
@@ -31,7 +31,7 @@
 
                 <!-- Logo -->
                 <div class="content-header-item">
-                    <a class=" font-w700" href="{!! route('home') !!}">
+                    <a class=" font-w700" href="{!! route('dashboard') !!}">
                         @if(Auth::user()->getColla()->getLogo() )
                             <img class="img-avatar img-avatar64" src={{ asset('media/colles/'.Auth::user()->getColla()->getShortName().'/'.Auth::user()->getColla()->getLogo()) }} width="60" alt="{{ Auth::user()->getColla()->getName() }}" />
                             <br>
@@ -235,7 +235,7 @@
             <!-- Logo -->
             @if(Auth::user()->getColla()->getLogo() )
         <div class="content-header-item">
-            <a class=" font-w700" href="{!! route('home') !!}">
+            <a class=" font-w700" href="{!! route('dashboard') !!}">
                 <img class="pb-5" src="{!! asset('media/img/logo.svg') !!}" alt="Logo: FemPinya" width="60">
                 <br>
                 <span class="font-size-xl text-dual-primary-dark">Fem</span><span class="font-size-xl text-warning-light">Pinya</span>

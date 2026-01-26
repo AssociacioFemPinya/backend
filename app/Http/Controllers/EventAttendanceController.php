@@ -131,9 +131,17 @@ class EventAttendanceController extends Controller
         $castellersIncluded = $tags;
         $castellersIncludedSearch = in_array($tags_search_type, FilterSearchTypesEnum::validValues()) ? $tags_search_type : FilterSearchTypesEnum::OR;
 
-        $castellers = Casteller::filter($colla)
-            ->withStatus(CastellersStatusEnum::ActiveAll())
-            ->withTags($castellersIncluded, $castellersIncludedSearch)
+        $filter = Casteller::filter($colla)
+            ->withStatus(CastellersStatusEnum::ActiveAll());
+            
+            if($castellersIncludedSearch == FilterSearchTypesEnum::EXCEPT){
+                $filter->withoutTags($castellersIncluded, $castellersIncludedSearch);
+            }else{
+                $filter->withTags($castellersIncluded, $castellersIncludedSearch);
+            }
+
+        $castellers =
+            $filter
             ->eloquentBuilder()
             ->leftJoin('attendance', function (JoinClause $leftJoin) use ($event) {
                 $leftJoin->on('castellers.id_casteller', '=', 'attendance.casteller_id');

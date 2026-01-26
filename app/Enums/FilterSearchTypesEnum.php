@@ -7,12 +7,15 @@ namespace App\Enums;
 /**
  * @method static FilterMembersEnum And()
  * @method static FilterMembersEnum Or()
+ * @method static FilterMembersEnum Except()
  */
 class FilterSearchTypesEnum extends Enum
 {
     public const AND = 'AND';
 
     public const OR = 'OR';
+
+    public const EXCEPT = 'EXCEPT';
 
     public static function validOrAnd(string $searchTypes): string
     {
@@ -26,5 +29,12 @@ class FilterSearchTypesEnum extends Enum
         return (FilterSearchTypesEnum::isValid($searchTypes))
             ? $searchTypes
             : self::OR;
+    }
+
+    public static function validOrExcept(string $searchTypes): string
+    {
+        return (FilterSearchTypesEnum::isValid($searchTypes))
+            ? $searchTypes
+            : self::EXCEPT;
     }
 }

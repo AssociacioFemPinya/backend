@@ -48,6 +48,7 @@
                     <select name="filter_search_type" id="filter_search_type" class="selectize2-no-search form-control">
                         <option value="{{ \App\Enums\FilterSearchTypesEnum::AND }}">AND</option>
                         <option value="{{ \App\Enums\FilterSearchTypesEnum::OR }}" selected>OR</option>
+                        <option value="{{ \App\Enums\FilterSearchTypesEnum::EXCEPT }}" selected>EXCEPT</option>
                     </select>
                 </div>
                 <div class="col-sm-9 col-xl-3 text-center pb-10">
@@ -201,10 +202,12 @@
             let personalize_answers = {!! count($event->getAttendanceAnswers()) !!};
             let companions_allowed = {!! ($event->getCompanions()) ? 'true' : 'false'; !!};
             let event_id = {{ $event->getId() }};
-            let attendadance_tags ='attendance_tags'+event_id;
-            let attendance_status ='attendance_status'+event_id;
-            let attendance_status_verified ='attendance_status_verified'+event_id;
-            let attendance_filter_search_type ='attendance_filter_search_type'+event_id;
+            let attendadance_tags ='attendance_tags_'+event_id;
+            let attendance_status ='attendance_status_'+event_id;
+            let attendance_status_verified ='attendance_status_verified_'+event_id;
+            let attendance_filter_search_type ='attendance_filter_search_type_'+event_id;
+
+            console.log(attendadance_tags);
 
 
             function drawAttendersTable()
@@ -266,6 +269,7 @@
             function initFilters(){
 
                 if (sessionStorage.getItem(attendadance_tags)) {
+                    console.log('TAGS '+attendadance_tags);
                     var tags = JSON.parse(sessionStorage.getItem(attendadance_tags));
                     $('#tags').val(tags).trigger('change');
                 }
