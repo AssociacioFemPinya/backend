@@ -207,8 +207,6 @@
             let attendance_status_verified ='attendance_status_verified_'+event_id;
             let attendance_filter_search_type ='attendance_filter_search_type_'+event_id;
 
-            console.log(attendadance_tags);
-
 
             function drawAttendersTable()
             {
@@ -269,7 +267,6 @@
             function initFilters(){
 
                 if (sessionStorage.getItem(attendadance_tags)) {
-                    console.log('TAGS '+attendadance_tags);
                     var tags = JSON.parse(sessionStorage.getItem(attendadance_tags));
                     $('#tags').val(tags).trigger('change');
                 }
