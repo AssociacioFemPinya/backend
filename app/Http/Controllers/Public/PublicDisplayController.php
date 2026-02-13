@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Managers\CollesManager;
 use App\Managers\EventBoardManager;
 use App\Managers\PublicDisplayManager;
+use App\Services\TOTPService;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,6 +62,20 @@ class PublicDisplayController extends Controller
             $dataContent['castellerId'] = $boardInfo['castellerId'] ?? 0;
             $dataContent['positions'] = $eventBoardManager->loadMapByBoardEventId($colla, $boardEvent, $dataContent['castellerBase']);
             $dataContent['boardEventName'] = $boardEvent->getDisplayName();
+
+            // TOTP data if event is associated
+            $event = $boardEvent->getEvent();
+            if ($event) {
+                $dataContent['event'] = $event;
+                $dataContent['totpCode'] = TOTPService::getCurrentCode($event);
+                $dataContent['remainingSeconds'] = TOTPService::getRemainingSeconds($event);
+                $dataContent['totalSeconds'] = TOTPService::getPeriod($event);
+            } else {
+                $dataContent['event'] = null;
+                $dataContent['totpCode'] = null;
+                $dataContent['remainingSeconds'] = null;
+                $dataContent['totalSeconds'] = 0;
+            }
         }
 
         return view('public.display.home', $dataContent);
@@ -77,5 +92,29 @@ class PublicDisplayController extends Controller
         }
 
         return new JsonResponse($eventBoardManager->loadMapByBoardEventId($colla, $boardEvent, $base), Response::HTTP_OK);
+    }
+
+    public function getTotpCode(PublicDisplayManager $manager, CollesManager $collesManager, string $shortName, string $token): JsonResponse
+    {
+        if (! $colla = $collesManager->fetchByShortName($shortName)) {
+            return new JsonResponse(['error' => 'Colla not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $boardInfo = $manager->getDisplayBoardInfoByPublicToken($colla->getShortName(), $token);
+
+        if (! isset($boardInfo['boardEvent']) || ! $boardEvent = $boardInfo['boardEvent']) {
+            return new JsonResponse(['error' => 'Board event not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $event = $boardEvent->getEvent();
+        if (! $event) {
+            return new JsonResponse(['error' => 'No event associated'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'totpCode' => TOTPService::getCurrentCode($event),
+            'remainingSeconds' => TOTPService::getRemainingSeconds($event),
+            'totalSeconds' => TOTPService::getPeriod($event),
+        ], Response::HTTP_OK);
     }
 }

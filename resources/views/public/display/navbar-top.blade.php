@@ -20,6 +20,11 @@
         <div id="fixedbutton" class="btn btn-primary btn-board mr-1">
             <img src="<?php echo e(asset('media/img/ico_pinya_o3.svg')); ?>" style="width: 22px;" alt="" />
         </div>
+        @if(isset($event) && isset($totpCode))
+        <button type="button" class="btn btn-success btn-board mr-1" id="toggleTotpOverlay" title="Mostrar/Ocultar código TOTP">
+            <i class="fa fa-lock" id="totpToggleIcon"></i>
+        </button>
+        @endif
         <div class="col-sm-6 col-md-6 col-lg-2 col-xl-2 pt-5">
             @if(isset($boardEvent) && ($board->hasFolre()))
                 <select name="base" id="base" class="form-control">

@@ -122,6 +122,86 @@
             font-weight: 800;
         }
 
+        /* TOTP Overlay Styles */
+        #totp-overlay {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 320px;
+            max-width: 400px;
+            transition: opacity 0.2s, box-shadow 0.2s;
+            cursor: move;
+        }
+
+        #totp-overlay .event-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            user-select: none;
+        }
+
+        #totp-overlay.ui-draggable-dragging {
+            opacity: 0.85;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+        }
+
+        #totp-overlay .event-datetime {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+
+        #totp-overlay .totp-code {
+            font-family: 'Courier New', monospace;
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+
+        #totp-overlay .timer-description {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        #totp-overlay .totp-timer-bar {
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        #totp-overlay .totp-timer-progress {
+            height: 100%;
+            background-color: #28a745;
+            border-radius: 5px;
+            transition: width 1s linear;
+        }
+
+        #totp-overlay .timer-seconds {
+            min-width: 40px;
+        }
+
+        /* TOTP Toggle Button */
+        #toggleTotpOverlay {
+            transition: all 0.3s ease;
+        }
+
+        #toggleTotpOverlay:hover {
+            transform: scale(1.05);
+        }
+
+        #toggleTotpOverlay i {
+            font-size: 16px;
+        }
+
 
 
     </style>
@@ -129,6 +209,31 @@
 @endsection
 
 @section('content')
+
+    <!-- TOTP Overlay -->
+    @if($event && $totpCode !== null)
+    <div id="totp-overlay">
+        <div class="border border-success text-center bg-light rounded p-4 shadow">
+            <div class="event-name">{{ $event->getName() }}</div>
+            <div class="event-datetime">{{ $event->getStartDate()->format('d-m-Y, H:i') }}</div>
+            
+            <h5 class="mb-3">{{ __('tokentotp.verification_code') }}</h5>
+            <div class="totp-code" id="totpCodeDisplay">{{ $totpCode }}</div>
+            
+            @if($totalSeconds > 0)
+                <p class="timer-description">{{ __('tokentotp.code_changes', ['seconds' => $totalSeconds]) }}</p>
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="totp-timer-bar">
+                        <div class="totp-timer-progress" id="totpTimerProgress" style="width: {{ ($remainingSeconds / $totalSeconds) * 100 }}%;"></div>
+                    </div>
+                    <span class="font-monospace fs-5 text-secondary timer-seconds" id="timerSeconds">{{ $remainingSeconds }}s</span>
+                </div>
+            @else
+                <p class="mt-2">{{ __('tokentotp.code_static') }}</p>
+            @endif
+        </div>
+    </div>
+    @endif
 
     <div class="row no-gutters justify-content-center">
         <div class="col-12">
@@ -141,6 +246,8 @@
 @section('js')
 
     <script src='https://unpkg.com/panzoom@9.4.0/dist/panzoom.min.js'></script>
+    <script src="{{ asset('js/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/jquery-ui/jquery.ui.touch-punch.min.js') }}"></script>
 
     <script type="text/javascript">
         $(function () {
@@ -280,6 +387,205 @@
 
         });
     </script>
+
+    <!-- TOTP Draggable Script -->
+    @if($event && $totpCode !== null)
+    <script>
+        $(function() {
+            const storageKey = 'totpOverlayPosition_{{ $shortName }}';
+            const storageVisibilityKey = 'totpOverlayVisible_{{ $shortName }}';
+            const $overlay = $('#totp-overlay');
+            const $toggleBtn = $('#toggleTotpOverlay');
+            const $toggleIcon = $('#totpToggleIcon');
+            
+            // Check initial visibility state
+            function getVisibilityState() {
+                const saved = localStorage.getItem(storageVisibilityKey);
+                return saved === null ? true : saved === 'true';
+            }
+            
+            // Toggle overlay visibility
+            function toggleOverlayVisibility() {
+                const isVisible = $overlay.is(':visible');
+                const newState = !isVisible;
+                
+                if (newState) {
+                    $overlay.fadeIn(300);
+                    $toggleIcon.removeClass('fa-unlock').addClass('fa-lock');
+                    $toggleBtn.removeClass('btn-outline-success').addClass('btn-success');
+                } else {
+                    $overlay.fadeOut(300);
+                    $toggleIcon.removeClass('fa-lock').addClass('fa-unlock');
+                    $toggleBtn.removeClass('btn-success').addClass('btn-outline-success');
+                }
+                
+                localStorage.setItem(storageVisibilityKey, newState);
+            }
+            
+            // Set initial visibility
+            if (!getVisibilityState()) {
+                $overlay.hide();
+                $toggleIcon.removeClass('fa-lock').addClass('fa-unlock');
+                $toggleBtn.removeClass('btn-success').addClass('btn-outline-success');
+            }
+            
+            // Toggle button click handler
+            $toggleBtn.on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleOverlayVisibility();
+            });
+            
+            // Convert initial bottom/right position to top/left BEFORE making it draggable
+            function initializePosition() {
+                const savedPosition = localStorage.getItem(storageKey);
+                
+                if (savedPosition) {
+                    // Restore saved position
+                    restorePosition();
+                } else {
+                    // Convert initial bottom/right to top/left
+                    const currentPos = $overlay.offset();
+                    $overlay.css({
+                        top: currentPos.top + 'px',
+                        left: currentPos.left + 'px',
+                        bottom: 'auto',
+                        right: 'auto'
+                    });
+                }
+            }
+            
+            // Restore saved position
+            function restorePosition() {
+                const savedPosition = localStorage.getItem(storageKey);
+                if (savedPosition) {
+                    try {
+                        const pos = JSON.parse(savedPosition);
+                        
+                        // Validate position is still within viewport
+                        const windowWidth = $(window).width();
+                        const windowHeight = $(window).height();
+                        const overlayWidth = $overlay.outerWidth();
+                        const overlayHeight = $overlay.outerHeight();
+                        
+                        let top = pos.top;
+                        let left = pos.left;
+                        
+                        // Ensure overlay is visible
+                        if (left < 0) left = 20;
+                        if (top < 0) top = 20;
+                        if (left + overlayWidth > windowWidth) left = windowWidth - overlayWidth - 20;
+                        if (top + overlayHeight > windowHeight) top = windowHeight - overlayHeight - 20;
+                        
+                        // Apply position
+                        $overlay.css({
+                            top: top + 'px',
+                            left: left + 'px',
+                            bottom: 'auto',
+                            right: 'auto'
+                        });
+                    } catch (e) {
+                        console.error('Error restoring TOTP position:', e);
+                    }
+                }
+            }
+            
+            // Initialize position first
+            initializePosition();
+            
+            // Make overlay draggable from anywhere
+            $overlay.draggable({
+                containment: 'window',
+                cursor: 'move',
+                scroll: false,
+                start: function(event, ui) {
+                    // Ensure bottom and right are removed when drag starts
+                    $(this).css({
+                        bottom: 'auto',
+                        right: 'auto'
+                    });
+                },
+                stop: function(event, ui) {
+                    // Save position to localStorage
+                    const position = {
+                        top: ui.position.top,
+                        left: ui.position.left
+                    };
+                    localStorage.setItem(storageKey, JSON.stringify(position));
+                }
+            });
+
+            // Prevent drag events from interfering with panzoom
+            $overlay.on('mousedown touchstart', function(e) {
+                e.stopPropagation();
+            });
+
+            // Revalidate position on window resize
+            $(window).on('resize', function() {
+                const currentPos = $overlay.position();
+                if (currentPos.top !== 0 || currentPos.left !== 0) {
+                    setTimeout(restorePosition, 100);
+                }
+            });
+        });
+    </script>
+    @endif
+
+    <!-- TOTP Auto-Update Script -->
+    @if($event && $totpCode !== null && $totalSeconds > 0)
+    <script>
+        let totpRemainingSeconds = {{ $remainingSeconds }};
+        let totpTotalSeconds = {{ $totalSeconds }};
+        const totpRefreshUrl = "{{ route('public.display.totp-code', ['shortName' => $shortName, 'token' => $token]) }}";
+
+        function updateTotpTimer() {
+            if (totpRemainingSeconds <= 0) {
+                // Fetch new code
+                refreshTotpCode();
+                return;
+            }
+
+            totpRemainingSeconds--;
+
+            // Update progress bar
+            const progressBar = document.getElementById('totpTimerProgress');
+            if (progressBar) {
+                const percentage = (totpRemainingSeconds / totpTotalSeconds) * 100;
+                progressBar.style.width = percentage + '%';
+            }
+
+            // Update seconds counter
+            const timerSeconds = document.getElementById('timerSeconds');
+            if (timerSeconds) {
+                timerSeconds.textContent = totpRemainingSeconds + 's';
+            }
+        }
+
+        function refreshTotpCode() {
+            $.get(totpRefreshUrl)
+                .done(function(data) {
+                    // Update code display
+                    $('#totpCodeDisplay').text(data.totpCode);
+                    
+                    // Reset timer
+                    totpRemainingSeconds = data.remainingSeconds;
+                    totpTotalSeconds = data.totalSeconds;
+                    
+                    // Update progress bar to 100%
+                    $('#totpTimerProgress').css('width', '100%');
+                    
+                    // Update seconds counter
+                    $('#timerSeconds').text(data.remainingSeconds + 's');
+                })
+                .fail(function(error) {
+                    console.error('Error refreshing TOTP code:', error);
+                });
+        }
+
+        // Update timer every second
+        setInterval(updateTotpTimer, 1000);
+    </script>
+    @endif
 
     <script type="text/javascript">let colla_shortname = '{{ $shortName }}';</script>
     <script src="{{ asset('js/pages/listen_display_channel.js') }}"></script>
