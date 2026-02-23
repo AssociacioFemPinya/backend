@@ -6,6 +6,7 @@ use App\Colla;
 use App\Enums\FilterSearchTypesEnum;
 use App\Enums\TypeTags;
 use App\Event;
+use App\Helpers\DateHelper;
 use App\Helpers\Humans;
 use App\Managers\EventsManager;
 use App\Managers\MultieventManager;
@@ -211,9 +212,10 @@ class EventsController extends Controller
         $startDate = str_replace('/', '-', $request->start_date);
         $startDate = date('Y-m-d', strtotime($startDate)).' '.$request->hour.':'.$request->min.':00';
 
+        $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
         //open date
         if ($request->open_date_select === 'now') {
-            $openDate = Carbon::now()->toDateTimeString();
+            $openDate = $now;
         } elseif ($request->open_date_select === 'before_starts') {
             switch ($request->open_date_mode) {
                 case 'months':
