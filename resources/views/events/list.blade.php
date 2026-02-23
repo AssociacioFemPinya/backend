@@ -219,6 +219,7 @@
                                     "id_multievent": json.data[i].id_multievent
                                 };
                             }
+                            updateEventDatesCache(json.data);
                             return json.data;
                         }
                     },
@@ -288,6 +289,7 @@
                                     "id_multievent": json.data[i].id_multievent
                                 };
                             }
+                            updateEventDatesCache(json.data);
                             return json.data;
                         }
                     },
@@ -421,16 +423,23 @@
                 }
             }
 
-            function findEventDate(eventId, dataTable) {
-                let foundDate = null;
-                dataTable.rows().every(function() {
-                    const data = this.data();
-                    if (data.id_event === eventId) {
-                        foundDate = data.start_date;
-                        return false;
+            let eventDatesCache = {};
+
+            function findEventDate(eventId) {
+                if (eventDatesCache[eventId] !== undefined) {
+                    return eventDatesCache[eventId];
+                }
+                return null;
+            }
+
+            function updateEventDatesCache(events) {
+                if (!events || !Array.isArray(events)) return;
+
+                events.forEach(function(event) {
+                    if (event.id_event && event.start_date) {
+                        eventDatesCache[event.id_event] = event.start_date;
                     }
                 });
-                return foundDate;
             }
 
             function checkDuplicateDates() {
@@ -438,10 +447,10 @@
                 const duplicateDates = {};
 
                 selectedEvents.forEach(function(eventId) {
-                    const eventDate = findEventDate(eventId, events_upcoming) || findEventDate(eventId, events_past);
+                    const eventDate = findEventDate(eventId);
 
                     if (eventDate) {
-                        const dateOnly = eventDate.split(' ')[0];
+                        const dateOnly = eventDate.split(',')[1];
                         if (eventDates[dateOnly]) {
                             if (!duplicateDates[dateOnly]) {
                                 duplicateDates[dateOnly] = [
