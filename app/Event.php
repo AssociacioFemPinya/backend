@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Enums\TypeTags;
+use App\Helpers\DateHelper;
 use App\Managers\EventsManager;
 use App\Repositories\EventRepository;
 use App\Traits\FilterableTrait;
@@ -52,7 +53,7 @@ final class Event extends Model
     public function isOpen($date = null): bool
     {
         if (is_null($date)) {
-            $date = Carbon::now();
+            $date = Carbon::parse(DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString()));
         }
 
         if ($this->getOpenDate() < $date && $this->getCloseDate() > $date) {
