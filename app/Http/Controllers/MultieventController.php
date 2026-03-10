@@ -127,8 +127,10 @@ class MultieventController extends Controller
             $eventStartDate = str_replace('/', '-', $date);
             $eventStartDate = date('Y-m-d', strtotime($eventStartDate)).' '.$baseHour.':'.$baseMinute.':00';
 
+            $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
+
             if ($request->open_date_select === 'now') {
-                $eventOpenDate = Carbon::now()->toDateTimeString();
+                $openDate = $now;
             } elseif ($request->open_date_select === 'before_starts') {
                 switch ($request->open_date_mode) {
                     case 'months':
@@ -144,7 +146,7 @@ class MultieventController extends Controller
                         $eventOpenDate = Carbon::parse($eventStartDate)->subHours(intval($request->open_date_time));
                         break;
                     default:
-                        $eventOpenDate = Carbon::now();
+                        $eventOpenDate = Carbon::parse($now);
                 }
                 $eventOpenDate = $eventOpenDate->toDateTimeString();
             }
@@ -340,8 +342,10 @@ class MultieventController extends Controller
             $eventStartDate = str_replace('/', '-', $date);
             $eventStartDate = date('Y-m-d', strtotime($eventStartDate)).' '.$baseHour.':'.$baseMinute.':00';
 
+            $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
+
             if ($request->open_date_select === 'now') {
-                $eventOpenDate = Carbon::now()->toDateTimeString();
+                $eventOpenDate = $now;
             } elseif ($request->open_date_select === 'before_starts') {
                 switch ($request->open_date_mode) {
                     case 'months':
@@ -357,7 +361,7 @@ class MultieventController extends Controller
                         $eventOpenDate = Carbon::parse($eventStartDate)->subHours(intval($request->open_date_time));
                         break;
                     default:
-                        $eventOpenDate = Carbon::now();
+                        $eventOpenDate = Carbon::parse($now);
                 }
                 $eventOpenDate = $eventOpenDate->toDateTimeString();
             }
