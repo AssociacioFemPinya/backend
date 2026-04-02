@@ -239,6 +239,9 @@ class CastellerFactory
 
     private static function savePhoto(Casteller $casteller, UploadedFile $file)
     {
+
+        StructureHelper::createDirectories($colla->getShortname());
+
         $imageSizes = [
             'xs' => 32,
             'med' => 128,
