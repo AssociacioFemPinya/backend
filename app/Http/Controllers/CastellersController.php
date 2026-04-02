@@ -69,11 +69,11 @@ class CastellersController extends Controller
 
         $castellersFilter = Casteller::filter($colla)
             ->withStatus($status);
-            if($searchType == FilterSearchTypesEnum::EXCEPT){
-                $castellersFilter->withoutTags($tags, $searchType);
-            }else{
-                $castellersFilter->withTags($tags, $searchType);
-            }
+        if ($searchType == FilterSearchTypesEnum::EXCEPT) {
+            $castellersFilter->withoutTags($tags, $searchType);
+        } else {
+            $castellersFilter->withTags($tags, $searchType);
+        }
 
         $datatable = new CastellersDataTable($user);
         $data = $datatable->render($user, $request, $castellersFilter);

@@ -57,11 +57,11 @@ class CastellerConfigController extends Controller
         $searchType = $request->input('filter_search_type') ?? FilterSearchTypesEnum::OR; //AND or OR
         $castellersFilter = Casteller::filter($colla)
             ->withStatus($status);
-            if($searchType == FilterSearchTypesEnum::EXCEPT){
-                $castellersFilter->withoutTags($tags, $searchType);
-            }else{
-                $castellersFilter->withTags($tags, $searchType);
-            }
+        if ($searchType == FilterSearchTypesEnum::EXCEPT) {
+            $castellersFilter->withoutTags($tags, $searchType);
+        } else {
+            $castellersFilter->withTags($tags, $searchType);
+        }
 
         $data = $castellersFilter->datatablesFilter($request, [
             'castellers.name', 'castellers.last_name', DB::raw('concat(castellers.name," ",castellers.last_name)'),
