@@ -33,9 +33,8 @@ class FilterSearchTypesEnum extends Enum
 
     public static function validOrExcept(string $searchTypes): string
     {
-         return (FilterSearchTypesEnum::isValid($searchTypes))
-             ? $searchTypes
-             : self::EXCEPT;
+        return (FilterSearchTypesEnum::isValid($searchTypes))
+            ? $searchTypes
+            : self::EXCEPT;
     }
-    
 }

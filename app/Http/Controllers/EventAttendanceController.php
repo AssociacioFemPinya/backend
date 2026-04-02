@@ -134,25 +134,25 @@ class EventAttendanceController extends Controller
         $filter = Casteller::filter($colla)
             ->withStatus(CastellersStatusEnum::ActiveAll());
 
-            if($castellersIncludedSearch == FilterSearchTypesEnum::EXCEPT){
-                $filter->withoutTags($castellersIncluded, $castellersIncludedSearch);
-            }else{
-                $filter->withTags($castellersIncluded, $castellersIncludedSearch);
-            }
+        if ($castellersIncludedSearch == FilterSearchTypesEnum::EXCEPT) {
+            $filter->withoutTags($castellersIncluded, $castellersIncludedSearch);
+        } else {
+            $filter->withTags($castellersIncluded, $castellersIncludedSearch);
+        }
 
         $castellers =
             $filter
-            ->eloquentBuilder()
-            ->leftJoin('attendance', function (JoinClause $leftJoin) use ($event) {
-                $leftJoin->on('castellers.id_casteller', '=', 'attendance.casteller_id');
-                $leftJoin->where(function ($query) use ($event) {
-                    $query->orWhere('attendance.event_id', $event->getId());
-                    $query->orWhereNull('attendance.casteller_id');
+                ->eloquentBuilder()
+                ->leftJoin('attendance', function (JoinClause $leftJoin) use ($event) {
+                    $leftJoin->on('castellers.id_casteller', '=', 'attendance.casteller_id');
+                    $leftJoin->where(function ($query) use ($event) {
+                        $query->orWhere('attendance.event_id', $event->getId());
+                        $query->orWhereNull('attendance.casteller_id');
+                    });
+                })
+                ->with('attendance', function ($q) use ($event) {
+                    $q->where('event_id', $event->getId());
                 });
-            })
-            ->with('attendance', function ($q) use ($event) {
-                $q->where('event_id', $event->getId());
-            });
 
         if ($request->has('status')) {
 
