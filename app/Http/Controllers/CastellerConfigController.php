@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Casteller;
 use App\Colla;
 use App\Enums\CastellersStatusEnum;
+use App\Enums\FilterSearchTypesEnum;
 use App\Helpers\Humans;
 use App\Helpers\RenderHelper;
 use App\Mail\CastellerCredentials;
@@ -53,10 +54,14 @@ class CastellerConfigController extends Controller
 
         $tags = $request->input('tags') ?? [Tag::TAG_ALL];
         $status = CastellersStatusEnum::getBy($request->input('status')) ?? [CastellersStatusEnum::ALL];
-        $searchType = $request->input('filter_search_type'); //AND or OR
+        $searchType = $request->input('filter_search_type') ?? FilterSearchTypesEnum::OR; //AND or OR
         $castellersFilter = Casteller::filter($colla)
-            ->withStatus($status)
-            ->withTags($tags, $searchType);
+            ->withStatus($status);
+            if($searchType == FilterSearchTypesEnum::EXCEPT){
+                $castellersFilter->withoutTags($tags, $searchType);
+            }else{
+                $castellersFilter->withTags($tags, $searchType);
+            }
 
         $data = $castellersFilter->datatablesFilter($request, [
             'castellers.name', 'castellers.last_name', DB::raw('concat(castellers.name," ",castellers.last_name)'),
