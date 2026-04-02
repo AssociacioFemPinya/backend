@@ -6,7 +6,6 @@ namespace App\Factories;
 
 use App\Colla;
 use App\Helpers\StructureHelper;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -38,7 +37,7 @@ class CollaFactory
         if ($bag->has('shortname')) {
             StructureHelper::createDirectories($bag->get('shortname'));
             $colla->setAttribute('shortname', $bag->get('shortname'));
-        }else{
+        } else {
             StructureHelper::createDirectories($colla->getShortName());
         }
 
