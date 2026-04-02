@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\File;
 
 class StructureHelper
 {
-
     public static function createDirectories(string $shortname)
     {
 
