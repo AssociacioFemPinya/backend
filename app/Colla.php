@@ -281,5 +281,4 @@ final class Colla extends Model
             ->orderBy('name')
             ->get();
     }
-    
 }
