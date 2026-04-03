@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use App\Casteller;
 use App\Enums\ScaledAttendanceStatus;
-use Log;
 
 class RenderHelper
 {
@@ -247,8 +246,7 @@ class RenderHelper
 
     }
 
-
-    public static function renderCastellerButton(Casteller $casteller, string $heightType = "", bool $positioned = false) : string
+    public static function renderCastellerButton(Casteller $casteller, string $heightType = '', bool $positioned = false): string
     {
 
         $result = '<div class="col-6 col-sm-4 col-md-12 col-lg-6 col-xl-4 p-5">';
@@ -280,12 +278,12 @@ class RenderHelper
                 $class = 'btn-warning';
         }
 
-        $attendanceIcon = "";
+        $attendanceIcon = '';
         $answers = $casteller->attendance?->first()?->getOptions();
-        if(!empty($answers)){
+        if (! empty($answers)) {
             $hasAttendanceAnswers = true;
             $tooltipTxt .= '<br>'.Humans::readAttendanceAnswersTags($casteller, $casteller->attendance?->first());
-            $attendanceIcon = '<span class="pl-1 pr-1"><i class="'.RenderHelper::getHasAttendanceAnswersIconClass(!$positioned).' btn-has-attendance-answers fa-md"></i></span>';
+            $attendanceIcon = '<span class="pl-1 pr-1"><i class="'.RenderHelper::getHasAttendanceAnswersIconClass(! $positioned).' btn-has-attendance-answers fa-md"></i></span>';
         }
 
         if ($positioned) {
