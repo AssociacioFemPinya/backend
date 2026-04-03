@@ -10,11 +10,10 @@ use App\Colla;
 use App\Enums\AttendanceStatus;
 use App\Enums\BasesEnum;
 use App\Enums\CastellersStatusEnum;
-use App\Enums\ScaledAttendanceStatus;
 use App\Enums\TypeTags;
 use App\Event;
-use App\Helpers\RenderHelper;
 use App\Helpers\Humans;
+use App\Helpers\RenderHelper;
 use App\Managers\AttendanceManager;
 use App\Managers\EventBoardManager;
 use App\Row;
@@ -25,7 +24,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Log;
 
 final class EventBoardController extends Controller
 {
@@ -144,7 +142,7 @@ final class EventBoardController extends Controller
 
         foreach ($castellersPositioned as $casteller) {
 
-            $result .= RenderHelper::renderCastellerButton($casteller, $heightType,true );
+            $result .= RenderHelper::renderCastellerButton($casteller, $heightType, true);
 
         }
 
@@ -224,11 +222,11 @@ final class EventBoardController extends Controller
                     'castellerName' => $casteller->getDisplayName(),
                     'divId' => $boardPosition->getRow()->getDivId(),
                     'castellerHeight' => $casteller->getRelativeHeight(),
-                    'castellerAttendance' => (!is_null($attendance)) ? $attendance->getStatus() : '??',
-                    'castellerVerifiedAttendance' => (!is_null($attendance)) ? $attendance->getStatusVerified() : '??',
+                    'castellerAttendance' => (! is_null($attendance)) ? $attendance->getStatus() : '??',
+                    'castellerVerifiedAttendance' => (! is_null($attendance)) ? $attendance->getStatusVerified() : '??',
                     'castellerShoulderHeight' => $casteller->getRelativeShoulderHeight(),
                     'castellerActivePinya' => $casteller->isActivePinya(),
-                    'hasAttendanceAnswers' => ((!is_null($attendance)) && !empty($attendance->getOptions()))
+                    'hasAttendanceAnswers' => ((! is_null($attendance)) && ! empty($attendance->getOptions())),
                 ],
                 Response::HTTP_OK
             );
@@ -318,10 +316,10 @@ final class EventBoardController extends Controller
                     'divSwappedId' => $arrayBoarPositionsSwapped[0]->getRow()->getDivId(),
                     'castellerSwappedHeight' => $castellerSwapped1->getRelativeHeight(),
                     'castellerSwappedShoulderHeight' => $castellerSwapped1->getRelativeShoulderHeight(),
-                    'castellerSwappedAttendance' => (!is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatus(): '??',
-                    'castellerSwappedVerifiedAttendance' => (!is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatusVerified() : '??',
+                    'castellerSwappedAttendance' => (! is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatus() : '??',
+                    'castellerSwappedVerifiedAttendance' => (! is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatusVerified() : '??',
                     'castellerSwappedActivePinya' => $castellerSwapped1->isActivePinya(),
-                    'castellerSwappedHasAttendanceAnswers' => (!is_null($attendanceCastellerSwap1) && !empty($attendanceCastellerSwap1->getOptions()))
+                    'castellerSwappedHasAttendanceAnswers' => (! is_null($attendanceCastellerSwap1) && ! empty($attendanceCastellerSwap1->getOptions())),
 
                 ],
 
@@ -339,19 +337,19 @@ final class EventBoardController extends Controller
                 'divId' => $arrayBoarPositionsSwapped[0]->getRow()->getDivId(),
                 'castellerHeight' => $castellerSwapped1->getRelativeHeight(),
                 'castellerShoulderHeight' => $castellerSwapped1->getRelativeShoulderHeight(),
-                'castellerAttendance' => (!is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatus(): '??',
-                'castellerVerifiedAttendance' => (!is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatusVerified() : '??',
+                'castellerAttendance' => (! is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatus() : '??',
+                'castellerVerifiedAttendance' => (! is_null($attendanceCastellerSwap1)) ? $attendanceCastellerSwap1->getStatusVerified() : '??',
                 'castellerActivePinya' => $castellerSwapped1->isActivePinya(),
-                'castellerHasAttendanceAnswers' => (!is_null($attendanceCastellerSwap1) && !empty($attendanceCastellerSwap1?->getOptions())),
+                'castellerHasAttendanceAnswers' => (! is_null($attendanceCastellerSwap1) && ! empty($attendanceCastellerSwap1?->getOptions())),
 
                 'castellerSwappedName' => $castellerSwapped2->getDisplayName(),
                 'divSwappedId' => $arrayBoarPositionsSwapped[1]->getRow()->getDivId(),
                 'castellerSwappedHeight' => $castellerSwapped2->getRelativeHeight(),
                 'castellerSwappedShoulderHeight' => $castellerSwapped2->getRelativeShoulderHeight(),
-                'castellerSwappedAttendance' =>  (!is_null($attendanceCastellerSwap2)) ? $attendanceCastellerSwap2->getStatus(): '??',
-                'castellerSwappedVerifiedAttendance' => (!is_null($attendanceCastellerSwap2)) ? $attendanceCastellerSwap2->getStatusVerified() : '??',
+                'castellerSwappedAttendance' => (! is_null($attendanceCastellerSwap2)) ? $attendanceCastellerSwap2->getStatus() : '??',
+                'castellerSwappedVerifiedAttendance' => (! is_null($attendanceCastellerSwap2)) ? $attendanceCastellerSwap2->getStatusVerified() : '??',
                 'castellerSwappedActivePinya' => $castellerSwapped2->isActivePinya(),
-                'castellerSwappedHasAttendanceAnswers' => (!is_null($attendanceCastellerSwap2) && !empty($attendanceCastellerSwap2?->getOptions()))
+                'castellerSwappedHasAttendanceAnswers' => (! is_null($attendanceCastellerSwap2) && ! empty($attendanceCastellerSwap2?->getOptions())),
 
             ],
             Response::HTTP_OK
@@ -387,7 +385,7 @@ final class EventBoardController extends Controller
                 $item->casteller->castellerVerifiedAttendance = $casteller->attendance[0]->getStatusVerified();
             }
             if ($casteller->attendance->isNotEmpty()) {
-                $item->casteller->hasAttendanceAnswers = (!empty($casteller->attendance[0]->getOptions()));
+                $item->casteller->hasAttendanceAnswers = (! empty($casteller->attendance[0]->getOptions()));
             }
             $item->casteller->activePinya = $casteller->isActivePinya();
             $item->casteller->height = $casteller->getRelativeHeight();
@@ -532,8 +530,8 @@ final class EventBoardController extends Controller
                 'castellerShoulderHeight' => trans('casteller.relative_shoulder_height').': '.$casteller->getRelativeShoulderHeight().'cm',
                 'castellerStatus' => trans('attendance.attendance_status').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatus())).'"></i>',
                 'castellerStatusVerified' => trans('attendance.attendance_status_verified').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatusVerified())).'"></i>',
-                'castellerTags' => Humans::readCastellerColumn($casteller,'tags', 'right'),
-                'castellerAttendanceTags' => Humans::readAttendanceAnswersTags($casteller, $attendance)
+                'castellerTags' => Humans::readCastellerColumn($casteller, 'tags', 'right'),
+                'castellerAttendanceTags' => Humans::readAttendanceAnswersTags($casteller, $attendance),
             ],
 
             Response::HTTP_OK);
