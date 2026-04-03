@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Factories;
 
 use App\Colla;
-use Illuminate\Support\Facades\File;
+use App\Helpers\StructureHelper;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -15,8 +15,6 @@ class CollaFactory
 {
     public static function make(ParameterBag $bag): Colla
     {
-
-        self::createDirectories($bag->get('shortname'));
 
         $colla = new Colla();
         $colla = self::update($colla, $bag);
@@ -37,7 +35,10 @@ class CollaFactory
         }
 
         if ($bag->has('shortname')) {
+            StructureHelper::createDirectories($bag->get('shortname'));
             $colla->setAttribute('shortname', $bag->get('shortname'));
+        } else {
+            StructureHelper::createDirectories($colla->getShortName());
         }
 
         if ($bag->has('email')) {
@@ -82,25 +83,6 @@ class CollaFactory
         }
 
         return $colla;
-    }
-
-    private static function createDirectories(string $shortname)
-    {
-
-        $pathCollesGeneral = public_path('media/colles/'.$shortname);
-        $pathCollesCastellers = public_path('media/colles/'.$shortname.'/castellers');
-        $pathCollesSVG = public_path('media/colles/'.$shortname.'/svg');
-
-        if (! File::isDirectory($pathCollesGeneral)) {
-            File::makeDirectory($pathCollesGeneral, 0755, true, true);
-        }
-        if (! File::isDirectory($pathCollesCastellers)) {
-            File::makeDirectory($pathCollesCastellers, 0755, true, true);
-        }
-        if (! File::isDirectory($pathCollesSVG)) {
-            File::makeDirectory($pathCollesSVG, 0755, true, true);
-        }
-
     }
 
     private static function saveLogo(Colla $colla, UploadedFile $file): string
