@@ -10,10 +10,15 @@ class StructureHelper
 {
     public static function createDirectories(string $shortname)
     {
+        $safeShortname = preg_replace('/[^A-Za-z0-9_\-]/', '', $shortname);
 
-        $pathCollesGeneral = public_path('media/colles/'.$shortname);
-        $pathCollesCastellers = public_path('media/colles/'.$shortname.'/castellers');
-        $pathCollesSVG = public_path('media/colles/'.$shortname.'/svg');
+        if (empty($safeShortname)) {
+            return;
+        }
+
+        $pathCollesGeneral = public_path('media/colles/'.$safeShortname);
+        $pathCollesCastellers = public_path('media/colles/'.$safeShortname.'/castellers');
+        $pathCollesSVG = public_path('media/colles/'.$safeShortname.'/svg');
 
         if (! File::isDirectory($pathCollesGeneral)) {
             File::makeDirectory($pathCollesGeneral, 0755, true, true);
