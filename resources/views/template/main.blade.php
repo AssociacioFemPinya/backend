@@ -103,8 +103,8 @@
     ?>
     <?php
     /*
-    Code that fixes the datables annoying popup when the sesion expires
-    If the error occurs, refreshses the tab automatically
+    Code that fixes the DataTables annoying popup when the session expires
+    If the error occurs, refreshes the tab automatically
     */
     ?>
     <script>
