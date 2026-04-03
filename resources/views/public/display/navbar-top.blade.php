@@ -24,6 +24,12 @@
         <button type="button" class="btn btn-success btn-board mr-1" id="toggleTotpOverlay" title="Mostrar/Ocultar código TOTP">
             <i class="fa fa-lock" id="totpToggleIcon"></i>
         </button>
+        <button type="button" class="btn btn-success btn-board mr-1" id="totpOverlaySizeDown" title="Hacer más pequeño el popup TOTP">
+            <i class="fa fa-search-minus"></i>
+        </button>
+        <button type="button" class="btn btn-success btn-board mr-1" id="totpOverlaySizeUp" title="Hacer más grande el popup TOTP">
+            <i class="fa fa-search-plus"></i>
+        </button>
         @endif
         <div class="col-sm-6 col-md-6 col-lg-2 col-xl-2 pt-5">
             @if(isset($boardEvent) && ($board->hasFolre()))

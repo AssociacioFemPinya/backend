@@ -124,20 +124,25 @@
 
         /* TOTP Overlay Styles */
         #totp-overlay {
+            --totp-scale: 1;
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 9999;
-            min-width: 320px;
-            max-width: 400px;
+            min-width: calc(320px * var(--totp-scale));
+            max-width: calc(400px * var(--totp-scale));
             transition: opacity 0.2s, box-shadow 0.2s;
             cursor: move;
         }
 
+        #totp-overlay .totp-overlay-card {
+            padding: calc(1.5rem * var(--totp-scale)) !important;
+        }
+
         #totp-overlay .event-name {
-            font-size: 1.1rem;
+            font-size: calc(1.1rem * var(--totp-scale));
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: calc(4px * var(--totp-scale));
             user-select: none;
         }
 
@@ -147,46 +152,52 @@
         }
 
         #totp-overlay .event-datetime {
-            font-size: 1rem;
+            font-size: calc(1rem * var(--totp-scale));
             color: #6c757d;
-            margin-bottom: 12px;
+            margin-bottom: calc(12px * var(--totp-scale));
+        }
+
+        #totp-overlay .totp-title {
+            font-size: calc(1.25rem * var(--totp-scale));
+            margin-bottom: calc(1rem * var(--totp-scale)) !important;
         }
 
         #totp-overlay .totp-code {
             font-family: 'Courier New', monospace;
-            font-size: 3rem;
+            font-size: calc(3rem * var(--totp-scale));
             font-weight: bold;
-            letter-spacing: 5px;
+            letter-spacing: calc(5px * var(--totp-scale));
             color: #333;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             user-select: none;
         }
 
         #totp-overlay .timer-description {
-            font-size: 0.9rem;
-            margin-top: 8px;
-            margin-bottom: 12px;
+            font-size: calc(0.9rem * var(--totp-scale));
+            margin-top: calc(8px * var(--totp-scale));
+            margin-bottom: calc(12px * var(--totp-scale));
         }
 
         #totp-overlay .totp-timer-bar {
-            height: 10px;
+            height: calc(10px * var(--totp-scale));
             background-color: #ddd;
-            border-radius: 5px;
+            border-radius: calc(5px * var(--totp-scale));
             width: 100%;
-            max-width: 300px;
+            max-width: calc(300px * var(--totp-scale));
             overflow: hidden;
-            margin-right: 10px;
+            margin-right: calc(10px * var(--totp-scale));
         }
 
         #totp-overlay .totp-timer-progress {
             height: 100%;
             background-color: #28a745;
-            border-radius: 5px;
+            border-radius: calc(5px * var(--totp-scale));
             transition: width 1s linear;
         }
 
         #totp-overlay .timer-seconds {
-            min-width: 40px;
+            min-width: calc(40px * var(--totp-scale));
+            font-size: calc(1.25rem * var(--totp-scale));
         }
 
         /* TOTP Toggle Button */
@@ -213,11 +224,11 @@
     <!-- TOTP Overlay -->
     @if($event && $totpCode !== null)
     <div id="totp-overlay">
-        <div class="border border-success text-center bg-light rounded p-4 shadow">
+        <div class="totp-overlay-card border border-success text-center bg-light rounded p-4 shadow">
             <div class="event-name">{{ $event->getName() }}</div>
             <div class="event-datetime">{{ $event->getStartDate()->format('d-m-Y, H:i') }}</div>
             
-            <h5 class="mb-3">{{ __('tokentotp.verification_code') }}</h5>
+            <h5 class="totp-title mb-3">{{ __('tokentotp.verification_code') }}</h5>
             <div class="totp-code" id="totpCodeDisplay">{{ $totpCode }}</div>
             
             @if($totalSeconds > 0)
@@ -394,9 +405,43 @@
         $(function() {
             const storageKey = 'totpOverlayPosition_{{ $shortName }}';
             const storageVisibilityKey = 'totpOverlayVisible_{{ $shortName }}';
+            const storageScaleKey = 'totpOverlayScale_{{ $shortName }}';
+            const minScale = 0.8;
+            const maxScale = 1.8;
+            const defaultScale = 1;
+            const scaleStep = 0.1;
             const $overlay = $('#totp-overlay');
             const $toggleBtn = $('#toggleTotpOverlay');
             const $toggleIcon = $('#totpToggleIcon');
+            const $sizeDownBtn = $('#totpOverlaySizeDown');
+            const $sizeUpBtn = $('#totpOverlaySizeUp');
+
+            function clampScale(scale) {
+                return Math.min(maxScale, Math.max(minScale, scale));
+            }
+
+            function getScaleState() {
+                const saved = localStorage.getItem(storageScaleKey);
+                if (saved === null) {
+                    return defaultScale;
+                }
+
+                const parsed = parseFloat(saved);
+                if (isNaN(parsed)) {
+                    return defaultScale;
+                }
+
+                return clampScale(parsed);
+            }
+
+            function setScaleState(scale) {
+                const validScale = clampScale(scale);
+                $overlay.css('--totp-scale', validScale.toFixed(2));
+                localStorage.setItem(storageScaleKey, validScale.toFixed(2));
+
+                $sizeDownBtn.prop('disabled', validScale <= minScale);
+                $sizeUpBtn.prop('disabled', validScale >= maxScale);
+            }
             
             // Check initial visibility state
             function getVisibilityState() {
@@ -421,6 +466,13 @@
                 
                 localStorage.setItem(storageVisibilityKey, newState);
             }
+
+            function updateScale(delta) {
+                const currentScale = getScaleState();
+                const nextScale = currentScale + delta;
+                setScaleState(nextScale);
+                restorePosition();
+            }
             
             // Set initial visibility
             if (!getVisibilityState()) {
@@ -428,12 +480,27 @@
                 $toggleIcon.removeClass('fa-lock').addClass('fa-unlock');
                 $toggleBtn.removeClass('btn-success').addClass('btn-outline-success');
             }
+
+            // Set initial scale
+            setScaleState(getScaleState());
             
             // Toggle button click handler
             $toggleBtn.on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 toggleOverlayVisibility();
+            });
+
+            $sizeDownBtn.on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                updateScale(-scaleStep);
+            });
+
+            $sizeUpBtn.on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                updateScale(scaleStep);
             });
             
             // Convert initial bottom/right position to top/left BEFORE making it draggable
