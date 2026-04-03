@@ -238,7 +238,6 @@ class RenderHelper
 
     public static function getHasAttendanceAnswersIconClass(bool $withColor = true): string
     {
-        $icon = '';
 
         $color = ($withColor) ? 'text-info ' : 'text-muted ';
 
@@ -258,7 +257,6 @@ class RenderHelper
             $tooltipTxt .= '<br>'.$casteller->getRelativeShoulderHeight().'cm';
         }
 
-        $hasAttendanceAnswers = false;
         $status = $casteller->attendance?->first() ? $casteller->attendance?->first()->getScaledAttendance() : ScaledAttendanceStatus::UNKNOWN();
 
         switch ($status) {
@@ -282,7 +280,7 @@ class RenderHelper
         $answers = $casteller->attendance?->first()?->getOptions();
         if (! empty($answers)) {
             $hasAttendanceAnswers = true;
-            $tooltipTxt .= '<br>'.Humans::readAttendanceAnswersTags($casteller, $casteller->attendance?->first());
+            $tooltipTxt .= '<br>'.Humans::readAttendanceAnswersTags($casteller->attendance?->first());
             $attendanceIcon = '<span class="pl-1 pr-1"><i class="'.RenderHelper::getHasAttendanceAnswersIconClass(! $positioned).' btn-has-attendance-answers fa-md"></i></span>';
         }
 
@@ -306,7 +304,7 @@ class RenderHelper
             data-placement="top"
             data-html="true"
             title="'.$tooltipTxt.'">
-            <span class="pl-1 pr-1"><i class="'.RenderHelper::getAttendanceIconEditor($status).' fa-lg"></span></i><span class="span-name"> '.$casteller->getDisplayName().'</span>'
+            <span class="pl-1 pr-1"><i class="'.RenderHelper::getAttendanceIconEditor($status).' fa-lg"></i></span><span class="span-name"> '.$casteller->getDisplayName().'</span>'
             .$attendanceIcon
             .'</button>';
         }
