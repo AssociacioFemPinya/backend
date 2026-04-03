@@ -102,17 +102,15 @@
     */
     ?>
     <?php
-        /*
-        Avoid the annoying Popup Error on datatables when a the sesion expires
-        */
+    /*
+    Code that fixes the datables annoying popup when the sesion expires
+    If the error occurs, refreshses the tab automatically
+    */
     ?>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof $ !== 'undefined' && $.fn.dataTable) {
-                // 1. Desactivem l'alert per defecte
                 $.fn.dataTable.ext.errMode = 'none';
-
-                // 2. Escoltem l'error per refrescar la pàgina
                 $(document).on('error.dt', function (e, settings, techNote, message) {
                     if (settings.jqXHR && (settings.jqXHR.status === 401 || settings.jqXHR.status === 419)) {
                         window.location.reload();
