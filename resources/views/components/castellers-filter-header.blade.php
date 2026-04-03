@@ -18,8 +18,9 @@
 
     <div class="col-md-1">
         <select name="filter_search_type" id="filter_search_type" class="selectize2 form-control">
-            <option value="AND">AND</option>
-            <option value="OR" selected>OR</option>
+            <option value="{{ \App\Enums\FilterSearchTypesEnum::AND }}">AND</option>
+            <option value="{{ \App\Enums\FilterSearchTypesEnum::OR }}" selected>OR</option>
+            <option value="{{ \App\Enums\FilterSearchTypesEnum::EXCEPT }}" >EXCEPT</option>
         </select>
     </div>
     <div class="col-md-4">
