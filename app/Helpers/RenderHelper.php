@@ -236,8 +236,29 @@ class RenderHelper
 
     }
 
-    public static function renderCastellerButton(Casteller $casteller, ScaledAttendanceStatus $status, string $tooltipTxt, bool $positioned = false): string
+    public static function getHasAttendanceAnswersIconClass(bool $withColor = true): string
     {
+
+        $color = ($withColor) ? 'text-info ' : 'text-muted ';
+
+        return $color.'fa-solid fa-info-circle';
+
+    }
+
+    public static function renderCastellerButton(Casteller $casteller, string $heightType = '', bool $positioned = false): string
+    {
+
+        $result = '<div class="col-6 col-sm-4 col-md-12 col-lg-6 col-xl-4 p-5">';
+
+        $tooltipTxt = $casteller->getFullName() ?? $casteller->getAlias();
+        if ($heightType === 'height') {
+            $tooltipTxt .= '<br>'.$casteller->getRelativeHeight().'cm';
+        } else {
+            $tooltipTxt .= '<br>'.$casteller->getRelativeShoulderHeight().'cm';
+        }
+
+        $status = $casteller->attendance?->first() ? $casteller->attendance?->first()->getScaledAttendance() : ScaledAttendanceStatus::UNKNOWN();
+
         switch ($status) {
             case ScaledAttendanceStatus::YESVERIFIED():
                 $class = 'btn-success';
@@ -255,8 +276,16 @@ class RenderHelper
                 $class = 'btn-warning';
         }
 
+        $attendanceIcon = '';
+        $answers = $casteller->attendance?->first()?->getOptions();
+        if (! empty($answers)) {
+            $hasAttendanceAnswers = true;
+            $tooltipTxt .= '<br>'.Humans::readAttendanceAnswersTags($casteller->attendance?->first());
+            $attendanceIcon = '<span class="pl-1 pr-1"><i class="'.RenderHelper::getHasAttendanceAnswersIconClass(! $positioned).' btn-has-attendance-answers fa-md"></i></span>';
+        }
+
         if ($positioned) {
-            return '<button
+            $result .= '<button
             class="btn positioned text-left pr-1 pl-1"
             data-id_casteller="'.$casteller->getId().'"
             data-id_row="'.$casteller->boardPosition[0]->getRow()->getDivId().'"
@@ -264,18 +293,24 @@ class RenderHelper
             data-placement="top"
             data-html="true"
             title="'.$tooltipTxt.'">
-            <span class="pl-1 pr-1"><i class="'.RenderHelper::getAttendanceIconEditor($status, false).' fa-lg"></i></span><span class="span-name-positioned"> '.$casteller->getDisplayName().'</span>
-            </button>';
+            <span class="pl-1 pr-1"><i class="'.RenderHelper::getAttendanceIconEditor($status, false).' fa-lg"></i></span><span class="span-name-positioned"> '.$casteller->getDisplayName().'</span>'
+            .$attendanceIcon
+            .'</button>';
         } else {
-            return '<button
+            $result .= '<button
             class="btn '.$class.' btn-casteller text-left pr-1 pl-1"
             data-id_casteller="'.$casteller->getId().'"
             data-toggle="tooltip"
             data-placement="top"
             data-html="true"
             title="'.$tooltipTxt.'">
-            <span class="pl-1 pr-1"><i class="'.RenderHelper::getAttendanceIconEditor($status).' fa-lg"></span></i><span class="span-name"> '.$casteller->getDisplayName().'</span>
-            </button>';
+            <span class="pl-1 pr-1"><i class="'.RenderHelper::getAttendanceIconEditor($status).' fa-lg"></i></span><span class="span-name"> '.$casteller->getDisplayName().'</span>'
+            .$attendanceIcon
+            .'</button>';
         }
+
+        $result .= '</div>';
+
+        return $result;
     }
 }

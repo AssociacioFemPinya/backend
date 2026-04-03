@@ -101,6 +101,24 @@
     <script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
     */
     ?>
+    <?php
+    /*
+    Code that fixes the datables annoying popup when the sesion expires
+    If the error occurs, refreshses the tab automatically
+    */
+    ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof $ !== 'undefined' && $.fn.dataTable) {
+                $.fn.dataTable.ext.errMode = 'none';
+                $(document).on('error.dt', function (e, settings, techNote, message) {
+                    if (settings.jqXHR && (settings.jqXHR.status === 401 || settings.jqXHR.status === 419)) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
 
     @yield('js')
 </body>
