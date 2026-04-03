@@ -110,12 +110,34 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof $ !== 'undefined' && $.fn.dataTable) {
-                $.fn.dataTable.ext.errMode = 'none';
-                $(document).on('error.dt', function (e, settings, techNote, message) {
-                    if (settings.jqXHR && (settings.jqXHR.status === 401 || settings.jqXHR.status === 419)) {
+                var previousErrMode = $.fn.dataTable.ext.errMode;
+
+                $.fn.dataTable.ext.errMode = function (settings, techNote, message) {
+                    var status = settings && settings.jqXHR ? settings.jqXHR.status : null;
+
+                    if (status === 401 || status === 419) {
                         window.location.reload();
+                        return;
                     }
-                });
+
+                    if (typeof previousErrMode === 'function') {
+                        previousErrMode(settings, techNote, message);
+                        return;
+                    }
+
+                    if (previousErrMode === 'throw') {
+                        throw new Error(message);
+                    }
+
+                    if (previousErrMode === 'alert') {
+                        alert(message);
+                        return;
+                    }
+
+                    if (window.console && typeof window.console.error === 'function') {
+                        console.error(message);
+                    }
+                };
             }
         });
     </script>
