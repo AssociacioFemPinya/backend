@@ -101,6 +101,26 @@
     <script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
     */
     ?>
+    <?php
+        /*
+        Avoid the annoying Popup Error on datatables when a the sesion expires
+        */
+    ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof $ !== 'undefined' && $.fn.dataTable) {
+                // 1. Desactivem l'alert per defecte
+                $.fn.dataTable.ext.errMode = 'none';
+
+                // 2. Escoltem l'error per refrescar la pàgina
+                $(document).on('error.dt', function (e, settings, techNote, message) {
+                    if (settings.jqXHR && (settings.jqXHR.status === 401 || settings.jqXHR.status === 419)) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
 
     @yield('js')
 </body>
