@@ -274,4 +274,12 @@ final class Colla extends Model
             ->where('end_period', '>', Carbon::now())
             ->first();
     }
+
+    public function getSortedPeriods(): ?Collection
+    {
+        return $this->periods()
+            ->orderBy('name')
+            ->get();
+    }
+    
 }
