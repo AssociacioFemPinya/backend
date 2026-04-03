@@ -48,6 +48,7 @@
                     <select name="filter_search_type" id="filter_search_type" class="selectize2-no-search form-control">
                         <option value="{{ \App\Enums\FilterSearchTypesEnum::AND }}">AND</option>
                         <option value="{{ \App\Enums\FilterSearchTypesEnum::OR }}" selected>OR</option>
+                        <option value="{{ \App\Enums\FilterSearchTypesEnum::EXCEPT }}" >EXCEPT</option>
                     </select>
                 </div>
                 <div class="col-sm-9 col-xl-3 text-center pb-10">
@@ -201,10 +202,10 @@
             let personalize_answers = {!! count($event->getAttendanceAnswers()) !!};
             let companions_allowed = {!! ($event->getCompanions()) ? 'true' : 'false'; !!};
             let event_id = {{ $event->getId() }};
-            let attendadance_tags ='attendance_tags'+event_id;
-            let attendance_status ='attendance_status'+event_id;
-            let attendance_status_verified ='attendance_status_verified'+event_id;
-            let attendance_filter_search_type ='attendance_filter_search_type'+event_id;
+            let attendadance_event_tags ='attendance_tags_event';
+            let attendadance_event_status ='attendadance_event_status_';
+            let attendadance_event_status_verified ='attendadance_event_status_verified';
+            let attendadance_event_filter_search_type ='attendadance_event_filter_search_type';
 
 
             function drawAttendersTable()
@@ -265,29 +266,29 @@
 
             function initFilters(){
 
-                if (sessionStorage.getItem(attendadance_tags)) {
-                    var tags = JSON.parse(sessionStorage.getItem(attendadance_tags));
+                if (localStorage.getItem(attendadance_event_tags)) {
+                    var tags = JSON.parse(localStorage.getItem(attendadance_event_tags));
                     $('#tags').val(tags).trigger('change');
                 }
-                if (sessionStorage.getItem(attendance_status)) {
-                    var status = JSON.parse(sessionStorage.getItem(attendance_status));
+                if (localStorage.getItem(attendadance_event_status)) {
+                    var status = JSON.parse(localStorage.getItem(attendadance_event_status));
                     $('#status').val(status).trigger('change');
                 }
-                if (sessionStorage.getItem(attendance_status_verified)) {
-                    var statusVerified = JSON.parse(sessionStorage.getItem(attendance_status_verified));
+                if (localStorage.getItem(attendadance_event_status_verified)) {
+                    var statusVerified = JSON.parse(localStorage.getItem(attendadance_event_status_verified));
                     $('#statusVerified').val(statusVerified).trigger('change');
                 }
-                if (sessionStorage.getItem(attendance_filter_search_type)) {
-                    $('#filter_search_type').val(sessionStorage.getItem(attendance_filter_search_type)).trigger('change');
+                if (localStorage.getItem(attendadance_event_filter_search_type)) {
+                    $('#filter_search_type').val(localStorage.getItem(attendadance_event_filter_search_type)).trigger('change');
                 }
             }
 
             function resetFilters(){
                 $("#attenders").DataTable().search('');
-                sessionStorage.removeItem(attendadance_tags);
-                sessionStorage.removeItem(attendance_status);
-                sessionStorage.removeItem(attendance_status_verified);
-                sessionStorage.removeItem(attendance_filter_search_type);
+                localStorage.removeItem(attendadance_event_tags);
+                localStorage.removeItem(attendadance_event_status);
+                localStorage.removeItem(attendadance_event_status_verified);
+                localStorage.removeItem(attendadance_event_filter_search_type);
                 $('#tags').val(["all"]).trigger('change');
                 $('#status').val(null).trigger('change');
                 $('#statusVerified').val(null).trigger('change');
@@ -328,12 +329,12 @@
                 attenders.page(0);
                 attenders.state.save();
                 var selectedTags = $('#tags').val();
-                sessionStorage.setItem(attendadance_tags, JSON.stringify(selectedTags));
+                localStorage.setItem(attendadance_event_tags, JSON.stringify(selectedTags));
                 var seletedStatus = $('#status').val();
-                sessionStorage.setItem(attendance_status, JSON.stringify(seletedStatus));
+                localStorage.setItem(attendadance_event_status, JSON.stringify(seletedStatus));
                 var seletedStatusVerified = $('#statusVerified').val();
-                sessionStorage.setItem(attendance_status_verified, JSON.stringify(seletedStatusVerified));
-                sessionStorage.setItem(attendance_filter_search_type, $('#filter_search_type').val());
+                localStorage.setItem(attendadance_event_status_verified, JSON.stringify(seletedStatusVerified));
+                localStorage.setItem(attendadance_event_filter_search_type, $('#filter_search_type').val());
                 $('#attenders').DataTable().destroy();
                 drawAttendersTable();
             });

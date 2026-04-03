@@ -131,20 +131,28 @@ class EventAttendanceController extends Controller
         $castellersIncluded = $tags;
         $castellersIncludedSearch = in_array($tags_search_type, FilterSearchTypesEnum::validValues()) ? $tags_search_type : FilterSearchTypesEnum::OR;
 
-        $castellers = Casteller::filter($colla)
-            ->withStatus(CastellersStatusEnum::ActiveAll())
-            ->withTags($castellersIncluded, $castellersIncludedSearch)
-            ->eloquentBuilder()
-            ->leftJoin('attendance', function (JoinClause $leftJoin) use ($event) {
-                $leftJoin->on('castellers.id_casteller', '=', 'attendance.casteller_id');
-                $leftJoin->where(function ($query) use ($event) {
-                    $query->orWhere('attendance.event_id', $event->getId());
-                    $query->orWhereNull('attendance.casteller_id');
+        $filter = Casteller::filter($colla)
+            ->withStatus(CastellersStatusEnum::ActiveAll());
+
+        if ($castellersIncludedSearch == FilterSearchTypesEnum::EXCEPT) {
+            $filter->withoutTags($castellersIncluded, FilterSearchTypesEnum::OR);
+        } else {
+            $filter->withTags($castellersIncluded, $castellersIncludedSearch);
+        }
+
+        $castellers =
+            $filter
+                ->eloquentBuilder()
+                ->leftJoin('attendance', function (JoinClause $leftJoin) use ($event) {
+                    $leftJoin->on('castellers.id_casteller', '=', 'attendance.casteller_id');
+                    $leftJoin->where(function ($query) use ($event) {
+                        $query->orWhere('attendance.event_id', $event->getId());
+                        $query->orWhereNull('attendance.casteller_id');
+                    });
+                })
+                ->with('attendance', function ($q) use ($event) {
+                    $q->where('event_id', $event->getId());
                 });
-            })
-            ->with('attendance', function ($q) use ($event) {
-                $q->where('event_id', $event->getId());
-            });
 
         if ($request->has('status')) {
 
