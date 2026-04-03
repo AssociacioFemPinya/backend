@@ -229,6 +229,8 @@ Per fer-ho pots fer servir [`ngrok`](https://ngrok.io) per crear un túnel HTTPS
 
 
 
+
+
 [Linux]: https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=000
 [Windows]: https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=fff
 [Windows+WSL2]: https://img.shields.io/static/v1?label=Windows&message=WSL2&color=FCC624&logo=windows&labelColor=0078D6
