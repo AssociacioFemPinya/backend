@@ -380,11 +380,7 @@ final class EventBoardController extends Controller
             $casteller = $castellers->where('id_casteller', $item->casteller->id_casteller)->first();
             if ($casteller->attendance->isNotEmpty()) {
                 $item->casteller->castellerAttendance = $casteller->attendance[0]->getStatus();
-            }
-            if ($casteller->attendance->isNotEmpty()) {
                 $item->casteller->castellerVerifiedAttendance = $casteller->attendance[0]->getStatusVerified();
-            }
-            if ($casteller->attendance->isNotEmpty()) {
                 $item->casteller->hasAttendanceAnswers = (! empty($casteller->attendance[0]->getOptions()));
             }
             $item->casteller->activePinya = $casteller->isActivePinya();
@@ -531,7 +527,7 @@ final class EventBoardController extends Controller
                 'castellerStatus' => trans('attendance.attendance_status').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatus())).'"></i>',
                 'castellerStatusVerified' => trans('attendance.attendance_status_verified').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatusVerified())).'"></i>',
                 'castellerTags' => Humans::readCastellerColumn($casteller, 'tags', 'right'),
-                'castellerAttendanceTags' => Humans::readAttendanceAnswersTags($casteller, $attendance),
+                'castellerAttendanceTags' => Humans::readAttendanceAnswersTags($attendance),
             ],
 
             Response::HTTP_OK);

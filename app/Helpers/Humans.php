@@ -183,7 +183,7 @@ class Humans
     }
 
     /** Read for humans answers of an Attendance ..*/
-    public static function readAttendanceAnswersTags(Casteller|Event $casteller, ?Attendance $attendance): ?string
+    public static function readAttendanceAnswersTags(?Attendance $attendance): ?string
     {
         $tags = '';
 
@@ -194,7 +194,7 @@ class Humans
         $attendanceOptions = is_null($attendance->getOptionsNames()) ? [] : $attendance->getOptionsNames();
 
         foreach ($attendanceOptions as $attendanceOptionName) {
-            $tags .= "<span class='badge badge-primary' style='margin-left: 3px; margin-bottom: 3px;'>".$attendanceOptionName.'</span>';
+            $tags .= "<span class='badge badge-primary' style='margin-left: 3px; margin-bottom: 3px;'>".e($attendanceOptionName).'</span>';
         }
 
         return $tags;

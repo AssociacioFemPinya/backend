@@ -677,8 +677,8 @@
 
                 if(hasAttendanceAnswers)
                 {
-                    iconInfo = '{!! \App\Helpers\RenderHelper::getHasAttendanceAnswersIconClass() !!}';
-                    icon = '<i class="fa ' + iconInfo + ' mt-5 pt-1"></i>';
+                    let iconInfo = '{!! \App\Helpers\RenderHelper::getHasAttendanceAnswersIconClass() !!}';
+                    let icon = '<i class="fa ' + iconInfo + ' mt-5 pt-1"></i>';
 
                     attendanceAnswersIcon = '<span style="font-size: 10px; width:100%; float:right; position: absolute; top: -8px; left: 15px; ">'  + icon + '</span>'
                 }
@@ -990,12 +990,12 @@
 
                         let timeout = setTimeout(function() {
                             url = url.replace(':divId', el.attr('id'));
-                            iconInfo = '{!! \App\Helpers\RenderHelper::getHasAttendanceAnswersIconClass() !!}';
-                            icon = '<i class="fa ' + iconInfo + ' mt-5 pt-1"></i>';
+                            let iconInfo = '{!! \App\Helpers\RenderHelper::getHasAttendanceAnswersIconClass() !!}';
+                            let icon = '<i class="fa ' + iconInfo + ' mt-5 pt-1"></i>';
 
                             if(el.html()){
-                                $.get(url).done(function(result,timeout) {
-                                    contentString =
+                                $.get(url).done(function(result,textStatus) {
+                                    let contentString =
                                         '<img class="img-avatar" src="' + result.castellerPhoto + '" alt="no photo">' +
                                         '<br>' + result.castellerStatus +
                                         '<br>' + result.castellerStatusVerified +
