@@ -296,6 +296,12 @@
             cursor:pointer;
         }
 
+        .btn-has-attendance-answers{
+            position:absolute;
+            right: 10px;
+            top: 10px;
+        }
+
     </style>
 @endsection
 
@@ -498,8 +504,8 @@
     </script>
     <script>
 
-        var positionId = 0;
-        let firstPositionId = 0;
+        let positionId = 0;
+        var firstPositionId = 0;
         let castellerId;
         let idCasteller;
         let rowId;
@@ -507,6 +513,7 @@
         let base = 'PINYA';
         let btnTrash = $('.btn-trash');
         let firstPointerType = null;
+        var timeout = null;
 
         jQuery(window).one('pointermove', function (e) {
             firstPointerType = e.originalEvent.pointerType;
@@ -527,11 +534,26 @@
             }
             if (localStorage.getItem('board_event_position')) {
                 positionId = localStorage.getItem('board_event_position');
+                highlightPositionButton(positionId);
+            }else{
+                highlightPositionButton(firstPositionId);
             }
-            let positionLoaded = $('#positions-list button[data-id_position="' + positionId + '"]');
+        }
+
+        function highlightPositionButton(posId){
+            if(posId == null ) return;
+            let positionLoaded = $('#positions-list button[data-id_position="' + posId + '"]');
             positionLoaded.addClass('btn-primary');
             positionLoaded.removeClass('btn-outline-primary');
         }
+
+        function unHiglightPositionButton(posId){
+            if(posId == null ) return;
+            let positionLoaded = $('#positions-list button[data-id_position="' + posId + '"]');
+            positionLoaded.removeClass('btn-primary');
+            positionLoaded.addClass('btn-outline-primary');
+        }
+
 
         function resetFilters(){
                 localStorage.removeItem('board_event_height_type');
@@ -546,12 +568,15 @@
             }
 
 
-        function loadCastellersList(positionId) {
+        function loadCastellersList() {
 
             let heightType = $('#height_type').val();
             let attendanceStatus = $('#status').val();
             let attendanceStatusVerified = $('#statusVerified').val();
             let filterText = $('#searchByNameText').val();
+            let positionId = localStorage.getItem('board_event_position')
+
+            if(filterText) positionId = null;
 
             $.post(
                 "{{ route('event.board.load-positions-ajax', ['boardEvent' => $boardEvent]) }}",
@@ -573,7 +598,14 @@
         }
 
         $('#searchByNameText').on('input', function() {
-            loadCastellersList(null);
+            clearTimeout(timeout);
+            let positionId = localStorage.getItem('board_event_position');
+            unHiglightPositionButton(positionId);
+            highlightPositionButton(firstPositionId);
+            localStorage.removeItem('board_event_position');
+            timeout = setTimeout(() => {
+                    loadCastellersList();
+            }, 1000);
         });
 
 
@@ -589,8 +621,8 @@
 
             $.post(url, {castellerId: idCasteller, rowId: idRow, eventId: {{ $event->getId() }}, base: base})
                 .then(function(result, status){
-                    castellerDiv(result.divId, result.castellerName, result.castellerHeight, result.castellerAttendance, result.castellerVerifiedAttendance, result.castellerShoulderHeight, result.castellerActivePinya);
-                    loadCastellersList(positionId);
+                    castellerDiv(result.divId, result.castellerName, result.castellerHeight, result.castellerAttendance, result.castellerVerifiedAttendance, result.castellerShoulderHeight, result.castellerActivePinya,result.hasAttendanceAnswers);
+                    loadCastellersList();
                 }).fail(function(result, status){
                 }
             );
@@ -606,7 +638,7 @@
             $.post(url, {divId: idRow, eventId: {{ $event->getId() }}, base: base})
                 .then(function(result, status){
                     $('#' + idRow).html('');
-                    loadCastellersList(positionId);
+                    loadCastellersList();
                 }).fail(function(result, status){
                 }
             );
@@ -614,11 +646,12 @@
             resetVars();
         }
 
-        function castellerDiv(divId, castellerName = "", castellerHeight, castellerAttendance, castellerVerifiedAttendance, castellerShoulderHeight, activePinya){
+        function castellerDiv(divId, castellerName = "", castellerHeight, castellerAttendance, castellerVerifiedAttendance, castellerShoulderHeight, activePinya, hasAttendanceAnswers){
             let colorAttendance = '{!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::UNKNOWN) !!}';
             let height_type = $('#height_type').val();
             let height = castellerHeight;
             if(height_type === 'shoulderHeight') height = castellerShoulderHeight;
+            let attendanceAnswersIcon = "";
 
             $('#' + divId).html('');
             $('#' + divId).removeClass("highlighted-not-active");
@@ -640,12 +673,22 @@
 
                 iAttendance = '<i class="fa ' + colorAttendance + ' mt-5 pt-1"></i>';
 
-            if(activePinya == false) $('#' + divId).addClass("highlighted-not-active");
+                if(activePinya == false) $('#' + divId).addClass("highlighted-not-active");
+
+                if(hasAttendanceAnswers)
+                {
+                    iconInfo = '{!! \App\Helpers\RenderHelper::getHasAttendanceAnswersIconClass() !!}';
+                    icon = '<i class="fa ' + iconInfo + ' mt-5 pt-1"></i>';
+
+                    attendanceAnswersIcon = '<span style="font-size: 10px; width:100%; float:right; position: absolute; top: -8px; left: 15px; ">'  + icon + '</span>'
+                }
 
                 $('#' + divId).html(
-                    '<span style="font-size: 10px; width:100%; float:left; position: absolute; top: -8px; left: 0px; ">'  + iAttendance +' '+ height+ '</span>'
-                    + '<span style="width:100%; position: absolute; top: 2px; left: 0px; ">' + castellerName + '</span>'
+                    '<span style="font-size: 10px; width:100%; position: absolute; top: -8px; left: -7px; ">'  + iAttendance +' '+ height+ '</span>'
+                    + attendanceAnswersIcon
+                    + '<span style="width:100%; position: absolute; top: 3px; left: 0px; ">' + castellerName + '</span>'
                 );
+
             }
         }
 
@@ -656,8 +699,8 @@
 
             $.post(url, {rowId: idRow, rowSwapId: idRowSwap, eventId: {{ $event->getId() }}, base: base})
                 .then(function(result, status){
-                    castellerDiv(result.divId, result.castellerName, result.castellerHeight, result.castellerAttendance, result.castellerVerifiedAttendance, result.castellerShoulderHeight, result.castellerActivePinya);
-                    castellerDiv(result.divSwappedId, result.castellerSwappedName, result.castellerSwappedHeight, result.castellerSwappedAttendance, result.castellerSwappedVerifiedAttendance, result.castellerSwappedShoulderHeight, result.castellerSwappedActivePinya);
+                    castellerDiv(result.divId, result.castellerName, result.castellerHeight, result.castellerAttendance, result.castellerVerifiedAttendance, result.castellerShoulderHeight, result.castellerActivePinya, result.castellerHasAttendanceAnswers);
+                    castellerDiv(result.divSwappedId, result.castellerSwappedName, result.castellerSwappedHeight, result.castellerSwappedAttendance, result.castellerSwappedVerifiedAttendance, result.castellerSwappedShoulderHeight, result.castellerSwappedActivePinya, result.castellerSwappedHasAttendanceAnswers);
                 }).fail(function(result, status){
 
                 }
@@ -675,7 +718,7 @@
             $.get(url).then(function(result, status){
 
                 result.forEach(function(e, i){
-                    castellerDiv(e.row.div_id, e.casteller.alias, e.casteller.height, e.casteller.castellerAttendance, e.casteller.castellerVerifiedAttendance, e.casteller.shoulderHeight, e.casteller.activePinya);
+                    castellerDiv(e.row.div_id, e.casteller.alias, e.casteller.height, e.casteller.castellerAttendance, e.casteller.castellerVerifiedAttendance, e.casteller.shoulderHeight, e.casteller.activePinya, e.casteller.hasAttendanceAnswers);
                 });
 
 
@@ -740,7 +783,7 @@
             });
 
             initFilters();
-            loadCastellersList(positionId);
+            loadCastellersList();
             loadMap(boardEventId, base);
 
             @if($event->getBoards()->isEmpty())
@@ -782,7 +825,7 @@
                 positionClicked.addClass('btn-primary');
                 positionClicked.removeClass('btn-outline-primary');
 
-                loadCastellersList(positionId);
+                loadCastellersList();
             });
 
             $('#status,#statusVerified').on('change', function(e){
@@ -790,13 +833,13 @@
                 localStorage.setItem('board_event_status', JSON.stringify(seletedStatus));
                 var seletedStatusVerified = $('#statusVerified').val();
                 localStorage.setItem('board_event_status_verified', JSON.stringify(seletedStatusVerified));
-                loadCastellersList(positionId);
+                loadCastellersList();
             });
 
             $('#height_type').on('change', function(e){
                 localStorage.setItem('board_event_height_type', $(this).val());
                 loadMap(boardEventId, base);
-                loadCastellersList(positionId);
+                loadCastellersList();
             });
 
             $('#positionRows').on('click', '.positioned', function(){
@@ -851,10 +894,12 @@
                             swapCastellersOnPinya(boardEventId, rowId, rowIdSwap)
                             el.removeClass('element-selected');
                             resetVars();
+                            loadCastellersList();
                         }else if(el.html() !=='' && rowId != rowIdSwap){
                             swapCastellersOnPinya(boardEventId, rowIdSwap, rowId)
                             el.removeClass('element-selected');
                             resetVars();
+                            loadCastellersList();
                         }else if(rowId == rowIdSwap){
                             el.removeClass('element-selected');
                             resetVars();
@@ -862,11 +907,9 @@
                             rowId = el.attr('id');
                             rowIdSwap = null;
                             $('.btn-load-position[data-id_position="' + positionId + '"]').click();
-
                         }
 
                     } else {
-
 
                         if(el.html() !== ''){
                             enableTrash();
@@ -898,7 +941,7 @@
                     .then(function(result, status){
                             $('#pinya div').html('');
                             loadMap(boardEventId, base);
-                            loadCastellersList(positionId);
+                            loadCastellersList();
                     })
                     .fail(function(result, status){
                     });
@@ -928,7 +971,7 @@
                             result.forEach(function(e, i) {
                                 $('#' + e.row.div_id).html('');
                             });
-                            loadCastellersList(positionId);
+                            loadCastellersList();
                     })
                     .fail(function(result, status){
                     });
@@ -947,17 +990,23 @@
 
                         let timeout = setTimeout(function() {
                             url = url.replace(':divId', el.attr('id'));
+                            iconInfo = '{!! \App\Helpers\RenderHelper::getHasAttendanceAnswersIconClass() !!}';
+                            icon = '<i class="fa ' + iconInfo + ' mt-5 pt-1"></i>';
 
                             if(el.html()){
-                                $.get(url).done(function(result) {
+                                $.get(url).done(function(result,timeout) {
+                                    contentString =
+                                        '<img class="img-avatar" src="' + result.castellerPhoto + '" alt="no photo">' +
+                                        '<br>' + result.castellerStatus +
+                                        '<br>' + result.castellerStatusVerified +
+                                        '<br>' + result.castellerHeight +
+                                        '<br>' + result.castellerShoulderHeight +
+                                        '<br>' + result.castellerTags;
+                                    contentString += result.castellerAttendanceTags ? `<br>${icon} ${result.castellerAttendanceTags}` : '';
+
                                     el.popover({
                                         html: true,
-                                        content:
-                                            '<img class="img-avatar" src="' + result.castellerPhoto + '" alt="no photo">' +
-                                            '<br>' + result.castellerStatus +
-                                            '<br>' + result.castellerStatusVerified +
-                                            '<br>' + result.castellerHeight +
-                                            '<br>' + result.castellerShoulderHeight,
+                                        content: contentString,
                                         title: result.castellerName
                                     }).popover('show');
                                 })
