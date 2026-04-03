@@ -35,7 +35,7 @@ class EventsController extends Controller
 
         $colla = Colla::getCurrent();
 
-        $data_content['periods'] = $colla->periods;
+        $data_content['periods'] = $colla->getSortedPeriods();
         $data_content['currentPeriod'] = $colla->getCurrentPeriod();
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['boardsColla'] = $colla->getBoards();
