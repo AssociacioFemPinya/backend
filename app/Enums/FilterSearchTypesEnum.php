@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Enums;
 
 /**
- * @method static FilterMembersEnum And()
- * @method static FilterMembersEnum Or()
- * @method static FilterMembersEnum Except()
+ * @method static FilterSearchTypesEnum And()
+ * @method static FilterSearchTypesEnum Or()
+ * @method static FilterSearchTypesEnum Except()
  */
 class FilterSearchTypesEnum extends Enum
 {

@@ -58,7 +58,7 @@ class CastellerConfigController extends Controller
         $castellersFilter = Casteller::filter($colla)
             ->withStatus($status);
         if ($searchType == FilterSearchTypesEnum::EXCEPT) {
-            $castellersFilter->withoutTags($tags, $searchType);
+            $castellersFilter->withoutTags($tags, FilterSearchTypesEnum::OR);
         } else {
             $castellersFilter->withTags($tags, $searchType);
         }

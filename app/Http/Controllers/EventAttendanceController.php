@@ -135,7 +135,7 @@ class EventAttendanceController extends Controller
             ->withStatus(CastellersStatusEnum::ActiveAll());
 
         if ($castellersIncludedSearch == FilterSearchTypesEnum::EXCEPT) {
-            $filter->withoutTags($castellersIncluded, $castellersIncludedSearch);
+            $filter->withoutTags($castellersIncluded, FilterSearchTypesEnum::OR);
         } else {
             $filter->withTags($castellersIncluded, $castellersIncludedSearch);
         }
