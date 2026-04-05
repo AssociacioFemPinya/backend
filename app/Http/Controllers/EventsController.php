@@ -159,7 +159,7 @@ class EventsController extends Controller
             }
 
             $array_event['buttons'] .= '<a href="'.route('event.attendance.verify', $eventId).'" class="btn btn-primary btn-action mr-1" target="_blank"><i class="fa-solid fa-clipboard-user"></i></a>';
-            $array_event['buttons'] .= '<a href="'.route('event.attendance.verify_touch', $eventId).'" class="btn btn-info btn-action" target="_blank"><i class="fa-solid fa-keyboard"></i></a>';
+            $array_event['buttons'] .= '<a href="'.route('event.attendance.verify_touch', $eventId).'" class="btn btn-primary btn-action mr-1" target="_blank"><i class="fa-solid fa-keyboard"></i></a>';
             $data->data[] = $array_event;
         }
 
