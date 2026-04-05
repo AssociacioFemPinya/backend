@@ -26,10 +26,6 @@ class Notification extends Model
 
     protected $fillable = ['title', 'data', 'template'];
 
-    protected $events = [
-        'created' => NotificationListener::class,
-    ];
-
     protected static $filterClass = \App\Services\Filters\NotificationsFilter::class;
 
     /** Get notificationID */

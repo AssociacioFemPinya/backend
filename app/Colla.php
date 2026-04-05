@@ -140,6 +140,11 @@ final class Colla extends Model
         return $this->hasMany(Event::class, 'colla_id', 'id_colla');
     }
 
+    public function multievents(): ?HasMany
+    {
+        return $this->hasMany(Multievent::class, 'colla_id', 'id_colla');
+    }
+
     public function castellers(): ?HasMany
     {
         return $this->hasMany(Casteller::class, 'colla_id', 'id_colla');
@@ -184,6 +189,11 @@ final class Colla extends Model
     public function getEvents(): ?Collection
     {
         return $this->getAttribute('events');
+    }
+
+    public function getMultievents(): ?Collection
+    {
+        return $this->getAttribute('multievents');
     }
 
     //Properties
@@ -247,6 +257,11 @@ final class Colla extends Model
         return $this->getAttribute('banner');
     }
 
+    public function getBannerNotificationMessage(): ?string
+    {
+        return $this->getAttribute('banner_notification_message');
+    }
+
     public function getColor(): ?string
     {
         return $this->getAttribute('color');
@@ -258,5 +273,12 @@ final class Colla extends Model
             ->where('start_period', '<', Carbon::now())
             ->where('end_period', '>', Carbon::now())
             ->first();
+    }
+
+    public function getSortedPeriods(): ?Collection
+    {
+        return $this->periods()
+            ->orderBy('name')
+            ->get();
     }
 }

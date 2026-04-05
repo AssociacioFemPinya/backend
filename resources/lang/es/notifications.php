@@ -51,5 +51,7 @@ return [
     "reminders" => "Recordatorios",
     "messages" => "Mensajes inmediatos",
     "scheduled_message" => "Notificación programada",
+    "firebase_new_message_received" => "¡Tienes un nuevo mensaje pendiente de leer!",
+    "firebase_new_reminder_received" => "Tienes un evento pendiente de responder:",
 
 ];

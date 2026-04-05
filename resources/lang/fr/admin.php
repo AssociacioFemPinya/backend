@@ -29,5 +29,7 @@ return [
     "do_admin" => "Donne-lui le rôle d 'administrateur",
     "max_members" => "Nombre maximum de membres actifs",
     "max_members_abreviat" => "Max actifs",
-
+    "banner_notification_message" => "Message de notification de la bannière",
+    "banner_notification_placeholder" => "Entrez le message à afficher dans la bannière",
+    "banner_notification_help" => "Ce message sera affiché dans une bannière jaune en haut de toutes les pages. Laissez vide pour ne pas afficher de bannière.",
 ];

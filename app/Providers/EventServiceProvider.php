@@ -6,6 +6,7 @@ use App\CastellerConfig;
 use App\Events\NotificationReady;
 use App\NotificationOrder;
 use App\Observers\CastellerConfigObserver;
+use App\Observers\EventObserver;
 use App\Observers\NotificationObserver;
 use App\Observers\NotificationOrderObserver;
 use Illuminate\Auth\Events\Registered;
@@ -36,6 +37,7 @@ class EventServiceProvider extends ServiceProvider
         parent::boot();
         CastellerConfig::observe(CastellerConfigObserver::class);
         NotificationOrder::observe(NotificationOrderObserver::class);
+        \App\Event::observe(EventObserver::class);
 
         Event::listen(NotificationReady::class, [NotificationObserver::class, 'ready']);
     }

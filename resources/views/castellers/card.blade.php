@@ -488,7 +488,7 @@
                         }
                     },
                     "ordering":'true',
-                    "order": [3, 'asc'],
+                    "order": [3, 'desc'],
                     "columns": [
                         { "data": "name", "name": "name"},
                         { "data": "type", "name": "type"},

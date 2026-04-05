@@ -31,7 +31,7 @@
     <div class="row mt-4 info-section">
         <div class="col-md-6">
             <p class="text-muted">
-                <i class="bi bi-calendar2-check"></i> &nbsp; {!! $event->getStartDate()->isoFormat('dddd, D MMMM \d\e OY \a \l\e\s HH:mm') !!}<br>
+                <i class="bi bi-calendar2-check"></i> &nbsp; {!! App\Helpers\Humans::parseDate($event->getStartDate()) !!}<br>
                 <i class="bi bi-clock-history"></i> &nbsp; {!! round($event->getDuration()/60,1) !!} {!! trans('event.hours') !!}
             </p>
         </div>

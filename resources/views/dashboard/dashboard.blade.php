@@ -229,24 +229,33 @@
                                                     </div>
                                                 </div>
                                                 @if($attendances && !empty($attendances))
-                                                    <div id="attendance-list" class="row block text-left">
-                                                        <div class="col-4 d-flex attendance-list-alias">
-                                                            @foreach($attendances['ok'] as $alias)
-                                                                <span>{{ $alias }}</span>
+                                                    @php
+                                                        $collapseId = 'collapseAttendance-' . uniqid();
+                                                    @endphp
+                                                       <div id="attendance-list" class="row block text-left">
+                                                            @foreach(['ok', 'nok', 'unknown'] as $status)
+                                                                <div class="col-4 d-flex flex-column {{ !$loop->first ? 'border-left' : '' }} attendance-list-alias">
+                                                                    @foreach(array_slice($attendances[$status], 0, 10) as $alias)
+                                                                        <div>{{ $alias }}</div>
+                                                                    @endforeach
+                                                                    <div class="collapse  flex-column" id="{{ $collapseId }}-{{ $status }}">
+                                                                        @foreach(array_slice($attendances[$status], 10) as $alias)
+                                                                            <div>{{ $alias }}</div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
                                                             @endforeach
                                                         </div>
-                                                        <div class="col-4 d-flex border-left attendance-list-alias">
-                                                            @foreach($attendances['nok'] as $alias)
-                                                                <span>{{ $alias }}</span>
-                                                            @endforeach
-                                                        </div>
-                                                        <div class="col-4 d-flex border-left attendance-list-alias">
-                                                            @foreach($attendances['unknown'] as $alias)
-                                                                <span>{{ $alias }}</span>
-                                                            @endforeach
-                                                        </div>
+                                                        @if(count($attendances['ok']) > 10 || count($attendances['nok']) > 10 || count($attendances['unknown']) > 10)
+                                                            <button class="btn btn-sm btn-link p-0 mt-2"
+                                                                    type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target=".collapse"
+                                                                    aria-expanded="false">
+                                                                {!! trans('general.view_more') !!}
+                                                            </button>
+                                                        @endif
 
-                                                    </div>
                                                 @endif
                                             @else
                                                 <div>

@@ -51,5 +51,7 @@ return [
     "reminders" => "Rappels",
     "messages" => "Messages instantanés",
     "scheduled_message" => "Notification programmée",
+    "firebase_new_message_received" => "Vous avez un nouveau message en attente de lecture !",
+    "firebase_new_reminder_received" => "Vous avez un événement en attente de votre réponse :",
 
 ];

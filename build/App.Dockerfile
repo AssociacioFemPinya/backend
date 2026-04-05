@@ -1,5 +1,5 @@
 # Build from Base.Dockerfile
-FROM ghcr.io/associaciofempinya/fempinya-base:v1
+FROM ghcr.io/associaciofempinya/fempinya-base-image:v1
 
 # Copy existing application directory contents
 COPY . /var/www/html

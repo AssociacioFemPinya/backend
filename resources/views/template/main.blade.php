@@ -47,6 +47,7 @@
 
 </head>
 <body>
+    @include('template.partials.banner-notification')
     <div id="page-container" class="sidebar-o sidebar-inverse enable-page-overlay side-scroll main-content-boxed " >
 
         @include('template.partials.sidebar-left')
@@ -100,6 +101,46 @@
     <script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
     */
     ?>
+    <?php
+    /*
+    Code that fixes the DataTables annoying popup when the session expires
+    If the error occurs, refreshes the tab automatically
+    */
+    ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof $ !== 'undefined' && $.fn.dataTable) {
+                var previousErrMode = $.fn.dataTable.ext.errMode;
+
+                $.fn.dataTable.ext.errMode = function (settings, techNote, message) {
+                    var status = settings && settings.jqXHR ? settings.jqXHR.status : null;
+
+                    if (status === 401 || status === 419) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    if (typeof previousErrMode === 'function') {
+                        previousErrMode(settings, techNote, message);
+                        return;
+                    }
+
+                    if (previousErrMode === 'throw') {
+                        throw new Error(message);
+                    }
+
+                    if (previousErrMode === 'alert') {
+                        alert(message);
+                        return;
+                    }
+
+                    if (window.console && typeof window.console.error === 'function') {
+                        console.error(message);
+                    }
+                };
+            }
+        });
+    </script>
 
     @yield('js')
 </body>

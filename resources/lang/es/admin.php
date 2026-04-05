@@ -29,6 +29,8 @@ return [
     "do_admin" => "Hacer administrador del sistema",
     "max_members" => "Máximo miembros activos",
     "max_members_abreviat" => "Max activos",
-
+    "banner_notification_message" => "Mensaje de notificación del banner",
+    "banner_notification_placeholder" => "Introduce el mensaje que se mostrará en el banner",
+    "banner_notification_help" => "Este mensaje se mostrará en un banner amarillo en la parte superior de todas las páginas. Déjalo en blanco para no mostrar ningún banner.",
 
 ];

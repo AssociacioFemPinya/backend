@@ -8,6 +8,7 @@ use App\Colla;
 use App\Enums\EventTypeEnum;
 use App\Enums\FilterSearchTypesEnum;
 use App\Event;
+use App\Helpers\DateHelper;
 use App\Period;
 use App\Tag;
 use App\Traits\DatatablesFilterTrait;
@@ -31,15 +32,16 @@ class EventsFilter extends BaseFilter
 
     public function upcoming(): self
     {
+        $currentTime = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
         $this->eloquentBuilder
-            ->where('start_date', '>', Carbon::now());
+            ->where('start_date', '>', $currentTime);
 
         return $this;
     }
 
     public function liveOrUpcoming(): self
     {
-        $currentTime = Carbon::now();
+        $currentTime = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
         $this->eloquentBuilder
             ->whereRaw("DATE_ADD(start_date, INTERVAL duration MINUTE) > '{$currentTime}'");
 
@@ -48,17 +50,21 @@ class EventsFilter extends BaseFilter
 
     public function past(): self
     {
+        $currentTime = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
+
         $this->eloquentBuilder
-            ->where('start_date', '<', Carbon::now());
+            ->where('start_date', '<', $currentTime);
 
         return $this;
     }
 
     public function open(): self
     {
+        $currentTime = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
+
         $this->eloquentBuilder
-            ->where('open_date', '<', Carbon::now())
-            ->where('close_date', '>', Carbon::now());
+            ->where('open_date', '<', $currentTime)
+            ->where('close_date', '>', $currentTime);
 
         return $this;
     }
@@ -155,9 +161,23 @@ class EventsFilter extends BaseFilter
 
     public function today(): self
     {
+        $currentTime = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
+
         $this->eloquentBuilder
-            ->where('start_date', '>=', Carbon::now()->startOfDay())
-            ->where('start_date', '<=', Carbon::now()->endOfDay());
+            ->where('start_date', '>=', Carbon::parse($currentTime)->startOfDay())
+            ->where('start_date', '<=', Carbon::parse($currentTime)->endOfDay());
+
+        return $this;
+    }
+
+    public function findDuplicateByNameAndDate(string $name, string $startDate, ?int $excludeEventId = null): self
+    {
+        $this->eloquentBuilder->where('name', $name)
+            ->where('start_date', $startDate);
+
+        if ($excludeEventId !== null) {
+            $this->eloquentBuilder->where('id_event', '!=', $excludeEventId);
+        }
 
         return $this;
     }

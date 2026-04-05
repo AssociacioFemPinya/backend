@@ -37,7 +37,7 @@ class Humans
             }
             $start_date = Carbon::parse($event->start_date);
 
-            return $start_date->isoFormat('dddd, D MMMM \d\e OY \a \l\e\s HH:mm');
+            return self::parseDate($start_date);
         } else {
             return $event->{$column};
         }
@@ -182,6 +182,24 @@ class Humans
         return RenderHelper::fieldSelect($attendanceOptions, $answersOptions, 'answers', null, true, false, 'answers', 'data-id_casteller', (string) $casteller->getId());
     }
 
+    /** Read for humans answers of an Attendance ..*/
+    public static function readAttendanceAnswersTags(?Attendance $attendance): ?string
+    {
+        $tags = '';
+
+        if (is_null($attendance) || $attendance->getStatus() != AttendanceStatus::YES) {
+            return $tags;
+        }
+
+        $attendanceOptions = is_null($attendance->getOptionsNames()) ? [] : $attendance->getOptionsNames();
+
+        foreach ($attendanceOptions as $attendanceOptionName) {
+            $tags .= "<span class='badge badge-primary' style='margin-left: 3px; margin-bottom: 3px;'>".e($attendanceOptionName).'</span>';
+        }
+
+        return $tags;
+    }
+
     /** Read for humans selectable answers of an Attendance ..*/
     public static function readSelectableAttendanceAnswers(Event $event, ?Attendance $attendance): string
     {
@@ -274,7 +292,7 @@ class Humans
             if ($shortDate) {
                 return $dateParsed->format('d/m/Y H:i');
             } else {
-                return $dateParsed->isoFormat('dddd, D MMMM \d\e OY \a \l\e\s HH:mm');
+                return $dateParsed->isoFormat('dddd, D MMMM OY, HH:mm');
             }
         }
     }

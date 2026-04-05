@@ -6,6 +6,7 @@ namespace App\Managers;
 
 use App\Enums\NotificationStateEnum;
 use App\Jobs\EmailNotification;
+use App\Jobs\FirebaseNotification;
 use App\Jobs\TelegramNotification;
 use App\NotificationOrder;
 
@@ -18,24 +19,36 @@ class NotificationOrderManager
         $casteller = $notificationOrder->getCasteller();
         $notification = $notificationOrder->getNotification();
 
-        // Type: Telegram
-        if ($casteller->getCastellerTelegram() != null) {
-            $notificationOrder->logs()->create([
-                'channel' => 'Telegram',
-                'status' => NotificationStateEnum::PENDING,
-            ]);
-            $message = $notification->render($casteller, 'telegram');
-            TelegramNotification::dispatch($notificationOrder, $casteller, $message);
-        }
+        // Notification order (only notify in one channel):
+        // 1. Firebase
+        // 2. Telegram
+        // 3. Mail
 
-        // Type: Email: Only send if telegram is not configured
-        if ($casteller->getCastellerTelegram() == null && $casteller->getEmail()) {
-            $notificationOrder->logs()->create([
-                'channel' => 'Mail',
-                'status' => NotificationStateEnum::PENDING,
-            ]);
-            $message = $notification->render($casteller, 'mail');
-            EmailNotification::dispatch($notificationOrder, $casteller, $notification, $message);
+        $channels = [
+            'firebase' => [
+                'condition' => fn () => $casteller->getCastellerConfig()->getFirebaseToken() !== null,
+                'job' => fn ($message) => FirebaseNotification::dispatch($notificationOrder, $casteller, $notification, $message),
+            ],
+            'telegram' => [
+                'condition' => fn () => $casteller->getCastellerTelegram() !== null,
+                'job' => fn ($message) => TelegramNotification::dispatch($notificationOrder, $casteller, $message),
+            ],
+            'mail' => [
+                'condition' => fn () => $casteller->getEmail(),
+                'job' => fn ($message) => EmailNotification::dispatch($notificationOrder, $casteller, $notification, $message),
+            ],
+        ];
+
+        foreach ($channels as $channel => $config) {
+            if ($config['condition']()) {
+                $notificationOrder->logs()->create([
+                    'channel' => $channel,
+                    'status' => NotificationStateEnum::PENDING,
+                ]);
+                $message = $notification->render($casteller, $channel);
+                $config['job']($message);
+                break;
+            }
         }
     }
 }

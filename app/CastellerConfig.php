@@ -19,10 +19,6 @@ class CastellerConfig extends Model
         'last_credentials_sent_at' => 'datetime',
     ];
 
-    protected $events = [
-        'updated' => CastellerConfigListener::class,
-    ];
-
     // Relations
 
     public function casteller(): BelongsTo
@@ -52,6 +48,11 @@ class CastellerConfig extends Model
     public function getTelegramToken(): ?string
     {
         return $this->getAttribute('telegram_token');
+    }
+
+    public function getFirebaseToken(): ?string
+    {
+        return $this->getAttribute('firebase_token');
     }
 
     public function getTelegramEnabled(): int

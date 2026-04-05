@@ -19,6 +19,8 @@ return [
     "error" => "Erreur!",
     "logout" => "Fermer la session",
     "date" => "Date",
+    "dates" => "Dates",
+    "actions" => "Actions",
 
     "users" => "Utilisateurs",
     "config" => "Configurer les applications",
@@ -64,6 +66,7 @@ return [
     "pinyes" => "Pinyes",
     "templates" => "Modèles",
     "events" => "Événements",
+    "multievents" => "Multiévénements",
     "calendar" => "Agenda",
     "castellers" => "Castellers",
     "notifications" => "Notifications",
@@ -96,4 +99,5 @@ return [
 
     "success_message" => "Félicitations! Votre demande a été traitée correctement!",
     "error_message" => "Oups... il semble qu'il y ait eu une erreur lors du traitement de votre demande",
+    "view_more" => "Voir plus..."
 ];

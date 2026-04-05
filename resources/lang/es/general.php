@@ -19,6 +19,8 @@ return [
     "error" => "Error.",
     "logout" => "Cierra la sessión",
     "date" => "Fecha",
+    "dates" => "Fechas",
+    "actions" => "Acciones",
 
     "users" => "Usuarios",
     "config" => "Configurar Apps",
@@ -64,6 +66,7 @@ return [
     "pinyes" => "Pinyes",
     "templates" => "Plantillas",
     "events" => "Eventos",
+    "multievents" => "Multieventos",
     "calendar" => "Agenda",
     "castellers" => "Miembros",
     "notifications" => "Notificaciones",
@@ -94,4 +97,5 @@ return [
 
     "success_message" => "Felicidades! Tu petición se ha procesado correctamente!",
     "error_message" => "Ups... parece que ha habido un error procesando tu peticion",
+    "view_more" => "Ver más..."
 ];

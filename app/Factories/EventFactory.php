@@ -71,6 +71,10 @@ class EventFactory
             $event->setAttribute('type', $bag->getInt('type'));
         }
 
+        if ($bag->has('id_multievent')) {
+            $event->setAttribute('id_multievent', $bag->getInt('id_multievent'));
+        }
+
         // we need to save the empty event at the beginning to be able to set a tag on it
         $event->save();
 

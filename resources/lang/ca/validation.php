@@ -112,8 +112,8 @@ return [
     "string"      => "El camp :attribute ha de ser una cadena.",
     "timezone"    => "El camp :attribute ha de ser una zona vàlida.",
     "unique"      => "El camp :attribute ja està registrat i no es pot repetir.",
-    "uploaded"    => "El camp:attribute ha fallat al pujar.",
-    "url"         => "El camp:attribute no és una adreça web vàlida.",
+    "uploaded"    => "El camp :attribute ha fallat al pujar.",
+    "url"         => "El camp :attribute no és una adreça web vàlida.",
     "uuid"        => "El camp :attribute ha de ser un indentificador únic universal (UUID) vàlid.",
 
     /*
