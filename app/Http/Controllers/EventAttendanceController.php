@@ -471,6 +471,8 @@ class EventAttendanceController extends Controller
             ->eloquentBuilder()
             ->get(['id_casteller', 'name', 'last_name', 'alias']);
 
-        return view('events.attendance.verify_touch', compact('event', 'castellers'));
+        $attendanceStatusYes = AttendanceStatus::YES;
+
+        return view('events.attendance.verify_touch', compact('event', 'castellers', 'attendanceStatusYes'));
     }
 }

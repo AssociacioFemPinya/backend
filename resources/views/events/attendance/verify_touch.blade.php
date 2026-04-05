@@ -265,7 +265,7 @@
                     _token: "{{ csrf_token() }}",
                     id_event: eventId,
                     id_casteller: castellerId,
-                    status: 1
+                    status: {{ $attendanceStatusYes }}
                 },
                 success: function(response) {
                     $('#confirmModal').modal('hide');
