@@ -158,7 +158,7 @@
                         { "data": "buttons", "name": "buttons", "sortable": false}
                     ],
                     "columnDefs": [
-                        {"witdh": "20%", "targets": 0},
+                        {"width": "20%", "targets": 0},
                         {"width": "10%", "targets": 1},
                         {"width": "15%", "targets": 2},
                         {"width": "15%", "targets": 3},

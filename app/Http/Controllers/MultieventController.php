@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Colla;
 use App\Enums\TypeTags;
+use App\\Enums\\FilterSearchTypesEnum;
 use App\Event;
 use App\Helpers\DateHelper;
 use App\Managers\EventsManager;
