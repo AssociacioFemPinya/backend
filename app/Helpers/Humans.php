@@ -79,7 +79,7 @@ class Humans
                     break;
             }
         } elseif ($column === 'tags') {
-            $tags = null;
+            $tags = '';
 
             foreach ($casteller->getTags() as $tag) { //filterd tag -- paint it blue https://open.spotify.com/track/63T7DJ1AFDD6Bn8VzG6JE8?si=QfAzbKC3Sl2sNxmBj12crA
                 $tags .= '<span class="badge badge-primary pull-'.$align.'" style="margin-left: 3px; margin-bottom: 3px;">'.$tag->getName().'</span>';
