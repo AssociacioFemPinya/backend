@@ -662,16 +662,16 @@
                     colorAttendance = '{!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::YESVERIFIED) !!}';
                 }
                 else if(castellerVerifiedAttendance == 2) {
-                    colorAttendance = '{!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::NO) !!}';
+                    colorAttendance = 'fa {!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::NO) !!}';
                 }
                 else if(castellerAttendance == 1) {
-                    colorAttendance = '{!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::YES) !!}';
+                    colorAttendance = 'fa {!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::YES) !!}';
                 }
                 else if(castellerAttendance == 2) {
-                    colorAttendance = '{!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::NO) !!}';
+                    colorAttendance = 'fa {!! \App\Helpers\RenderHelper::getAttendanceIconEditor(\App\Enums\ScaledAttendanceStatus::NO) !!}';
                 }
 
-                iAttendance = '<i class="fa ' + colorAttendance + ' mt-5 pt-1"></i>';
+                iAttendance = '<i class="' + colorAttendance + ' mt-5 pt-1"></i>';
 
                 if(activePinya == false) $('#' + divId).addClass("highlighted-not-active");
 
