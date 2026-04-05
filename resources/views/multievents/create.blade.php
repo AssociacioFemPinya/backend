@@ -25,7 +25,7 @@
         @else
             {!! Form::open(array('id' => 'FormAddMultievent', 'url' => route('multievents.add'), 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data')) !!}
         @endif
-        
+
         <div class="row form-group">
             <div class="col-md-4">
                 <label class="control-label">{!! trans('casteller.name') !!}</label>
@@ -47,9 +47,9 @@
             <div class="col-md-3">
                 <label class="control-label">{!! trans('multievent.multievent_tags') !!}</label>
                 <select class="selectize2 form-control" placeholder="{!! trans('general.tags') !!}" name="tags[]" style="width: 100%" multiple>
-                    @php 
-                        $oldTags = isset($multievent) ? 
-                            (method_exists($multievent, 'tagsArray') ? $multievent->tagsArray('value') : 
+                    @php
+                        $oldTags = isset($multievent) ?
+                            (method_exists($multievent, 'tagsArray') ? $multievent->tagsArray('value') :
                                 ($multievent->getEvents()->isNotEmpty() ? $multievent->getEvents()->first()->tagsArray('value') : []))
                             : [];
                     @endphp
@@ -61,8 +61,8 @@
             <div class="col-md-3">
                 <label class="control-label">{!! trans('multievent.multievent_tags_casteller') !!}</label>
                 <select class="selectize2 form-control" placeholder="{!! trans('general.tags') !!}" name="tags_casteller[]" style="width: 100%" multiple>
-                    @php 
-                        $oldCastellerTags = isset($multievent) && $multievent->getEvents()->isNotEmpty() ? $multievent->getEvents()->first()->castellerTagsArray('value') : []; 
+                    @php
+                        $oldCastellerTags = isset($multievent) && $multievent->getEvents()->isNotEmpty() ? $multievent->getEvents()->first()->castellerTagsArray('value') : [];
                     @endphp
                     @foreach ($tags_casteller as $tag)
                         <option value="{{ $tag->getValue() }}" @if(in_array($tag->getValue(), old('tags_casteller',$oldCastellerTags))) selected @endif>{{ $tag->getName() }}</option>
@@ -91,7 +91,7 @@
                 <div class="row">
                     <div class="col-md-5">
                         <select class="form-control" name="hour" id="hour" required>
-                            @php 
+                            @php
                                 $oldHour = isset($multievent) && $multievent->getTime() ? $multievent->getHour() : null;
                             @endphp
                             @for ($i = 0; $i <= 23; $i++)
@@ -107,7 +107,7 @@
                     <div class="col-sm-1 text-center" style="padding-left: 0; padding-right: 0; max-width: 1%;"><b>:</b></div>
                     <div class="col-5">
                         <select class="form-control" name="min" id="min" required>
-                            @php 
+                            @php
                                 $oldMinute = isset($multievent) && $multievent->getTime() ? $multievent->getMinute() : null;
                             @endphp
                             @for($i = 0; $i < 60; $i+=5)
@@ -203,7 +203,7 @@
                                         $diffDays = $firstEvent->getStartDate()->diffInDays($firstEvent->getOpenDate());
                                         $diffWeeks = $firstEvent->getStartDate()->diffInWeeks($firstEvent->getOpenDate());
                                         $diffMonths = $firstEvent->getStartDate()->diffInMonths($firstEvent->getOpenDate());
-                                        
+
                                         if($diffMonths >= 1) $openDateMode = "months";
                                         elseif($diffWeeks >= 1) $openDateMode = "weeks";
                                         elseif($diffDays >= 1) $openDateMode = "days";
@@ -228,7 +228,7 @@
                                 $closeDateSelect = "before_starts";
                                 if(isset($multievent) && $multievent->getEvents()->isNotEmpty()) {
                                     $firstEvent = $multievent->getEvents()->first();
-                                    if($firstEvent && $firstEvent->getCloseDate() && $firstEvent->getStartDate() && 
+                                    if($firstEvent && $firstEvent->getCloseDate() && $firstEvent->getStartDate() &&
                                        $firstEvent->getCloseDate()->format('Y-m-d H:i:s') == $firstEvent->getStartDate()->format('Y-m-d H:i:s')) {
                                         $closeDateSelect = "when_starts";
                                     }
@@ -266,7 +266,7 @@
                                         $diffDays = $firstEvent->getStartDate()->diffInDays($firstEvent->getCloseDate());
                                         $diffWeeks = $firstEvent->getStartDate()->diffInWeeks($firstEvent->getCloseDate());
                                         $diffMonths = $firstEvent->getStartDate()->diffInMonths($firstEvent->getCloseDate());
-                                        
+
                                         if($diffMonths >= 1) $closeDateMode = "months";
                                         elseif($diffWeeks >= 1) $closeDateMode = "weeks";
                                         elseif($diffDays >= 1) $closeDateMode = "days";
@@ -283,7 +283,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row form-group">
             <div class="col-md-6">
                 <label class="control-label">{!! trans('attendance.attendance_answers') !!}</label>
@@ -400,8 +400,6 @@
                 @endforeach
             @endif
 
-            console.log(initDates);
-
             var datepicker = $("#datepicker_start_date").datepicker({
                 @if (Auth()->user()->language=='ca')
                 language: 'ca',
@@ -421,11 +419,11 @@
                     // Crear un objeto Date con partes de la fecha (año, mes-1, día)
                     return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
                 });
-                
+
                 // Establecer las fechas seleccionadas en el datepicker
                 datepicker.datepicker('setDates', dateArray);
                 console.log(dateArray);
-                
+
                 // Actualizar el campo oculto con las fechas formateadas
                 var formattedDates = dateArray.map(function(date) {
                     var day = ('0' + date.getDate()).slice(-2);
@@ -433,10 +431,10 @@
                     var year = date.getFullYear();
                     return day + '/' + month + '/' + year;
                 }).join(',');
-                
+
                 $("#event_dates").val(formattedDates);
                 $('.num-events').html(dateArray.length);
-                
+
                 // Si hay fechas seleccionadas, establecer la primera como fecha principal
                 if (dateArray.length > 0) {
                     var firstDate = dateArray[0];

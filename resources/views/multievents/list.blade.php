@@ -2,7 +2,7 @@
 
 @section('title', trans('general.multievents'))
 @section('css_before')
-    <style> 
+    <style>
         .btn-action {
             width: 50px;
             height: 35px;
@@ -158,7 +158,7 @@
                         { "data": "buttons", "name": "buttons", "sortable": false}
                     ],
                     "columnDefs": [
-                        {"witdh": "20%", "targets": 0},
+                        {"width": "20%", "targets": 0},
                         {"width": "10%", "targets": 1},
                         {"width": "15%", "targets": 2},
                         {"width": "15%", "targets": 3},
