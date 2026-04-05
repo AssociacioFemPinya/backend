@@ -16,7 +16,7 @@ return [
     "1" => "Yes",
     "2" => "No",
     "verify_touch_title" => "Verify attendance",
-    "verify_touch_confirm" => "Confirm your attendance to the event?",
+    "verify_touch_confirm" => "Confirm your attendance at the event?",
     "verify_touch_cancel" => "Cancel",
     "verify_touch_yes" => "Verify",
     "verify_touch_backspace" => "backspace ⌫",
