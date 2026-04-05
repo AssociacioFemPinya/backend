@@ -400,8 +400,6 @@
                 @endforeach
             @endif
 
-            console.log(initDates);
-
             var datepicker = $("#datepicker_start_date").datepicker({
                 @if (Auth()->user()->language=='ca')
                 language: 'ca',
