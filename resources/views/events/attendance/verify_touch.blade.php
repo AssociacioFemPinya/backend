@@ -155,7 +155,7 @@
 <script src="{{ asset('js/plugins/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
 <script>
-    const castellers = {!! json_encode($castellers) !!};
+    const castellers = @json($castellers, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
     const eventId = {{ $event->getId() }};
     
     $(document).ready(function() {
