@@ -215,7 +215,14 @@
             });
 
             if (filtered.length === 0) {
-                listEl.innerHTML = '<div class="text-center p-20 text-muted"><h4>{{ __("attendance.verify_touch_no_castellers") }} "'+query+'"</h4></div>';
+                const emptyStateEl = document.createElement('div');
+                emptyStateEl.className = 'text-center p-20 text-muted';
+
+                const titleEl = document.createElement('h4');
+                titleEl.textContent = '{{ __("attendance.verify_touch_no_castellers") }} "' + query + '"';
+
+                emptyStateEl.appendChild(titleEl);
+                listEl.appendChild(emptyStateEl);
                 return;
             }
 
