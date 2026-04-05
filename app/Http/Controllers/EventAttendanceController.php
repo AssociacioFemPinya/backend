@@ -456,4 +456,21 @@ class EventAttendanceController extends Controller
 
         return view('events.attendance.verify', compact('event', 'totpCode', 'remainingSeconds', 'totalSeconds'));
     }
+
+    public function getVerifyAttendanceTouch(Event $event)
+    {
+        $user = $this->user();
+        if (! $user->can('view events') && ! $user->can('edit events')) {
+            abort(404);
+        }
+        $this->authorize('getEvent', $event);
+
+        $colla = Colla::getCurrent();
+        $castellers = Casteller::filter($colla)
+            ->withStatus(CastellersStatusEnum::ActiveAll())
+            ->eloquentBuilder()
+            ->get(['id_casteller', 'name', 'last_name', 'alias']);
+
+        return view('events.attendance.verify_touch', compact('event', 'castellers'));
+    }
 }

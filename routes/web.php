@@ -169,6 +169,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit event
     Route::get('event/attendance/list-block/{event}', 'EventAttendanceController@getListBlocks')->where('event', '[0-9]+')->name('event.attendance.list-block');
     Route::post('event/attendance/notify-missing-ajax/{event}', 'EventAttendanceController@notifyMissingAjax')->where('event', '[0-9]+')->name('event.attendance.notify_missing');
     Route::get('event/{event}/attendance/verify', 'EventAttendanceController@getVerifyAttendance')->name('event.attendance.verify');
+    Route::get('event/{event}/attendance/verify-touch', 'EventAttendanceController@getVerifyAttendanceTouch')->name('event.attendance.verify_touch');
 });
 
 // EDIT EVENTS
