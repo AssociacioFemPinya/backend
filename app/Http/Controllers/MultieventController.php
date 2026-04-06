@@ -467,7 +467,7 @@ class MultieventController extends Controller
     {
         $user = $this->user();
 
-        if (! $user->can('view events')) {
+        if (! $user->can('view events') && ! $user->can('edit events')) {
             abort(404);
         }
 
@@ -485,7 +485,7 @@ class MultieventController extends Controller
     {
         $user = $this->user();
 
-        if (! $user->can('view events')) {
+        if (! $user->can('view events') && ! $user->can('edit events')) {
             abort(404);
         }
 

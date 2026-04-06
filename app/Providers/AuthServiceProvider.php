@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Casteller;
 use App\Event;
+use App\Multievent;
 use App\Notification;
 use App\Policies\BoardPolicy;
 use App\Policies\CastellerPolicy;
 use App\Policies\EventPolicy;
+use App\Policies\MultieventPolicy;
 use App\Policies\NotificationPolicy;
 use App\Policies\ScheduledNotificationPolicy;
 use App\Policies\TagPolicy;
@@ -28,6 +30,7 @@ class AuthServiceProvider extends ServiceProvider
         Casteller::class => CastellerPolicy::class,
         Tag::class => TagPolicy::class,
         Event::class => EventPolicy::class,
+        Multievent::class => MultieventPolicy::class,
         Board::class => BoardPolicy::class,
         Notification::class => NotificationPolicy::class,
         ScheduledNotification::class => ScheduledNotificationPolicy::class,
