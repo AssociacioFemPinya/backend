@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factories;
 
 use App\Casteller;
+use App\Helpers\StructureHelper;
 use App\Tag;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
