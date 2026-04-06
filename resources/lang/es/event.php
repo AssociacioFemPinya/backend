@@ -72,5 +72,8 @@ return [
     "events_assigned_to_existing_multievent" => "Los eventos se han asignado correctamente al multievento existente.",
     'events_already_in_multievent' => 'Algunos de los eventos seleccionados ya forman parte de un multievento',
     'duplicate_date_warning' => 'Advertencia: Fechas duplicadas detectadas',
-    'duplicate_date_warning_message' => 'Se han detectado eventos con la misma fecha. No se pueden asignar eventos con la misma fecha a un multievento.'
+    'duplicate_date_warning_message' => 'Se han detectado eventos con la misma fecha. No se pueden asignar eventos con la misma fecha a un multievento.',
+    'dynamic_form' => 'Formulario',
+    'dynamic_form_description' => 'Opcional: Crea un formulario con preguntas personalizadas para los asistentes.',
+    'dynamic_form_description_multievent' => 'Opcional: Crea un formulario con preguntas personalizadas para los asistentes a este multievento.',
 ];

@@ -72,5 +72,8 @@ return [
     "events_assigned_to_existing_multievent" => "Els esdeveniments s'han assignat correctament al multiesdeveniment existent.",
     'events_already_in_multievent' => "Alguns dels esdeveniments seleccionats ja formen part d\'un multiesdeveniment",
     'duplicate_date_warning' => 'Alerta: Dates duplicades detectades',
-    'duplicate_date_warning_message' => 'S\'han detectat esdeveniments amb la mateixa data. No es poden assignar esdeveniments amb la mateixa data a un multiesdeveniment.'
+    'duplicate_date_warning_message' => 'S\'han detectat esdeveniments amb la mateixa data. No es poden assignar esdeveniments amb la mateixa data a un multiesdeveniment.',
+    'dynamic_form' => 'Formulari',
+    'dynamic_form_description' => 'Opcional: Crea un formulari amb preguntes personalitzades per als assistents.',
+    'dynamic_form_description_multievent' => 'Opcional: Crea un formulari amb preguntes personalitzades per als assistents a aquest multiesdeveniment.',
 ];

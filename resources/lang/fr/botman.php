@@ -245,4 +245,7 @@ return [
     "help_tecnica_general_reminders" => "Envoi de notifications générales.",
     "help_tecnica_send_reminders_expres" => "Rappel rapide.",
     "help_tecnica_send_reminders_tags" => "Rappel aux membres avec étiquettes.",
+    "form_link_reply" => "📝 Pour répondre au formulaire, accédez au lien suivant :",
+    "form_answers_link_reply" => "📝 Consultez les réponses des formulaires directement dans l'App Web :",
+
 ];

@@ -252,4 +252,7 @@ return [
 
 
 
+    "form_link_reply" => "📝 Para responder el formulario, accede al siguiente enlace:",
+    "form_answers_link_reply" => "📝 Consulta las respuestas de los formularios directamente en la App Web:",
+
 ];

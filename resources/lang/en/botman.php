@@ -247,5 +247,8 @@ return [
     "help_tecnica_send_reminders_expres" => "Quick reminder.",
     "help_tecnica_send_reminders_tags" => "Reminder to members with tags.",
 
+    "form_link_reply" => "📝 To answer the form, access the following link:",
+    "form_answers_link_reply" => "📝 Check the form answers directly in the Web App:",
+
 ];
 

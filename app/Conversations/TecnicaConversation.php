@@ -363,7 +363,7 @@ class TecnicaConversation extends Conversation
                     }
                 } elseif (in_array($answer, $eventsAttendanceEventAnswersMenu)) {
                     $appUrl = url('/event/attendance/' . $event->getId());
-                    $this->getBot()->reply("📝 Consulta les respostes dels formularis directament a l'App Web:\n" . $appUrl);
+                    $this->getBot()->reply(__('botman.form_answers_link_reply') . "\n" . $appUrl);
 
                     return $this->repeat(__('botman.conversation_ask_castellers_attendance_event'));
                 } else {

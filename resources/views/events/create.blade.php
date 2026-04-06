@@ -265,8 +265,8 @@
         <div class="row form-group">
             <div class="col-md-12">
                 <hr>
-                <h4><i class="fa fa-list-alt"></i> Formulario Dinámico</h4>
-                <p class="text-muted">Opcional: Crea un formulario con preguntas personalizadas para los asistentes.</p>
+                <h4><i class="fa fa-list-alt"></i> {!! trans('event.dynamic_form') !!}</h4>
+                <p class="text-muted">{!! trans('event.dynamic_form_description') !!}</p>
                 <input type="hidden" name="form_schema" id="form_schema_input" value="">
                 <div id="fb-editor"></div>
                 <hr>

@@ -252,4 +252,7 @@ return [
 
 
 
+    "form_link_reply" => "📝 Per respondre el formulari, accedeix al següent enllaç:",
+    "form_answers_link_reply" => "📝 Consulta les respostes dels formularis directament a l'App Web:",
+
 ];

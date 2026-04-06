@@ -574,7 +574,7 @@ class EventsConversation extends Conversation
     private function askOptions(Event $event, string $option)
     {
         $formUrl = url('/member/event/' . $event->getId() . '/form');
-        $this->getBot()->reply("📝 Per respondre el formulari, accedeix al següent enllaç:\n" . $formUrl);
+        $this->getBot()->reply(__('botman.form_link_reply') . "\n" . $formUrl);
 
         // Return to the previous menu
         $attendance = Attendance::getAttendanceCasteller($this->casteller->getId());
