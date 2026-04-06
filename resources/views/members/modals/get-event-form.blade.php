@@ -32,8 +32,8 @@
 
 <script>
     $(function() {
-        var formData = {!! $schema !!};
-        var userOptions = {!! $userOptions !!};
+        var formData = {!! $schema !!} || [];
+        var userOptions = {!! $userOptions !!} || {};
 
         if (formData && formData.length > 0) {
             var formRenderInstance = $('#fb-reader').formRender({

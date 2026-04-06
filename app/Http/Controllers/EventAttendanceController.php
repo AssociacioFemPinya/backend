@@ -69,16 +69,16 @@ class EventAttendanceController extends Controller
             trans('attendance.companions'),
             trans('attendance.tags')]
         );
+        $answers = $event->getAttendanceAnswers();
+        $answersOptions = [];
+        foreach ($answers as $answer) {
+            $answersOptions[$answer->getId()] = $answer->getName();
+        }
 
         foreach ($castellers as $casteller) {
             $attendance = Attendance::getAttendanceCastellerEvent($casteller->getId(), $event->getId());
             if ($attendance != null) {
-                $answersOptions = [];
-                if ($attendance->getOptions() != null) {
-                    foreach ($attendance->getOptions() as $option) {
-                        array_push($answersOptions, Tag::find($option)->getName());
-                    }
-                }
+                $answersOptionsText = Humans::readAttendanceAnswersText($casteller, $answersOptions, $attendance, $event);
 
                 $csv->addRow([
                     $casteller->getAlias(),
@@ -86,7 +86,7 @@ class EventAttendanceController extends Controller
                     $casteller->getLastName(),
                     AttendanceStatus::getById($attendance->status),
                     AttendanceStatus::getById($attendance->status_verified),
-                    implode(',', $answersOptions),
+                    $answersOptionsText,
                     $attendance->getCompanions(),
                     implode(',', $casteller->tagsArray()),
                 ]);
@@ -232,7 +232,7 @@ class EventAttendanceController extends Controller
             $array_attender['alias'] .= $casteller->getDisplayName();
             $array_attender['status'] = Humans::readAttendanceStatus($casteller, $attendance);
             $array_attender['status_verified'] = Humans::readAttendanceStatusVerified($casteller, $attendance);
-            $array_attender['attendance_answers'] = Humans::readAttendanceAnswers($casteller, $answersOptions, $attendance);
+            $array_attender['attendance_answers'] = Humans::readAttendanceAnswers($casteller, $answersOptions, $attendance, $event);
             $array_attender['companions'] = Humans::readAttendanceCompanions($casteller, $attendance, $event);
             $array_attender['last_update'] = Humans::readAttendanceLastUpdate($attendance);
 

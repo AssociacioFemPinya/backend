@@ -85,7 +85,7 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin']], function()
 });
 
 // VIEW CASTELLERS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|view BBDD|edit BBDD'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view BBDD|edit BBDD']], function()
 {
     Route::get('castellers/list', [CastellersController::class, 'getList'])->name('castellers.list');
     Route::post('castellers/list-ajax', [CastellersController::class, 'postListAjax'])->name('castellers.list-ajax');
@@ -109,14 +109,14 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view BBDD|edit BBDD'],
 });
 
 // EDIT CASTELLERS OR CASTELLER PERSONALS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD|edit casteller personals'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit BBDD|edit casteller personals']], function()
 {
     Route::post('castellers/update/{casteller}', 'CastellersController@postUpdateCasteller')->where('casteller', '[0-9]+')->name('castellers.update');
 });
 
 // EDIT CASTELLERS
 
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit BBDD']], function()
 {
     Route::post('castellers/add', 'CastellersController@postAddCasteller')->name('castellers.add');
     Route::post('castellers/delete/{casteller}', 'CastellersController@postDestroyCasteller')->where('casteller', '[0-9]+')->name('castellers.destroy');
@@ -132,7 +132,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD'], function(
 });
 
 // VIEW CASTELLER CONFIG
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|view casteller config|edit casteller config'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view casteller config|edit casteller config']], function()
 {
     Route::get('castellers/config/list', 'CastellerConfigController@getList')->name('castellers.config.list');
     Route::post('castellers/config/list-ajax', 'CastellerConfigController@postListAjax')->name('castellers.config.list-ajax');
@@ -141,13 +141,13 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view casteller config|
 });
 
 // EDIT CASTELLER CONFIG
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit casteller config'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit casteller config']], function()
 {
     Route::post('castellers/config/set-status-ajax', 'CastellerConfigController@postSetStatusAjax')->name('castellers.config.set-status');
 });
 
 // VIEW EVENTS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit events'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view events|edit events']], function()
 {
     Route::get('events/list', [EventsController::class, 'getList'])->name('events.list');
     Route::post('events/list-ajax/{time}', [EventsController::class, 'postListAjax'])->name('events.list-ajax');
@@ -172,7 +172,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit event
 });
 
 // EDIT EVENTS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit events'], function()
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit events']], function()
 {
     Route::get('events/create', 'EventsController@getCreate')->name('events.create');
     Route::post('events/add', 'EventsController@postStoreEvent')->name('events.add');

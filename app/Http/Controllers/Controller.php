@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Auth\AuthenticationException;
 
 abstract class Controller extends BaseController
 {
@@ -18,7 +18,7 @@ abstract class Controller extends BaseController
     {
         /** @var User $user */
         if (! $user = Auth::user()) {
-            throw new UnauthorizedException();
+            throw new AuthenticationException();
         }
 
         return $user;

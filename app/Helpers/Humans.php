@@ -170,8 +170,8 @@ class Humans
         return $status_verified;
     }
 
-    /** Read for humans answers of an Attendance ..*/
-    public static function readAttendanceAnswers(Casteller|Event $casteller, array $answersOptions, ?Attendance $attendance): ?string
+    /** Read for humans answers of an Attendance as plain text ..*/
+    public static function readAttendanceAnswersText(Casteller|Event $casteller, array $answersOptions, ?Attendance $attendance, ?Event $event = null): string
     {
         $attendanceOptions = is_null($attendance) || is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
 
@@ -179,15 +179,75 @@ class Humans
             return '';
         }
 
+        if (! $event && $attendance) {
+            $event = $attendance->getEvent();
+        }
+
+        if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
+            $schemaDict = [];
+            if ($event && $event->form_schema) {
+                foreach ($event->form_schema as $field) {
+                    if (isset($field['name']) && isset($field['label'])) {
+                        $schemaDict[$field['name']] = $field['label'];
+                    }
+                }
+            }
+
+            $parsedOptions = [];
+            foreach ($attendanceOptions as $key => $val) {
+                if (is_array($val)) {
+                    $val = implode(', ', $val);
+                }
+                $label = $schemaDict[$key] ?? $key;
+                $parsedOptions[] = $label . ': ' . $val;
+            }
+            return implode("\n", $parsedOptions);
+        } else {
+            $parsedOptions = [];
+            foreach ($attendanceOptions as $option) {
+                if (isset($answersOptions[$option])) {
+                    $parsedOptions[] = $answersOptions[$option];
+                } else {
+                    $tag = \App\Tag::find($option);
+                    $parsedOptions[] = $tag ? $tag->getName() : $option;
+                }
+            }
+            return implode(', ', $parsedOptions);
+        }
+    }
+
+    /** Read for humans answers of an Attendance ..*/
+    public static function readAttendanceAnswers(Casteller|Event $casteller, array $answersOptions, ?Attendance $attendance, ?Event $event = null): ?string
+    {
+        $attendanceOptions = is_null($attendance) || is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
+
+        if (empty($attendanceOptions)) {
+            return '';
+        }
+
+        if (! $event && $attendance) {
+            $event = $attendance->getEvent();
+        }
+
         // Nuevo formato basado en JSON (FormBuilder)
         $text = '';
         if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
+            $schemaDict = [];
+            if ($event && $event->form_schema) {
+                foreach ($event->form_schema as $field) {
+                    if (isset($field['name']) && isset($field['label'])) {
+                        $schemaDict[$field['name']] = $field['label'];
+                    }
+                }
+            }
+
             $parsedOptions = [];
             foreach ($attendanceOptions as $key => $val) {
                 if(is_array($val)){
                     $val = implode(', ', $val);
                 }
-                $parsedOptions[] = "<b>" . e($key) . "</b>: " . e($val);
+                $label = $schemaDict[$key] ?? $key;
+                $parsedOptions[] = "<b>" . e($label) . "</b>: " . e($val);
             }
             $text = implode('<br>', $parsedOptions);
         } else {
