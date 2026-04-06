@@ -60,6 +60,8 @@
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
     <script src="{{ asset('js/plugins/datatables/buttons/buttons.html5.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
 
 
     <script type="text/javascript" src="{!! asset('js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') !!}"></script>
@@ -233,6 +235,20 @@
             $(document).on('click', '.btn-info', function (event) {
                 const eventId = $(event.currentTarget).data("event_id");
                 const url = `{{ route('member.get.event-info-modal', ':eventId') }}`.replace(':eventId', eventId);
+
+                $.get(url)
+                    .done(function(data) {
+                        $('#modalEventInfoContent').html(data);
+                        $('#modalEventInfo').modal('show');
+                    })
+                    .fail(function(xhr) {
+                        alert(xhr.responseJSON.message);
+                    });
+            });
+
+            $(document).on('click', '.btn-attendance-form', function (event) {
+                const eventId = $(event.currentTarget).data("event_id");
+                const url = `{{ route('member.get.event-form-modal', ':eventId') }}`.replace(':eventId', eventId);
 
                 $.get(url)
                     .done(function(data) {

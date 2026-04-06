@@ -175,11 +175,41 @@ class Humans
     {
         $attendanceOptions = is_null($attendance) || is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
 
-        if (is_null($attendance) || $attendance->getStatus() != AttendanceStatus::YES) {
-            return RenderHelper::fieldSelect($attendanceOptions, $answersOptions, 'answers', null, true, true, 'answers', 'data-id_casteller', (string) $casteller->getId());
+        if (empty($attendanceOptions)) {
+            return '';
         }
 
-        return RenderHelper::fieldSelect($attendanceOptions, $answersOptions, 'answers', null, true, false, 'answers', 'data-id_casteller', (string) $casteller->getId());
+        // Nuevo formato basado en JSON (FormBuilder)
+        $text = '';
+        if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
+            $parsedOptions = [];
+            foreach ($attendanceOptions as $key => $val) {
+                if(is_array($val)){
+                    $val = implode(', ', $val);
+                }
+                $parsedOptions[] = "<b>" . e($key) . "</b>: " . e($val);
+            }
+            $text = implode('<br>', $parsedOptions);
+        } else {
+            // Formato antiguo (fallback array tags)
+            $parsedOptions = [];
+            foreach ($attendanceOptions as $option) {
+                if (isset($answersOptions[$option])) {
+                    $parsedOptions[] = $answersOptions[$option];
+                } else {
+                    $parsedOptions[] = $option;
+                }
+            }
+            $text = implode(', ', $parsedOptions);
+        }
+
+        if (strlen(strip_tags($text)) > 50) {
+            $shortText = substr(strip_tags($text), 0, 50) . '...';
+            $fullTextHtml = htmlentities($text, ENT_QUOTES, 'UTF-8');
+            return $shortText . ' <a href="#" onclick="event.preventDefault(); showFullTextModal(\'Respostes\', \''.$fullTextHtml.'\');">Veure més</a>';
+        }
+
+        return $text;
     }
 
     /** Read for humans answers of an Attendance ..*/
@@ -191,9 +221,16 @@ class Humans
             return $tags;
         }
 
-        $attendanceOptions = is_null($attendance->getOptionsNames()) ? [] : $attendance->getOptionsNames();
+        $attendanceOptions = is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
 
-        foreach ($attendanceOptions as $attendanceOptionName) {
+        // Check if FormBuilder structure
+        if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
+           return "<span class='badge badge-success'><i class='fa fa-list-alt'></i> Respostes Omplertes</span>";
+        }
+
+        $attendanceOptionsNames = is_null($attendance->getOptionsNames()) ? [] : $attendance->getOptionsNames();
+
+        foreach ($attendanceOptionsNames as $attendanceOptionName) {
             $tags .= "<span class='badge badge-primary' style='margin-left: 3px; margin-bottom: 3px;'>".e($attendanceOptionName).'</span>';
         }
 
@@ -204,7 +241,20 @@ class Humans
     public static function readSelectableAttendanceAnswers(Event $event, ?Attendance $attendance): string
     {
         $attendanceAnswers = '';
+
+        if ($event->form_schema) {
+            $butonBtn = $event->isOpen() && $attendance && $attendance->getStatus() == AttendanceStatus::YES ? 'btn-primary' : 'btn-secondary disabled';
+            if ($attendance && $attendance->getStatus() == AttendanceStatus::YES) {
+                return '<button type="button" class="btn btn-sm '.$butonBtn.' btn-attendance-form pull-right" data-event_id="'.$event->getId().'"><i class="fa fa-list-alt"></i> ' . trans('general.form') . '</button>';
+            }
+            return '';
+        }
+
         $allAttendanceOptions = $attendance && $attendance->getOptions() ? $attendance->getOptions() : [];
+        if (!is_array($allAttendanceOptions) || (is_array($allAttendanceOptions) && count($allAttendanceOptions) > 0 && array_keys($allAttendanceOptions) !== range(0, count($allAttendanceOptions) - 1))) {
+            $allAttendanceOptions = []; // Ignore new format for old renderer
+        }
+
         $eventId = $event->getId();
         $align = 'right';
         $butonEnabled = $event->isOpen() && $attendance && $attendance->getStatus() == AttendanceStatus::YES;

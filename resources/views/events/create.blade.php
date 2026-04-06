@@ -263,15 +263,16 @@
         </div>
 
         <div class="row form-group">
-            <div class="col-md-6">
-                <label class="control-label">{!! trans('attendance.attendance_answers') !!}</label>
-                <select class="selectize2 form-control" placeholder="{!! trans('general.tags') !!}" name="answers[]" style="width: 100%" multiple>
-                    @php $oldAnswers = isset($event) ? $event->answersArray('VALUE') : []; @endphp
-                    @foreach ($attendance_answers as $answer)
-                        <option value="{{ $answer->getValue() }}" @if(in_array($answer->getValue(), old('answers',$oldAnswers))) selected @endif>{{ $answer->getName() }}</option>
-                    @endforeach
-                </select>
+            <div class="col-md-12">
+                <hr>
+                <h4><i class="fa fa-list-alt"></i> Formulario Dinámico</h4>
+                <p class="text-muted">Opcional: Crea un formulario con preguntas personalizadas para los asistentes.</p>
+                <input type="hidden" name="form_schema" id="form_schema_input" value="">
+                <div id="fb-editor"></div>
+                <hr>
             </div>
+        </div>
+        <div class="row form-group">
             <div class="col-md-6">
                 <label class="control-label">{!! trans('casteller.address') !!}</label>
                 <textarea class="form-control" name="address" id="address" cols="10" rows="5">@if(isset($event)){!! old('address',$event->getAddress()) !!}@else{!! old('address') !!}@endif</textarea>
@@ -358,9 +359,52 @@
         <script type="text/javascript" src="{!! asset('js/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') !!}"></script>
     @endif
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+
     <script>
         $(function ()
         {
+            // Init FormBuilder
+            var formBuilderOptions = {
+                locale: 'ca-ES',
+                controlPosition: 'left',
+                dataType: 'json',
+                disableFields: ['file', 'hidden', 'button'],
+                typeUserDisabledAttrs: {
+                    'checkbox-group': ['className', 'access'],
+                    'radio-group': ['className', 'access'],
+                    'select': ['className', 'access'],
+                    'text': ['className', 'access'],
+                    'textarea': ['className', 'access'],
+                    'date': ['className', 'access'],
+                    'number': ['className', 'access']
+                }
+            };
+            @if(isset($event) && $event->form_schema)
+                formBuilderOptions.formData = {!! json_encode($event->form_schema) !!};
+            @endif
+            var formBuilder = $(document.getElementById('fb-editor')).formBuilder(formBuilderOptions);
+
+            $('#FormAddEvent, #FormUpdateEvent').on('submit', function() {
+                var formData = formBuilder.actions.getData('json');
+                if (formData === "[]") formData = "";
+                $('#form_schema_input').val(formData);
+                
+                // Evitar conflictos ocultando temporalmente los "name" del formBuilder
+                var editorInputs = $('#fb-editor').find(':input[name]');
+                editorInputs.each(function() {
+                    $(this).attr('data-temp-name', $(this).attr('name')).removeAttr('name');
+                });
+                setTimeout(function() {
+                    editorInputs.each(function() {
+                        $(this).attr('name', $(this).attr('data-temp-name'));
+                    });
+                }, 100);
+                
+                return true;
+            });
+
             let elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery'));
             elems.forEach(function (html) {
                 new Switchery(html, {size: 'small'});

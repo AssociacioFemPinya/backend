@@ -41,6 +41,7 @@ final class Event extends Model
     protected $casts = [
         'companions' => 'boolean',
         'visibility' => 'boolean',
+        'form_schema' => 'array',
     ];
 
     const TYPES = [

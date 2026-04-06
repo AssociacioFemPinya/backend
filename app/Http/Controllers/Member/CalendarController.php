@@ -36,6 +36,22 @@ class CalendarController extends Controller
         return view('members.modals.get-event-info', $data_content);
     }
 
+    /** get eventForm modal via AJAX */
+    public function getEventFormModalAjax(Event $event)
+    {
+        $casteller = Auth::user()->casteller;
+
+        $attendance = Attendance::getAttendanceCastellerEvent($casteller->getId(), $event->getId());
+        $userOptions = $attendance ? $attendance->getOptions() : [];
+
+        $data_content['event'] = $event;
+        $data_content['schema'] = $event->form_schema ? json_encode($event->form_schema) : '[]';
+        $data_content['userOptions'] = json_encode($userOptions);
+
+        return view('members.modals.get-event-form', $data_content);
+    }
+
+
     /** get upcoming events via AJAX*/
     public function getEventAttendanceAjax(Request $request): JsonResponse
     {

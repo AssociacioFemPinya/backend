@@ -75,6 +75,15 @@ class EventFactory
             $event->setAttribute('id_multievent', $bag->getInt('id_multievent'));
         }
 
+        if ($bag->has('form_schema')) {
+            $formSchemaStr = $bag->get('form_schema');
+            if ($formSchemaStr) {
+                $event->setAttribute('form_schema', json_decode($formSchemaStr, true));
+            } else {
+                $event->setAttribute('form_schema', null);
+            }
+        }
+
         // we need to save the empty event at the beginning to be able to set a tag on it
         $event->save();
 
