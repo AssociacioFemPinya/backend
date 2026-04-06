@@ -1,0 +1,981 @@
+ ------ --------------------------------------------------
+  Line   Attendance.php
+ ------ --------------------------------------------------
+  178    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::YESVERIFIED().
+  180    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::NO().
+  182    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::UNKNOWN().
+  186    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::YES().
+  188    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::NO().
+  190    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::UNKNOWN().
+  193    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::UNKNOWN().
+ ------ --------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   AuthConfig.php
+ ------ -------------------------------------------------------------
+  35     Access to an undefined property App\AuthConfig::$casteller.
+ ------ -------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Board.php
+ ------ ----------------------------------------------------------------------
+  209    Method App\Board::getIsPublic() has invalid return type App\boolean.
+  211    Method App\Board::getIsPublic() should return App\boolean|null but
+         returns bool.
+ ------ ----------------------------------------------------------------------
+
+ ------ ---------------------------------------------------------
+  Line   Casteller.php
+ ------ ---------------------------------------------------------
+  131    Negated boolean expression is always false.
+  137    Access to an undefined property App\Event::$attendance.
+  295    Access to an undefined property App\Casteller::$tags.
+  300    Access to an undefined property App\Casteller::$tags.
+ ------ ---------------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   CastellerConfig.php
+ ------ -------------------------------------------------------------
+  94     Access to an undefined property App\Casteller::$authConfig.
+ ------ -------------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Colla.php
+ ------ --------------------------------------------------------------------
+  71     If condition is always true.
+  272    Method App\Colla::getCurrentPeriod() should return App\Period|null
+         but returns Illuminate\Database\Eloquent\Model|null.
+ ------ --------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------
+  Line   Console/Commands/CreateColla.php
+ ------ ----------------------------------------------------------------
+  124    Method App\Console\Commands\CreateColla::printCorrectInfo() is
+         unused.
+ ------ ----------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Console/Commands/CreateDemo.php
+ ------ ---------------------------------------------------------------------
+  160    Call to an undefined method Faker\Generator::dni().
+  182    Called 'first' on Laravel collection, but could have been retrieved
+         as a query.
+  259    Call to an undefined method
+         Illuminate\Database\Eloquent\Model::tags().
+  302    Call to an undefined method
+         Illuminate\Database\Eloquent\Model::tags().
+  510    Call to an undefined method
+         Illuminate\Database\Eloquent\Model::attendanceAnswers().
+  531    Call to an undefined method
+         Illuminate\Database\Eloquent\Model::attendanceAnswers().
+  584    Call to an undefined method
+         Illuminate\Database\Eloquent\Model::getId().
+ ------ ---------------------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Console/Commands/DeleteColla.php
+ ------ --------------------------------------------------------------------
+  104    Call to function is_null() with int will always evaluate to false.
+  125    Method App\Console\Commands\DeleteColla::startDelete() is unused.
+  468    If condition is always true.
+ ------ --------------------------------------------------------------------
+
+ ------ ------------------------------
+  Line   Console/Commands/Import.php
+ ------ ------------------------------
+  385    If condition is always true.
+ ------ ------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Conversations/EventsConversation.php
+ ------ ---------------------------------------------------------------------
+  332    Expression in empty() is not falsy.
+  454    Variable $newAttendanceStatus might not be defined.
+  689    Parameter #3 $statusVerified of static method
+         App\Attendance::setStatusVerified() expects string|null, int given.
+  693    Elseif condition is always true.
+ ------ ---------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------
+  Line   Conversations/TecnicaConversation.php
+ ------ -----------------------------------------------------------------
+  57     Method App\Conversations\TecnicaConversation::askReminderType()
+         invoked with 2 parameters, 1 required.
+  494    Unreachable statement - code above always terminates.
+ ------ -----------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   DataTables/BaseDataTable.php
+ ------ ----------------------------------------------------------------------
+  61     Method App\DataTables\BaseDataTable::getOrder() should return string
+         but returns int.
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   DataTables/Column.php
+ ------ -----------------------------------------------------------------------
+  37     Method App\DataTables\Column::getOrderable() should return string but
+         returns bool.
+ ------ -----------------------------------------------------------------------
+
+ ------ ------------------------------------------------------------
+  Line   DataTables/Reminders.php
+ ------ ------------------------------------------------------------
+  32     Access to an undefined property App\Notification::$events.
+ ------ ------------------------------------------------------------
+
+ ------ ---------------------------------------------------------
+  Line   Enums/CastellersStatusEnum.php
+ ------ ---------------------------------------------------------
+  39     Match expression does not handle remaining value: mixed
+ ------ ---------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Enums/Lang.php
+ ------ ---------------------------------------------------------------------
+  31     Method App\Enums\Lang::getLangKey() should return string but return
+         statement is missing.
+ ------ ---------------------------------------------------------------------
+
+ ------ -------------------------------------------------------------------
+  Line   Event.php
+ ------ -------------------------------------------------------------------
+  70     Access to an undefined property App\Event::$tags.
+  130    Call to an undefined method App\Tag::getTypeName().
+  200    Access to an undefined property App\Event::$attendances.
+  204    Access to an undefined property App\Event::$attendances.
+  208    Access to an undefined property App\Event::$attendances.
+  216    Access to an undefined property App\Event::$attendances.
+  220    Access to an undefined property App\Event::$attendances.
+  254    Method App\Event::getLastRonda() should return App\Ronda|null but
+         returns Illuminate\Database\Eloquent\Model|null.
+  359    Left side of && is always true.
+ ------ -------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Exceptions/Handler.php
+ ------ ----------------------------------------------------------------------
+  16     PHPDoc type array of property App\Exceptions\Handler::$dontReport is
+         not covariant with PHPDoc type array<string> of overridden property
+         Illuminate\Foundation\Exceptions\Handler::$dontReport.
+         💡 You can fix 3rd party PHPDoc types with stub files:
+            https://phpstan.org/user-guide/stub-files
+  25     PHPDoc type array of property App\Exceptions\Handler::$dontFlash is
+         not covariant with PHPDoc type array<string> of overridden property
+         Illuminate\Foundation\Exceptions\Handler::$dontFlash.
+         💡 You can fix 3rd party PHPDoc types with stub files:
+            https://phpstan.org/user-guide/stub-files
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Factories/CastellerFactory.php
+ ------ -----------------------------------------------------------------------
+  198    Variable $position in PHPDoc tag @var does not exist.
+  245    Call to static method createDirectories() on an unknown class
+         App\Factories\StructureHelper.
+         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols
+  280    Static method
+         App\Factories\CastellerFactory::relativeToAbsoluteHeight() is unused.
+ ------ -----------------------------------------------------------------------
+
+ ------ ---------------------------------
+  Line   Factories/MultieventFactory.php
+ ------ ---------------------------------
+  106    If condition is always true.
+  139    If condition is always true.
+ ------ ---------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Helpers/BotmanEmojisHelper.php
+ ------ ----------------------------------------------------------------------
+  49     Call to an undefined static method Spatie\Emoji\Emoji::back_arrow().
+  66     Call to an undefined static method
+         Spatie\Emoji\Emoji::speaking_head().
+  70     Call to an undefined static method Spatie\Emoji\Emoji::check_mark().
+  72     Call to an undefined static method
+         Spatie\Emoji\Emoji::wheel_of_dharma().
+ ------ ----------------------------------------------------------------------
+
+ ------ -------------------------------------------------------------------
+  Line   Helpers/BotmanHelper.php
+ ------ -------------------------------------------------------------------
+  76     Binary operation "+" between non-falsy-string and 1 results in an
+         error.
+  99     PHPDoc tag @param references unknown parameter: $eventType
+  149    Variable $optionEvent might not be defined.
+  176    Variable $optionEvent might not be defined.
+  185    Variable $optionEvent might not be defined.
+  204    Expression in empty() is not falsy.
+  234    Expression in empty() is not falsy.
+  278    Expression in empty() is not falsy.
+  304    Expression in empty() is not falsy.
+  375    Expression in empty() is not falsy.
+  381    Expression in empty() is not falsy.
+  428    Expression in empty() is not falsy.
+  434    Expression in empty() is not falsy.
+  541    Variable $numAnswer might not be defined.
+  581    Variable $rows might not be defined.
+ ------ -------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Helpers/DateHelper.php
+ ------ ----------------------------------------------------------------------
+  19     Variable $hour on left side of ?? always exists and is not nullable.
+  19     Variable $minute on left side of ?? always exists and is not
+         nullable.
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Helpers/Humans.php
+ ------ -----------------------------------------------------------------------
+  49     Method App\Helpers\Humans::readCastellerColumn() should return
+         string|null but return statement is missing.
+  50     Call to an undefined method App\Casteller::age().
+  69     Unreachable statement - code above always terminates.
+  72     Unreachable statement - code above always terminates.
+  76     Unreachable statement - code above always terminates.
+  79     Unreachable statement - code above always terminates.
+  102    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  105    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  108    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  111    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  111    Parameter #5 $name of static method
+         App\Helpers\RenderHelper::fieldbutton() expects string|null, false
+         given.
+  131    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  135    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  139    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  143    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  159    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  162    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int given.
+  165    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int<min, 0>|int<3, max> given.
+  194    Call to function is_null() with array will always evaluate to false.
+  232    Parameter #1 $value of static method
+         App\Helpers\RenderHelper::fieldInput() expects string, int given.
+  234    Parameter #1 $value of static method
+         App\Helpers\RenderHelper::fieldInput() expects string, int given.
+  243    Call to function is_null() with Carbon\Carbon will always evaluate to
+         false.
+  243    Expression in empty() is not falsy.
+ ------ -----------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------
+  Line   Helpers/RenderHelper.php
+ ------ ----------------------------------------------------------------
+  72     PHPDoc tag @param references unknown parameter: $buttonClass
+  72     PHPDoc tag @param references unknown parameter: $dataIdName
+  72     PHPDoc tag @param references unknown parameter: $dataIdValue
+  72     PHPDoc tag @param references unknown parameter: $iClass
+  72     PHPDoc tag @param references unknown parameter: $id
+  72     PHPDoc tag @param references unknown parameter: $name
+  260    Access to an undefined property App\Casteller::$attendance.
+  260    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::UNKNOWN().
+  263    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::YESVERIFIED().
+  266    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::YES().
+  269    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::UNKNOWN().
+  272    Call to an undefined static method
+         App\Enums\ScaledAttendanceStatus::NO().
+  280    Access to an undefined property App\Casteller::$attendance.
+  283    Access to an undefined property App\Casteller::$attendance.
+  291    Access to an undefined property App\Casteller::$boardPosition.
+ ------ ----------------------------------------------------------------
+
+ ------ ------------------------------------------------------------
+  Line   Http/Controllers/Auth/TokenAuthController.php
+ ------ ------------------------------------------------------------
+  15     Access to an undefined property App\User::$id_auth_config.
+  16     Access to an undefined property App\Colla::$config.
+ ------ ------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Http/Controllers/BoardsController.php
+ ------ ----------------------------------------------------------------------
+  138    Parameter #1 $view of function view expects view-string|null, string
+         given.
+  293    Variable $data_json might not be defined.
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Http/Controllers/BotManResponsesController.php
+ ------ -----------------------------------------------------------------------
+  59     Method App\Http\Controllers\BotManResponsesController::responseName()
+         should return array but return statement is missing.
+  63     Undefined variable: $this
+ ------ -----------------------------------------------------------------------
+
+ ------ ------------------------------------------------------------------
+  Line   Http/Controllers/CastellerConfigController.php
+ ------ ------------------------------------------------------------------
+  133    Access to an undefined property App\Casteller::$castellerConfig.
+ ------ ------------------------------------------------------------------
+
+ ------ ------------------------------------------------------
+  Line   Http/Controllers/CastellersController.php
+ ------ ------------------------------------------------------
+  218    Access to an undefined property App\Colla::$periods.
+  323    Negated boolean expression is always false.
+ ------ ------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Http/Controllers/CollesController.php
+ ------ --------------------------------------------------------------------
+  161    Method App\Http\Controllers\CollesController::postDestroyColla()
+         should return
+         Illuminate\Http\RedirectResponse|Illuminate\Routing\Redirector but
+         return statement is missing.
+ ------ --------------------------------------------------------------------
+
+ ------ ---------------------------------------------------
+  Line   Http/Controllers/Controller.php
+ ------ ---------------------------------------------------
+  20     Variable $user in PHPDoc tag @var does not exist.
+ ------ ---------------------------------------------------
+
+ ------ ------------------------------------------------------------
+  Line   Http/Controllers/EventAttendanceController.php
+ ------ ------------------------------------------------------------
+  430    Variable $newCastellers might not be defined.
+  433    Variable $attendenceStatusOK might not be defined.
+  434    Variable $attendenceStatusVerifiedOK might not be defined.
+ ------ ------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Http/Controllers/EventBoardController.php
+ ------ ---------------------------------------------------------------------
+  181    Access to an undefined property App\Colla::$events.
+  184    Access to an undefined property App\Colla::$castellers.
+  186    Negated boolean expression is always false.
+  186    Negated boolean expression is always false.
+  186    Result of || is always false.
+  196    Negated boolean expression is always false.
+  209    Negated boolean expression is always false.
+  273    Negated boolean expression is always false.
+  291    Negated boolean expression is always false.
+  291    Negated boolean expression is always false.
+  291    Result of || is always false.
+  343    Using nullsafe method call on non-nullable type App\Attendance. Use
+         -> instead.
+  352    Using nullsafe method call on non-nullable type App\Attendance. Use
+         -> instead.
+  489    Access to an undefined property App\Colla::$rows.
+  495    Negated boolean expression is always false.
+  506    Negated boolean expression is always false.
+  513    Negated boolean expression is always false.
+  527    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int|null given.
+  528    Parameter #1 $attendanceStatus of static method
+         App\Helpers\RenderHelper::getAttendanceIcon() expects string|null,
+         int|null given.
+  560    Variable $event in PHPDoc tag @var does not exist.
+  565    Call to an undefined method
+         Illuminate\Database\Eloquent\Model::getId().
+ ------ ---------------------------------------------------------------------
+
+ ------ --------------------------------------------
+  Line   Http/Controllers/EventRondesController.php
+ ------ --------------------------------------------
+  105    Variable $buttons might not be defined.
+ ------ --------------------------------------------
+
+ ------ -------------------------------------------
+  Line   Http/Controllers/EventsController.php
+ ------ -------------------------------------------
+  234    Variable $openDate might not be defined.
+  258    Variable $closeDate might not be defined.
+  360    Variable $openDate might not be defined.
+  384    Variable $closeDate might not be defined.
+ ------ -------------------------------------------
+
+ ------ -------------------------------------------------------
+  Line   Http/Controllers/Member/CalendarController.php
+ ------ -------------------------------------------------------
+  49     Access to an undefined property App\User::$casteller.
+  97     Access to an undefined property App\User::$casteller.
+  121    Access to an undefined property App\User::$casteller.
+  145    Access to an undefined property App\User::$casteller.
+ ------ -------------------------------------------------------
+
+ ------ ----------------------------------------------------------
+  Line   Http/Controllers/Member/NotificationsController.php
+ ------ ----------------------------------------------------------
+  37     Access to an undefined property App\User::$casteller.
+  49     PHPDoc tag @param references unknown parameter: $request
+  51     Access to an undefined property App\User::$casteller.
+ ------ ----------------------------------------------------------
+
+ ------ -------------------------------------------------------
+  Line   Http/Controllers/Member/PinyesController.php
+ ------ -------------------------------------------------------
+  16     Access to an undefined property App\User::$casteller.
+  27     Access to an undefined property App\User::$casteller.
+ ------ -------------------------------------------------------
+
+ ------ -------------------------------------------------------
+  Line   Http/Controllers/Member/ProfileController.php
+ ------ -------------------------------------------------------
+  22     Access to an undefined property App\User::$casteller.
+  48     Access to an undefined property App\User::$casteller.
+ ------ -------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Http/Controllers/Member/TokenVerificationController.php
+ ------ ---------------------------------------------------------------------
+  23     Access to an undefined property App\User::$casteller.
+  52     Access to an undefined property App\User::$casteller.
+  55     Parameter #3 $statusVerified of static method
+         App\Attendance::setStatusVerified() expects string|null, int given.
+ ------ ---------------------------------------------------------------------
+
+ ------ ------------------------------------------------
+  Line   Http/Controllers/MultieventController.php
+ ------ ------------------------------------------------
+  178    Variable $eventCloseDate might not be defined.
+  178    Variable $eventOpenDate might not be defined.
+  393    Variable $eventCloseDate might not be defined.
+  393    Variable $eventOpenDate might not be defined.
+ ------ ------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   Http/Controllers/Notifications/NotificationsController.php
+ ------ -------------------------------------------------------------
+  60     PHPDoc tag @param references unknown parameter:
+         $scheduledNotification
+  69     Access to an undefined property App\Notification::$autoria.
+  69     Access to an undefined property App\Notification::$user.
+ ------ -------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Http/Controllers/Notifications/ScheduledNotificationsController.php
+ ------ -----------------------------------------------------------------------
+  67     PHPDoc tag @throws with type
+         App\Http\Controllers\Notifications\AuthorizationException is not
+         subtype of Throwable
+  77     Access to an undefined property App\ScheduledNotification::$autoria.
+  148    PHPDoc tag @param references unknown parameter: $notificationsManager
+  188    PHPDoc tag @throws with type
+         App\Http\Controllers\Notifications\Exception is not subtype of
+         Throwable
+ ------ -----------------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------
+  Line   Http/Controllers/Public/PublicDisplayController.php
+ ------ ---------------------------------------------------------------
+  59     Using nullsafe method call on non-nullable type mixed. Use ->
+         instead.
+ ------ ---------------------------------------------------------------
+
+ ------ -------------------------------------------------------------------
+  Line   Http/Controllers/TesterController.php
+ ------ -------------------------------------------------------------------
+  19     Class App\Imports\CastellersImport constructor invoked with 0
+         parameters, 1 required.
+  23     Call to an undefined static method App\Casteller::newCasteller().
+ ------ -------------------------------------------------------------------
+
+ ------ --------------------------------------
+  Line   Http/Controllers/UsersController.php
+ ------ --------------------------------------
+  28     If condition is always true.
+ ------ --------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Http/Kernel.php
+ ------ -----------------------------------------------------------------------
+  97     PHPDoc type array of property App\Http\Kernel::$middlewarePriority is
+         not covariant with PHPDoc type array<string> of overridden property
+         Illuminate\Foundation\Http\Kernel::$middlewarePriority.
+         💡 You can fix 3rd party PHPDoc types with stub files:
+            https://phpstan.org/user-guide/stub-files
+ ------ -----------------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Http/Middleware/Authenticate.php
+ ------ ---------------------------------------------------------------------
+  17     Method App\Http\Middleware\Authenticate::redirectTo() should return
+         string but return statement is missing.
+ ------ ---------------------------------------------------------------------
+
+ ------ ------------------------------------------------------------
+  Line   Http/Middleware/RxBotman.php
+ ------ ------------------------------------------------------------
+  19     PHPDoc tag @param references unknown parameter: $request
+  27     Parameter #1 $ of closure expects Illuminate\Http\Request,
+         BotMan\BotMan\Messages\Incoming\IncomingMessage given.
+  55     Parameter #1 $ of closure expects Illuminate\Http\Request,
+         BotMan\BotMan\Messages\Incoming\IncomingMessage given.
+ ------ ------------------------------------------------------------
+
+ ------ -------------------------------------------------------
+  Line   Http/Middleware/TokenAuthenticationEnabled.php
+ ------ -------------------------------------------------------
+  20     Access to an undefined property App\User::$casteller.
+ ------ -------------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   Imports/CastellersMultiSheetImport.php
+ ------ -------------------------------------------------------------
+  12     Access to an undefined property
+         App\Imports\CastellersMultiSheetImport::$castellersManager.
+  18     Access to an undefined property
+         App\Imports\CastellersMultiSheetImport::$castellersManager.
+ ------ -------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Jobs/FirebaseNotification.php
+ ------ -----------------------------------------------------------------------
+  28     Property App\Jobs\FirebaseNotification::$notification is never read,
+         only written.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+  57     Parameter #1 $exception of method
+         App\Jobs\FirebaseNotification::fail() expects Throwable|null, string
+         given.
+ ------ -----------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Jobs/TelegramNotification.php
+ ------ ----------------------------------------------------------------------
+  49     Parameter #1 $exception of method
+         App\Jobs\TelegramNotification::fail() expects Throwable|null, string
+         given.
+  57     Parameter #1 $exception of method
+         App\Jobs\TelegramNotification::fail() expects Throwable|null, string
+         given.
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Managers/EventBoardManager.php
+ ------ -----------------------------------------------------------------------
+  27     Property App\Managers\EventBoardManager::$boardRepository is never
+         read, only written.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+  29     Property App\Managers\EventBoardManager::$eventRepository is never
+         read, only written.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+  50     Default value of the parameter #7 $status (int) of method
+         App\Managers\EventBoardManager::listCastellersPositionFiltered() is
+         incompatible with type string.
+  53     Variable $position in PHPDoc tag @var does not exist.
+  55     Call to an undefined method
+         Illuminate\Database\Eloquent\Model::getId().
+  167    Negated boolean expression is always false.
+ ------ -----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Managers/EventManager.php
+ ------ -----------------------------------------------------------------------
+  11     Property App\Managers\EventManager::$eventRepository is never read,
+         only written.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+ ------ -----------------------------------------------------------------------
+
+ ------ ------------------------------------------------------------
+  Line   Managers/EventsManager.php
+ ------ ------------------------------------------------------------
+  8      Class App\Event referenced with incorrect case: App\event.
+  22     Class App\Event referenced with incorrect case: App\event.
+  30     Class App\Event referenced with incorrect case: App\event.
+  30     Class App\Event referenced with incorrect case: App\event.
+  38     Class App\Event referenced with incorrect case: App\event.
+ ------ ------------------------------------------------------------
+
+ ------ ------------------------------------------------------
+  Line   Managers/NotificationsManager.php
+ ------ ------------------------------------------------------
+  27     PHPDoc tag @param references unknown parameter: $bag
+ ------ ------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Managers/PublicDisplayManager.php
+ ------ -----------------------------------------------------------------------
+  22     Property App\Managers\PublicDisplayManager::$boardRepository is never
+         read, only written.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+  49     Using nullsafe property access on non-nullable type stdClass. Use ->
+         instead.
+  54     Using nullsafe property access on non-nullable type stdClass. Use ->
+         instead.
+  69     Using nullsafe property access on non-nullable type stdClass. Use ->
+         instead.
+  85     Using nullsafe property access on non-nullable type stdClass. Use ->
+         instead.
+ ------ -----------------------------------------------------------------------
+
+ ------ --------------------------------------------------------
+  Line   Managers/ScheduledNotificationsManager.php
+ ------ --------------------------------------------------------
+  44     PHPDoc tag @param references unknown parameter: $colla
+ ------ --------------------------------------------------------
+
+ ------ --------------------------------------------------------
+  Line   Multievent.php
+ ------ --------------------------------------------------------
+  203    Access to an undefined property App\Multievent::$tags.
+  246    Call to an undefined method App\Tag::getTypeName().
+ ------ --------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   NotificationOrder.php
+ ------ ---------------------------------------------------------------------
+  25     Class App\NotificationOrderListener not found.
+         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols
+  31     Called 'first' on Laravel collection, but could have been retrieved
+         as a query.
+  37     Called 'first' on Laravel collection, but could have been retrieved
+         as a query.
+ ------ ---------------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------
+  Line   Policies/ScheduledNotificationPolicy.php
+ ------ ---------------------------------------------------------------
+  17     PHPDoc tag @param references unknown parameter: $notification
+ ------ ---------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Providers/AuthServiceProvider.php
+ ------ ---------------------------------------------------------------------
+  31     Class App\Providers\Board not found.
+         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols
+ ------ ---------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Repositories/AuthConfigRepository.php
+ ------ -----------------------------------------------------------------------
+  16     Call to function is_null() with string will always evaluate to false.
+  20     Unreachable statement - code above always terminates.
+ ------ -----------------------------------------------------------------------
+
+ ------ --------------------------------------------
+  Line   Repositories/CastellerConfigRepository.php
+ ------ --------------------------------------------
+  15     Undefined variable: $collaId
+ ------ --------------------------------------------
+
+ ------ -------------------------------------------------------
+  Line   Repositories/NotificationRepository.php
+ ------ -------------------------------------------------------
+  23     Call to an undefined method App\Notification::tags().
+ ------ -------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   ScheduledNotification.php
+ ------ ---------------------------------------------------------------------
+  171    Called 'first' on Laravel collection, but could have been retrieved
+         as a query.
+ ------ ---------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Services/AttendanceStats.php
+ ------ -----------------------------------------------------------------------
+  15     Property App\Services\AttendanceStats::$eloquentBuilder is unused.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+  33     Parameter #1 $query of method
+         Illuminate\Database\Eloquent\Builder<App\Attendance>::joinSub()
+         expects Closure|Illuminate\Database\Query\Builder|string,
+         Illuminate\Database\Eloquent\Builder given.
+  36     Parameter #1 $query of method
+         Illuminate\Database\Eloquent\Builder<App\Attendance>::rightJoinSub()
+         expects Closure|Illuminate\Database\Query\Builder|string,
+         Illuminate\Database\Eloquent\Builder given.
+ ------ -----------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Services/BotmanService.php
+ ------ ----------------------------------------------------------------------
+  158    Method App\Services\BotmanService::getMainMenu() should return array
+         but return statement is missing.
+  205    Method App\Services\BotmanService::getEventsMenu() should return
+         array but return statement is missing.
+  232    Method App\Services\BotmanService::getEventsMenuTecnica() should
+         return array but return statement is missing.
+  255    Method App\Services\BotmanService::getEventsMenuReminders() should
+         return array but return statement is missing.
+  276    Method App\Services\BotmanService::getPinyesMenu() should return
+         array but return statement is missing.
+  297    Method App\Services\BotmanService::getAttendanceEventMenu() should
+         return array but return statement is missing.
+  343    Method App\Services\BotmanService::getAttendanceEventAnswersMenu()
+         should return array but return statement is missing.
+  362    Method App\Services\BotmanService::getAttendanceAllEventsMenu()
+         should return array but return statement is missing.
+  385    Method App\Services\BotmanService::getOtherAttendanceOptionsMenu()
+         should return array but return statement is missing.
+  421    Method App\Services\BotmanService::getBackButton() should return
+         array but return statement is missing.
+  457    Method App\Services\BotmanService::getTecnicaMenu() should return
+         array but return statement is missing.
+  480    Method App\Services\BotmanService::getRemindersMenu() should return
+         array but return statement is missing.
+  502    Method App\Services\BotmanService::getOptionsMenu() should return
+         array but return statement is missing.
+  530    Method App\Services\BotmanService::getLinkingCastellersMenu() should
+         return array but return statement is missing.
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Services/Filters/BaseFilter.php
+ ------ -----------------------------------------------------------------------
+  11     Property App\Services\Filters\BaseFilter::$colla is unused.
+         💡 See:
+         https://phpstan.org/developing-extensions/always-read-written-propert
+         ies
+  27     Method App\Services\Filters\BaseFilter::getIterator() should return
+         ArrayIterator but returns Traversable<(int|string),
+         Illuminate\Database\Eloquent\Model>.
+ ------ -----------------------------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   Services/Filters/CastellersFilter.php
+ ------ -------------------------------------------------------------
+  24     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  39     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  40     Access to an undefined property App\Event::$attendances.
+  47     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  48     Access to an undefined property App\Event::$attendances.
+  61     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  76     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  88     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  91     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  94     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  97     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  100    Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  106    Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  113    Expression "$this" on a separate line does not do anything.
+  127    Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  146    Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  162    Parameter #1 $column of method
+         Illuminate\Database\Query\Builder::having() expects string,
+         Illuminate\Database\Query\Expression given.
+ ------ -------------------------------------------------------------
+
+ ------ ---------------------------------------------------------------------
+  Line   Services/Filters/EventBoardPositionsFilter.php
+ ------ ---------------------------------------------------------------------
+  73     Access to constant PINYA on an unknown class
+         App\Services\Filters\BasesEnum.
+         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols
+ ------ ---------------------------------------------------------------------
+
+ ------ ------------------------------------------------------------------
+  Line   Services/Filters/EventsFilter.php
+ ------ ------------------------------------------------------------------
+  194    Parameter #1 $column of method
+         Illuminate\Database\Query\Builder::having() expects string,
+         Illuminate\Database\Query\Expression given.
+  194    Parameter #3 $value of method
+         Illuminate\Database\Query\Builder::having() expects string|null,
+         int<0, max> given.
+  211    Parameter #1 $column of method
+         Illuminate\Database\Query\Builder::having() expects string,
+         Illuminate\Database\Query\Expression given.
+  211    Parameter #3 $value of method
+         Illuminate\Database\Query\Builder::having() expects string|null,
+         int<0, max> given.
+ ------ ------------------------------------------------------------------
+
+ ------ ------------------------------------------------------------------
+  Line   Services/Filters/MultieventsFilter.php
+ ------ ------------------------------------------------------------------
+  102    Parameter #1 $column of method
+         Illuminate\Database\Query\Builder::having() expects string,
+         Illuminate\Database\Query\Expression given.
+  102    Parameter #3 $value of method
+         Illuminate\Database\Query\Builder::having() expects string|null,
+         int<0, max> given.
+  119    Parameter #1 $column of method
+         Illuminate\Database\Query\Builder::having() expects string,
+         Illuminate\Database\Query\Expression given.
+  119    Parameter #3 $value of method
+         Illuminate\Database\Query\Builder::having() expects string|null,
+         int<0, max> given.
+ ------ ------------------------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   Services/Filters/NotificationLogsFilter.php
+ ------ -------------------------------------------------------------
+  16     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  39     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+  47     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+ ------ -------------------------------------------------------------
+
+ ------ -------------------------------------------------------------
+  Line   Services/Filters/NotificationsFilter.php
+ ------ -------------------------------------------------------------
+  15     Access to private property $eloquentBuilder of parent class
+         App\Services\Filters\BaseFilter.
+ ------ -------------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Services/TOTPService.php
+ ------ --------------------------------------------------------------------
+  40     Parameter #1 $secret of static method OTPHP\TOTP::create() expects
+         non-empty-string|null, string given.
+  109    Parameter #1 $otp of method OTPHP\TOTP::verify() expects
+         non-empty-string, string given.
+ ------ --------------------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Services/TelegramNotificator.php
+ ------ --------------------------------------------------------------------
+  18     PHPDoc tag @return with type void is incompatible with native type
+         bool.
+ ------ --------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Tag.php
+ ------ -----------------------------------------------------------------------
+  128    Method App\Tag::getTagByIdExternal() should return App\Casteller|null
+         but returns App\Tag|null.
+ ------ -----------------------------------------------------------------------
+
+ ------ ----------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\CastellersFilter)
+ ------ ----------------------------------------------------------------------
+  20     Method App\Services\Filters\CastellersFilter::datatablesFilter() has
+         invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ ----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\EventAttendanceFilter)
+ ------ -----------------------------------------------------------------------
+  20     Method App\Services\Filters\EventAttendanceFilter::datatablesFilter()
+         has invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ -----------------------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\EventBoardPositionsFilter)
+ ------ --------------------------------------------------------------------
+  20     Method
+         App\Services\Filters\EventBoardPositionsFilter::datatablesFilter()
+         has invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ --------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\EventBoardsFilter)
+ ------ -----------------------------------------------------------------------
+  20     Method App\Services\Filters\EventBoardsFilter::datatablesFilter() has
+         invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ -----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\EventRondesFilter)
+ ------ -----------------------------------------------------------------------
+  20     Method App\Services\Filters\EventRondesFilter::datatablesFilter() has
+         invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ -----------------------------------------------------------------------
+
+ ------ --------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\EventsFilter)
+ ------ --------------------------------------------------------------------
+  20     Method App\Services\Filters\EventsFilter::datatablesFilter() has
+         invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ --------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\MultieventsFilter)
+ ------ -----------------------------------------------------------------------
+  20     Method App\Services\Filters\MultieventsFilter::datatablesFilter() has
+         invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ -----------------------------------------------------------------------
+
+ ------ -----------------------------------------------------------------------
+  Line   Traits/DatatablesFilterTrait.php (in context of class
+         App\Services\Filters\ScheduledNotificationsFilter)
+ ------ -----------------------------------------------------------------------
+  20     Method
+         App\Services\Filters\ScheduledNotificationsFilter::datatablesFilter()
+         has invalid return type App\Traits\stdClass.
+  20     PHPDoc tag @return with type App\Traits\stdClass is not subtype of
+         native type stdClass.
+ ------ -----------------------------------------------------------------------
+
+ ------ ---------------------------------------------
+  Line   User.php
+ ------ ---------------------------------------------
+  71     Access to an undefined property
+         Spatie\Permission\Models\Permission::$name.
+ ------ ---------------------------------------------
+
+ [ERROR] Found 297 errors
