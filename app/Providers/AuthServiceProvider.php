@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Casteller;
 use App\Event;
-use App\Notification;
 use App\Multievent;
+use App\Notification;
 use App\Policies\BoardPolicy;
 use App\Policies\CastellerPolicy;
 use App\Policies\EventPolicy;
