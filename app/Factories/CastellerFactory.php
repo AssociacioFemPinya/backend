@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use App\Factories\StructureHelper;
 
 class CastellerFactory
 {
