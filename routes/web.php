@@ -152,7 +152,6 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view 
     Route::get('events/list', [EventsController::class, 'getList'])->name('events.list');
     Route::post('events/list-ajax/{time}', [EventsController::class, 'postListAjax'])->name('events.list-ajax');
     Route::get('events/tags', 'TagsController@getListEvents')->name('events.tags');
-    Route::get('events/answers', 'TagsController@getListAttendance')->name('events.answers');
 
     // Multievent routes
     Route::get('multievents/list', 'MultieventController@getList')->name('multievents.list');

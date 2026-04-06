@@ -22,8 +22,6 @@
                     {!! trans('general.tags') !!}
             @elseif($type === \App\Enums\TypeTags::EVENTS)
                 {!! trans('tag.event_tags') !!}
-            @elseif($type === \App\Enums\TypeTags::ATTENDANCE)
-                {!! trans('attendance.attendance_answers') !!}
             @elseif($type === \App\Enums\TypeTags::BOARDS)
                 {!! trans('boards.bases') !!}
             @endif
@@ -44,14 +42,6 @@
                 <div class="row">
                     <div class="col-md-12 text-right" style="margin-bottom: 20px;">
                         <button class="btn btn-primary btn-add-event-tag"><i class="fa fa-plus-circle"></i> {!! trans('tag.add_tag') !!}</button>
-                    </div>
-                </div>
-            @endcan
-        @elseif($type === \App\Enums\TypeTags::ATTENDANCE)
-            @can('edit events')
-                <div class="row">
-                    <div class="col-md-12 text-right" style="margin-bottom: 20px;">
-                        <button class="btn btn-primary btn-add-attendance-tag"><i class="fa fa-plus-circle"></i> {!! trans('tag.add_attendance_tag') !!}</button>
                     </div>
                 </div>
             @endcan
@@ -104,16 +94,6 @@
                                         @endcan
                                     @break
 
-                                    @case(\App\Enums\TypeTags::ATTENDANCE)
-                                        @php
-                                            $text = 'tag.not_attendance_tags';
-                                        @endphp
-                                        @can('edit events')
-                                            @php
-                                                $editPrivileges = true;
-                                            @endphp
-                                        @endcan
-                                    @break
 
                                     @case(\App\Enums\TypeTags::BOARDS)
                                         @php
@@ -260,11 +240,7 @@
                 <div class="block-content text-center">
                     <i class="fa fa-warning" style="font-size: 46px;"></i>
                     <h3 class="semibold modal-title text-danger">{!! trans('general.caution') !!}</h3>
-                    @if($type==App\Enums\TypeTags::ATTENDANCE)
-                        <p class="text-muted">{!! trans('attendance.del_attendance_answer_warning') !!}</p>
-                    @else
                         <p class="text-muted" id="text-delete">{!! trans('tag.del_tag_warning') !!}</p>
-                    @endif
 
                 </div>
             </div>
@@ -297,11 +273,7 @@
                 <div class="block-content text-center">
                     <i class="fa fa-warning" style="font-size: 46px;"></i>
                     <h3 class="semibold modal-title text-danger">{!! trans('general.caution') !!}</h3>
-                    @if($type==App\Enums\TypeTags::ATTENDANCE)
-                        <p class="text-muted">{!! trans('attendance.del_attendance_answer_warning') !!}</p>
-                    @else
                         <p class="text-muted" id="text-delete">{!! trans('tag.del_used_tag_warning') !!}</p>
-                    @endif
 
                 </div>
             </div>
@@ -447,16 +419,6 @@
                     });
                 });
 
-                $('.btn-add-attendance-tag').on('click', function (event)
-                {
-                    $('#modalAddTag').modal('show');
-
-                    $('#modalAddTagContent').html('<div class="col-md-12 text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
-
-                    $.get( "{{ route('events.answers.add-modal', App\Enums\TypeTags::ATTENDANCE) }}", function( data ) {
-                        $('#modalAddTagContent').html( data );
-                    });
-                });
             @endcan
 
             @can('edit boards')

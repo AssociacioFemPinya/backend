@@ -280,7 +280,7 @@ class RenderHelper
         $answers = $casteller->attendance?->first()?->getOptions();
         if (! empty($answers)) {
             $hasAttendanceAnswers = true;
-            $tooltipTxt .= '<br>'.Humans::readAttendanceAnswersTags($casteller->attendance?->first());
+            $tooltipTxt .= '<br>'.Humans::readAttendanceAnswersText($casteller, $casteller->attendance?->first());
             $attendanceIcon = '<span class="pl-1 pr-1"><i class="'.RenderHelper::getHasAttendanceAnswersIconClass(! $positioned).' btn-has-attendance-answers fa-md"></i></span>';
         }
 

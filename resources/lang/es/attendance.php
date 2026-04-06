@@ -15,4 +15,8 @@ return [
     "tags" => "Etiquetas",
     "1" => "Sí",
     "2" => "No",
+    "no_form_configured" => "Este evento no tiene ningún formulario configurado.",
+    "event_closed" => "El evento está cerrado. No se pueden modificar las respuestas.",
+    "event_open" => "El evento está abierto. Puedes responder el formulario.",
+    "form_saved_success" => "¡Las respuestas se han guardado correctamente!",
 ];

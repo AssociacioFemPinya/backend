@@ -125,72 +125,9 @@ final class Event extends Model
         return $this->getCastellerTags()->isNotEmpty();
     }
 
-    /** add personalise attendance answer to Event*/
-    public function addAttendanceAnswer(Tag $tag): bool
-    {
-        if ($tag->getTypeName() === TypeTags::ATTENDANCE && $tag->getCollaId() === $this->getCollaId() && ! $this->hasAttendanceAnswer($tag->getValue())) {
-            DB::table('event_attendance_tag')->insert(['event_id' => $this->getId(), 'tag_id' => $tag->getId()]);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /** remove attendance personalize answer*/
-    public function removeAttendanceAnswer(Tag $tag): bool
-    {
-        if ($this->hasAttendanceAnswer($tag->getValue()) && $tag->getCollaId() === $this->getCollaId()) {
-            if (DB::table('event_attendance_tag')
-                ->where('event_id', $this->getId())
-                ->where('tag_id', $tag->getId())
-                ->delete()
-            ) {
-
-                return true;
-            }
-
-            return false;
-        }
-
-        return false;
-    }
-
-    /** return is Event has an attendance personalize answer*/
-    public function hasAttendanceAnswer($tag_value): bool
-    {
-        if (in_array($tag_value, $this->answersArray('VALUE'))) {
-
-            return true;
-        }
-
-        return false;
-    }
-
     public function hasAttendanceAnswers(): bool
     {
-        return $this->getAttendanceAnswers()->isNotEmpty();
-    }
-
-    /** get Array personalise answers (only name or value) to Event*/
-    public function answersArray(string $return_type = 'NAME'): array
-    {
-        $array = [];
-
-        foreach ($this->getAttendanceAnswers() as $answer) {
-            if ($return_type === 'NAME') {
-
-                $array[] = $answer->getName();
-            } elseif ($return_type === 'VALUE') {
-
-                $array[] = $answer->getValue();
-            } elseif ($return_type === 'ID') {
-
-                $array[] = $answer->getId();
-            }
-        }
-
-        return $array;
+        return !empty($this->form_schema);
     }
 
     /** get a count of confirmed attendance to event */
@@ -281,10 +218,6 @@ final class Event extends Model
         return $this->belongsToMany(Tag::class, 'event_casteller_tag', 'event_id', 'tag_id');
     }
 
-    public function attendanceAnswers(): ?BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class, 'event_attendance_tag', 'event_id', 'tag_id');
-    }
 
     public function attendances(): ?HasMany
     {
@@ -393,21 +326,6 @@ final class Event extends Model
         return $this->castellerTags()->where('type', TypeTags::Castellers()->value())->get();
     }
 
-    public function getAttendanceAnswers(): ?Collection
-    {
-        return $this->attendanceAnswers()->where('type', TypeTags::Attendance()->value())->get();
-    }
-
-    public function getAttendanceAnswersOptions(): array
-    {
-        $answersOptions = [];
-        $answers = $this->getAttendanceAnswers();
-        foreach ($answers as $answer) {
-            $answersOptions[$answer->getId()] = $answer->getName();
-        }
-
-        return $answersOptions;
-    }
 
     public function getRondes(): ?Collection
     {

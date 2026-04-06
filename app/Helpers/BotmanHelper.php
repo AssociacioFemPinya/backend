@@ -158,7 +158,7 @@ class BotmanHelper
 
                 $myAnswersOptions = self::getOptionNames($eventAttendance, $driver, $lb.'  - ');
 
-                if (count($event->getAttendanceAnswersOptions())) {
+                if (is_array($event->form_schema) && count($event->form_schema) > 0) {
                     if ($myAnswersOptions != '') {
                         $messageEvent .= $botmanEmojisHelper->getEmoji('eventsAnswers').$lb.'  - '.$myAnswersOptions;
                     } else {

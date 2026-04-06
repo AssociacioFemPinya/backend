@@ -298,26 +298,7 @@ class Attendance extends Model
         return json_decode($this->getAttribute('options'), true);
     }
 
-    public function getOptionsNames(): array
-    {
-        // We only care about selected options if attendance is yes.
-        if ($this->getStatus() != AttendanceStatus::YES) {
-            return [];
-        }
 
-        $optionNames = [];
-        $options = json_decode($this->getAttribute('options'));
-
-        if (! empty($options)) {
-            $tags = Tag::currentTags(TypeTags::ATTENDANCE, $this->getEvent()->getColla());
-            foreach ($options as $option) {
-                $optionNames[] = $tags->find($option)->getName();
-            }
-            sort($optionNames);
-        }
-
-        return $optionNames;
-    }
 
     public function getUpdatedAtParsed(bool $shortDate = false): ?string
     {

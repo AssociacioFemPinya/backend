@@ -217,7 +217,7 @@
         $(function ()
         {
             let attenders;
-            let personalize_answers = {!! count($event->getAttendanceAnswers()) !!};
+            let personalize_answers = {!! is_array($event->form_schema) ? count($event->form_schema) : 0 !!};
             let companions_allowed = {!! ($event->getCompanions()) ? 'true' : 'false'; !!};
             let event_id = {{ $event->getId() }};
             let attendadance_event_tags ='attendance_tags_event';

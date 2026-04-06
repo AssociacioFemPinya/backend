@@ -99,11 +99,7 @@ class EventFactory
             self::addOrUpdateCastellerTags($event, []);
         }
 
-        if ($bag->has('answers')) {
-            self::addOrUpdateAttendanceAnswers($event, $bag->get('answers'));
-        } else {
-            self::addOrUpdateAttendanceAnswers($event, []);
-        }
+
 
         return $event;
     }
@@ -136,19 +132,7 @@ class EventFactory
         }
     }
 
-    private static function addOrUpdateAttendanceAnswers(Event $event, ?array $tags)
-    {
 
-        if ($event->hasAttendanceAnswers()) {
-            self::removeAttendanceAnswerFromEvent($event);
-        }
-
-        if (! empty($tags)) {
-            foreach ($tags as $tag) {
-                self::addAttendanceAnswerToEvent($event, $tag);
-            }
-        }
-    }
 
     private static function removeTagsFromEvent(Event $event)
     {
@@ -164,12 +148,7 @@ class EventFactory
         }
     }
 
-    private static function removeAttendanceAnswerFromEvent(Event $event)
-    {
-        foreach ($event->getAttendanceAnswers() as $tag) {
-            $event->removeAttendanceAnswer($tag);
-        }
-    }
+
 
     private static function addTagToEvent(Event $event, string $tag): void
     {
@@ -195,15 +174,5 @@ class EventFactory
         }
     }
 
-    private static function addAttendanceAnswerToEvent(Event $event, string $tag): void
-    {
-        /** @var Tag $tag */
-        $tag = Tag::currentTags(TypeTags::ATTENDANCE, $event->getColla())->where('value', $tag)->first();
 
-        $existingTag = $event->getAttendanceAnswers()->find($tag->getId());
-        if (! $existingTag) {
-            $event->attendanceAnswers()->save($tag);
-
-        }
-    }
 }

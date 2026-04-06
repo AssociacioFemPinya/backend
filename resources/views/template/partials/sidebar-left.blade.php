@@ -137,10 +137,7 @@
                                     <li>
                                         <a @if(Request::segment(1)=='multievents' && Request::segment(2)=='list') class="active" @endif  href="{!! route('multievents.list') !!}"><span class="sidebar-mini-hide">{!! trans('general.multievents') !!}</span></a>
                                     </li>
-                                    <li>
-                                        {{--  <a @if(Request::segment(2)=='events') class="active" @endif href="{!! route('admin.users') !!}">{!! trans('general.users') !!}</a>  --}}
-                                        <a @if(Request::segment(1)=='events' && Request::segment(2)=='answers') class="active" @endif href="{!! route('events.answers') !!}">{!! trans('attendance.attendance_answers') !!}</a>
-                                    </li>
+
                                     <li>
                                         <a @if(Request::segment(1)=='events' && Request::segment(2)=='tags') class="active" @endif href="{!! route('events.tags') !!}"> {!! trans('general.tags') !!}</a>
                                     </li>

@@ -99,5 +99,7 @@ return [
 
     "success_message" => "Félicitations! Votre demande a été traitée correctement!",
     "error_message" => "Oups... il semble qu'il y ait eu une erreur lors du traitement de votre demande",
-    "view_more" => "Voir plus..."
+    "view_more" => "Voir plus...",
+    "form" => "Formulaire",
+    "saving" => "Sauvegarde en cours",
 ];

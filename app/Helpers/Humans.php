@@ -170,18 +170,11 @@ class Humans
         return $status_verified;
     }
 
-    /** Read for humans answers of an Attendance as plain text ..*/
-    public static function readAttendanceAnswersText(Casteller|Event $casteller, array $answersOptions, ?Attendance $attendance, ?Event $event = null): string
+    public static function readAttendanceAnswersText(Casteller|Event $casteller, ?Attendance $attendance, ?Event $event = null): ?string
     {
         $attendanceOptions = is_null($attendance) || is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
-
-        if (empty($attendanceOptions)) {
-            return '';
-        }
-
-        if (! $event && $attendance) {
-            $event = $attendance->getEvent();
-        }
+        if (empty($attendanceOptions)) return '';
+        if (!$event && $attendance) $event = $attendance->getEvent();
 
         if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
             $schemaDict = [];
@@ -202,22 +195,13 @@ class Humans
                 $parsedOptions[] = $label . ': ' . $val;
             }
             return implode("\n", $parsedOptions);
-        } else {
-            $parsedOptions = [];
-            foreach ($attendanceOptions as $option) {
-                if (isset($answersOptions[$option])) {
-                    $parsedOptions[] = $answersOptions[$option];
-                } else {
-                    $tag = \App\Tag::find($option);
-                    $parsedOptions[] = $tag ? $tag->getName() : $option;
-                }
-            }
-            return implode(', ', $parsedOptions);
         }
+
+        return '';
     }
 
     /** Read for humans answers of an Attendance ..*/
-    public static function readAttendanceAnswers(Casteller|Event $casteller, array $answersOptions, ?Attendance $attendance, ?Event $event = null): ?string
+    public static function readAttendanceAnswers(Casteller|Event $casteller, ?Attendance $attendance, ?Event $event = null): ?string
     {
         $attendanceOptions = is_null($attendance) || is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
 
@@ -250,17 +234,6 @@ class Humans
                 $parsedOptions[] = "<b>" . e($label) . "</b>: " . e($val);
             }
             $text = implode('<br>', $parsedOptions);
-        } else {
-            // Formato antiguo (fallback array tags)
-            $parsedOptions = [];
-            foreach ($attendanceOptions as $option) {
-                if (isset($answersOptions[$option])) {
-                    $parsedOptions[] = $answersOptions[$option];
-                } else {
-                    $parsedOptions[] = $option;
-                }
-            }
-            $text = implode(', ', $parsedOptions);
         }
 
         if (strlen(strip_tags($text)) > 50) {
@@ -272,65 +245,20 @@ class Humans
         return $text;
     }
 
-    /** Read for humans answers of an Attendance ..*/
-    public static function readAttendanceAnswersTags(?Attendance $attendance): ?string
-    {
-        $tags = '';
 
-        if (is_null($attendance) || $attendance->getStatus() != AttendanceStatus::YES) {
-            return $tags;
-        }
-
-        $attendanceOptions = is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
-
-        // Check if FormBuilder structure
-        if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
-           return "<span class='badge badge-success'><i class='fa fa-list-alt'></i> Respostes Omplertes</span>";
-        }
-
-        $attendanceOptionsNames = is_null($attendance->getOptionsNames()) ? [] : $attendance->getOptionsNames();
-
-        foreach ($attendanceOptionsNames as $attendanceOptionName) {
-            $tags .= "<span class='badge badge-primary' style='margin-left: 3px; margin-bottom: 3px;'>".e($attendanceOptionName).'</span>';
-        }
-
-        return $tags;
-    }
 
     /** Read for humans selectable answers of an Attendance ..*/
     public static function readSelectableAttendanceAnswers(Event $event, ?Attendance $attendance): string
     {
-        $attendanceAnswers = '';
-
         if ($event->form_schema) {
             $butonBtn = $event->isOpen() && $attendance && $attendance->getStatus() == AttendanceStatus::YES ? 'btn-primary' : 'btn-secondary disabled';
             if ($attendance && $attendance->getStatus() == AttendanceStatus::YES) {
-                return '<button type="button" class="btn btn-sm '.$butonBtn.' btn-attendance-form pull-right" data-event_id="'.$event->getId().'"><i class="fa fa-list-alt"></i> ' . trans('general.form') . '</button>';
-            }
-            return '';
-        }
-
-        $allAttendanceOptions = $attendance && $attendance->getOptions() ? $attendance->getOptions() : [];
-        if (!is_array($allAttendanceOptions) || (is_array($allAttendanceOptions) && count($allAttendanceOptions) > 0 && array_keys($allAttendanceOptions) !== range(0, count($allAttendanceOptions) - 1))) {
-            $allAttendanceOptions = []; // Ignore new format for old renderer
-        }
-
-        $eventId = $event->getId();
-        $align = 'right';
-        $butonEnabled = $event->isOpen() && $attendance && $attendance->getStatus() == AttendanceStatus::YES;
-        foreach ($event->getAttendanceAnswersOptions() as $tagId => $option) {
-            if ($butonEnabled) {
-                $attendanceAnswers .= '<button type="button" class="badge btn-'.(in_array($tagId, $allAttendanceOptions) ? 'success' : 'secondary').
-                ' btn-attendance-option pull-'.$align.'" data-event_id="'.$eventId.'" data-tag_id="'.$tagId.
-                '" style="margin-left: 3px; margin-bottom: 3px; color: '.(in_array($tagId, $allAttendanceOptions) ? '#000000' : 'inherit').';"'.
-                '>'.$option.'</button>';
-            } else {
-                $attendanceAnswers .= '<button type="button" class="badge btn-secondary btn-attendance-option pull-'.$align.'"'.
-                'style="margin-left: 3px; margin-bottom: 3px; color: inherit;" disabled>'.$option.'</button>';
+                $formUrl = route('member.event.form', $event->getId());
+                return '<a href="'.$formUrl.'" class="btn btn-sm '.$butonBtn.' pull-right"><i class="fa fa-list-alt"></i> ' . trans('general.form') . '</a>';
             }
         }
 
-        return $attendanceAnswers;
+        return '';
     }
 
     /** Read for humans companions of an Attendance ..*/

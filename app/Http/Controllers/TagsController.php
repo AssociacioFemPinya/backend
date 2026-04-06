@@ -75,23 +75,7 @@ final class TagsController extends Controller
         return view('tags.list', $data_content);
     }
 
-    /** List Tags type=TypeTags::ATTENDANCE */
-    public function getListAttendance(): View
-    {
 
-        $user = $this->user();
-
-        if (! $user->can('view events') && ! $user->can('edit events')) {
-            abort(404);
-        }
-
-        $colla = Colla::getCurrent();
-        $data_content['colla'] = $colla;
-        $data_content['tags'] = $colla->getTags(TypeTags::ATTENDANCE);
-        $data_content['type'] = TypeTags::ATTENDANCE;
-
-        return view('tags.list', $data_content);
-    }
 
     /**get Modal add Tag via AJAX*/
     public function getAddTagModalAjax($type = TypeTags::CASTELLERS): View
@@ -326,54 +310,6 @@ final class TagsController extends Controller
         return redirect()->to(route('events.tags'));
     }
 
-    /** ADD Atendance Tag*/
-    public function postAddAttendanceTag(TagsManager $tagsManager, Request $request): RedirectResponse
-    {
-
-        $user = $this->user();
-
-        if (! $user->can('edit events')) {
-            abort(404);
-        }
-
-        $request->validate([
-            'name' => 'required|max:150|min:2',
-        ]);
-
-        $colla = Colla::getCurrent();
-
-        //Check vàlid name
-        if (! Tag::validNameAttendance($request->input('name'))) {
-
-            Session::flash('status_ko', trans('tag.invalid_name'));
-
-            return redirect()->to(route('events.answers'));
-        }
-
-        //Check if exist
-        $value = Str::slug($request->input('name'));
-        $tags_same = Tag::query()
-            ->where('colla_id', $colla->getId())
-            ->where('type', TypeTags::ATTENDANCE)
-            ->where('value', $value)
-            ->count();
-
-        if ($tags_same >= 1) {
-
-            Session::flash('status_ko', trans('tag.tag_exist'));
-
-            return redirect()->to(route('events.answers'));
-        }
-
-        $bag = new ParameterBag($request->except('_token'));
-        $bag->set('type', TypeTags::ATTENDANCE);
-        $bag->set('value', $value);
-        $tagsManager->createTag($colla, $bag);
-
-        Session::flash('status_ok', trans('tag.tag_added'));
-
-        return redirect()->to(route('events.answers'));
-    }
 
     public function getEditTagsModalAjax(Tag $tag): View
     {
@@ -425,11 +361,6 @@ final class TagsController extends Controller
                     return redirect()->to(route('events.tags'));
                 }
             }
-        } elseif ($tag->getType() === TypeTags::ATTENDANCE) {
-            if (! Tag::validNameAttendance($request->input('name'))) {
-
-                return redirect()->to(route('events.answers'));
-            }
         } elseif ($tag->getType() === TypeTags::BOARDS) {
             if (! Tag::validName($request->input('name'))) {
 
@@ -451,9 +382,6 @@ final class TagsController extends Controller
         } elseif ($tag->getType() === TypeTags::EVENTS) {
 
             return redirect()->to(route('events.tags'));
-        } elseif ($tag->getType() === TypeTags::ATTENDANCE) {
-
-            return redirect()->to(route('events.answers'));
         }
 
         return redirect()->to(route('boards.tags'));
@@ -486,9 +414,6 @@ final class TagsController extends Controller
         } elseif ($type === TypeTags::EVENTS) {
 
             return redirect()->to(route('events.tags'));
-        } elseif ($type == TypeTags::ATTENDANCE) {
-
-            return redirect()->to(route('events.answers'));
         }
 
         return redirect()->to(route('boards.tags'));

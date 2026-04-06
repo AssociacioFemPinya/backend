@@ -16,6 +16,6 @@ class TokenAuthController extends Controller
         $sessionExpires = $authConfig->getColla()->config->getMemberSessionExpire();
         Auth::guard('member')->login($authConfig, ! $sessionExpires);
 
-        return redirect()->route('member.calendar');
+        return redirect()->intended(route('member.calendar'));
     }
 }

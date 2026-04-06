@@ -15,4 +15,8 @@ return [
     "tags" => "Etiquetes",
     "1" => "Sí",
     "2" => "No",
+    "no_form_configured" => "Aquest event no té cap formulari configurat.",
+    "event_closed" => "L'event està tancat. No es poden modificar les respostes.",
+    "event_open" => "L'event està obert. Pots respondre el formulari.",
+    "form_saved_success" => "Les respostes s'han desat correctament!",
 ];

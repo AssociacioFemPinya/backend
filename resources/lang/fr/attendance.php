@@ -15,4 +15,8 @@ return [
     "tags" => "Tags",
     "1" => "Oui",
     "2" => "Non",
+    "no_form_configured" => "Cet événement n'a pas de formulaire configuré.",
+    "event_closed" => "L'événement est fermé. Les réponses ne peuvent pas être modifiées.",
+    "event_open" => "L'événement est ouvert. Vous pouvez remplir le formulaire.",
+    "form_saved_success" => "Les réponses ont été enregistrées avec succès !",
 ];

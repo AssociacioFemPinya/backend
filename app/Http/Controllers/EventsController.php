@@ -179,7 +179,7 @@ class EventsController extends Controller
         $data_content['type_add'] = 'ONE';
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        $data_content['attendance_answers'] = $colla->getTags(TypeTags::ATTENDANCE);
+        
         $data_content['types'] = Event::getTypes();
 
         return view('events.create', $data_content);
@@ -306,7 +306,7 @@ class EventsController extends Controller
         $data_content['event'] = $event;
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        $data_content['attendance_answers'] = $colla->getTags(TypeTags::ATTENDANCE);
+        
         $data_content['types'] = Event::getTypes();
 
         return view('events.create', $data_content);

@@ -362,19 +362,8 @@ class TecnicaConversation extends Conversation
                             return $this->askOfferEvents(EventTypeNameEnum::Activitat()->value(), $this->option, 3, $type);
                     }
                 } elseif (in_array($answer, $eventsAttendanceEventAnswersMenu)) {
-                    $attendances = Attendance::getAttendanceEvent($event->getId());
-
-                    $attendanceAnswers = [];
-
-                    foreach ($attendances as $attendance) {
-                        $attendanceAnswers[] = $attendance->getOptionsNames();
-                    }
-
-                    $countedAnswers = array_count_values(array_merge([], ...$attendanceAnswers));
-
-                    foreach ($countedAnswers as $key => $val) {
-                        $this->getBot()->reply($key.': '.$val);
-                    }
+                    $appUrl = url('/event/attendance/' . $event->getId());
+                    $this->getBot()->reply("📝 Consulta les respostes dels formularis directament a l'App Web:\n" . $appUrl);
 
                     return $this->repeat(__('botman.conversation_ask_castellers_attendance_event'));
                 } else {

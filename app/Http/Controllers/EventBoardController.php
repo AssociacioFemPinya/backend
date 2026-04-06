@@ -527,7 +527,7 @@ final class EventBoardController extends Controller
                 'castellerStatus' => trans('attendance.attendance_status').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatus())).'"></i>',
                 'castellerStatusVerified' => trans('attendance.attendance_status_verified').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatusVerified())).'"></i>',
                 'castellerTags' => Humans::readCastellerColumn($casteller, 'tags', 'left'),
-                'castellerAttendanceTags' => Humans::readAttendanceAnswersTags($attendance),
+                'castellerAttendanceTags' => Humans::readAttendanceAnswersText($casteller, $attendance),
             ],
 
             Response::HTTP_OK);

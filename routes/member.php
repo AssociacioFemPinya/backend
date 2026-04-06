@@ -17,6 +17,7 @@ Route::group(['middleware' => ['auth:member']], function() {
 
     # Calendar
     Route::get('/calendar', [CalendarController::class, 'getCalendar'])->name('member.calendar');
+    Route::get('/event/{event}/form', [CalendarController::class, 'getEventForm'])->where('event', '[0-9]+')->name('member.event.form');
     Route::post('/members/get/attendance', [CalendarController::class, 'getEventAttendanceAjax'])->name('member.get.event-attendance');
     Route::get('/members/get/event/{event}', [CalendarController::class, 'getEventInfoModalAjax'])->name('member.get.event-info-modal');
     Route::get('/members/get/event-form/{event}', [CalendarController::class, 'getEventFormModalAjax'])->name('member.get.event-form-modal');

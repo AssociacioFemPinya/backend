@@ -37,7 +37,7 @@ class MultieventController extends Controller
         $data_content['type_add'] = 'GROUP';
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        $data_content['attendance_answers'] = $colla->getTags(TypeTags::ATTENDANCE);
+        
         $data_content['types'] = Multievent::getTypes();
 
         return view('multievents.create', $data_content);
@@ -201,8 +201,9 @@ class MultieventController extends Controller
             if ($request->has('tags_casteller')) {
                 $eventBag->set('tags_casteller', $request->tags_casteller);
             }
-            if ($request->has('answers')) {
-                $eventBag->set('answers', $request->answers);
+            if ($request->has('form_schema')) {
+                $formSchema = json_decode($request->input('form_schema'), true);
+                $eventBag->set('form_schema', $formSchema);
             }
 
             $eventsManager->createEvent($colla, $eventBag);
@@ -230,7 +231,7 @@ class MultieventController extends Controller
         $data_content['multievent'] = $multievent;
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        $data_content['attendance_answers'] = $colla->getTags(TypeTags::ATTENDANCE);
+        
         $data_content['types'] = Multievent::getTypes();
 
         return view('multievents.create', $data_content);
@@ -416,8 +417,9 @@ class MultieventController extends Controller
             if ($request->has('tags_casteller')) {
                 $eventBag->set('tags_casteller', $request->tags_casteller);
             }
-            if ($request->has('answers')) {
-                $eventBag->set('answers', $request->answers);
+            if ($request->has('form_schema')) {
+                $formSchema = json_decode($request->input('form_schema'), true);
+                $eventBag->set('form_schema', $formSchema);
             }
 
             $existingEvent = $multievent->events()

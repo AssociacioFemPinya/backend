@@ -7,8 +7,6 @@
                     {!! trans('tag.update_tag') !!}
                 @elseif($tag->type=='EVENTS')
                     {!! trans('tag.update_event_tag') !!}
-                @elseif($tag->type=='ATTENDANCE')
-                    {!! trans('tag.update_attendance_tag') !!}
                 @elseif($type=='POSITION')
                     {!! trans('casteller.update_position') !!}
                 @endif
@@ -17,8 +15,6 @@
                     {!! trans('tag.add_tag') !!}
                 @elseif($type=='EVENTS')
                     {!! trans('tag.add_tag_event') !!}
-                @elseif($type=='ATTENDANCE')
-                    {!! trans('attendance.attendance_answers') !!}
                 @elseif($type=='POSITION')
                     {!! trans('casteller.add_position') !!}
                 @endif
@@ -37,8 +33,6 @@
             {!! Form::open(array('id' => 'FormAddTag', 'url' => route('castellers.tags.add'), 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data')) !!}
         @elseif($type=='EVENTS')
             {!! Form::open(array('id' => 'FormAddTag', 'url' => route('events.tags.add'), 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data')) !!}
-        @elseif($type=='ATTENDANCE')
-            {!! Form::open(array('id' => 'FormAddTag', 'url' => route('events.answers.add'), 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data')) !!}
         @elseif($type=='BOARDS')
             {!! Form::open(array('id' => 'FormAddTag', 'url' => route('boards.tags.add'), 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data')) !!}
         @elseif($type=='POSITION')

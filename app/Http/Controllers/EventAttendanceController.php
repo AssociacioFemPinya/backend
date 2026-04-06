@@ -59,37 +59,58 @@ class EventAttendanceController extends Controller
             ->withStatus(CastellersStatusEnum::ActiveAll())
             ->eloquentBuilder()->get();
 
-        $csv = new CsvExporter([
+        // Build dynamic form field columns from the event's form_schema
+        $formFields = [];
+        $schemaDict = [];
+        if ($event->form_schema && is_array($event->form_schema)) {
+            foreach ($event->form_schema as $field) {
+                if (isset($field['name']) && isset($field['label'])) {
+                    $formFields[] = $field['name'];
+                    $schemaDict[$field['name']] = $field['label'];
+                }
+            }
+        }
+
+        $csvHeaders = [
             trans('casteller.alias'),
             trans('casteller.name'),
             trans('casteller.last_name'),
             trans('attendance.attendance_status'),
             trans('attendance.attendance_status_verified'),
-            trans('attendance.attendance_answers'),
             trans('attendance.companions'),
-            trans('attendance.tags')]
-        );
-        $answers = $event->getAttendanceAnswers();
-        $answersOptions = [];
-        foreach ($answers as $answer) {
-            $answersOptions[$answer->getId()] = $answer->getName();
+            trans('attendance.tags'),
+        ];
+        // Add one column per form field
+        foreach ($formFields as $fieldName) {
+            $csvHeaders[] = $schemaDict[$fieldName];
         }
+
+        $csv = new CsvExporter($csvHeaders);
 
         foreach ($castellers as $casteller) {
             $attendance = Attendance::getAttendanceCastellerEvent($casteller->getId(), $event->getId());
             if ($attendance != null) {
-                $answersOptionsText = Humans::readAttendanceAnswersText($casteller, $answersOptions, $attendance, $event);
-
-                $csv->addRow([
+                $row = [
                     $casteller->getAlias(),
                     $casteller->getName(),
                     $casteller->getLastName(),
                     AttendanceStatus::getById($attendance->status),
                     AttendanceStatus::getById($attendance->status_verified),
-                    $answersOptionsText,
                     $attendance->getCompanions(),
                     implode(',', $casteller->tagsArray()),
-                ]);
+                ];
+
+                // Add form field values
+                $options = $attendance->getOptions() ?: [];
+                foreach ($formFields as $fieldName) {
+                    $val = $options[$fieldName] ?? '';
+                    if (is_array($val)) {
+                        $val = implode(', ', $val);
+                    }
+                    $row[] = $val;
+                }
+
+                $csv->addRow($row);
             }
         }
 
@@ -108,7 +129,7 @@ class EventAttendanceController extends Controller
 
         $this->authorize('getEvent', $event);
 
-        $answers = $event->getAttendanceAnswers();
+        $answers = [];
         $answersOptions = [];
         foreach ($answers as $answer) {
             $answersOptions[$answer->getId()] = $answer->getName();
@@ -232,7 +253,7 @@ class EventAttendanceController extends Controller
             $array_attender['alias'] .= $casteller->getDisplayName();
             $array_attender['status'] = Humans::readAttendanceStatus($casteller, $attendance);
             $array_attender['status_verified'] = Humans::readAttendanceStatusVerified($casteller, $attendance);
-            $array_attender['attendance_answers'] = Humans::readAttendanceAnswers($casteller, $answersOptions, $attendance, $event);
+            $array_attender['attendance_answers'] = Humans::readAttendanceAnswers($casteller, $attendance, $event);
             $array_attender['companions'] = Humans::readAttendanceCompanions($casteller, $attendance, $event);
             $array_attender['last_update'] = Humans::readAttendanceLastUpdate($attendance);
 

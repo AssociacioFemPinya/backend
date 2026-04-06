@@ -573,83 +573,14 @@ class EventsConversation extends Conversation
 
     private function askOptions(Event $event, string $option)
     {
+        $formUrl = url('/member/event/' . $event->getId() . '/form');
+        $this->getBot()->reply("📝 Per respondre el formulari, accedeix al següent enllaç:\n" . $formUrl);
 
-        $answersOptions = $event->getAttendanceAnswersOptions();
-        $attendance = Attendance::getAttendanceCastellerEvent($this->casteller->getId(), $event->getId());
-        $customAnswersCasteller = $attendance->getOptionsNames();
+        // Return to the previous menu
+        $attendance = Attendance::getAttendanceCasteller($this->casteller->getId());
+        $eventAttendance = $attendance->where('event_id', $event->getId())->first();
 
-        if (! empty($answersOptions)) {
-            $answersOptions[0] = __('general.none');
-        }
-
-        [$answersOptionsFormated, $numAnswer] = BotmanHelper::getCustomAnswersFormatted($answersOptions, $customAnswersCasteller, $this->botmanEmojisHelper);
-        // SERVICE
-        $botmanService = new BotmanService($this->botmanDriver);
-        // MAIN MENU
-        $eventsMenu = $botmanService->getEventsMenu($this->casteller);
-        $mainMenu = $botmanService->getMainMenu($this->casteller);
-        $rows = BotmanHelper::splitMenuByRows(array_merge($numAnswer, $botmanService->getBackButton($this->casteller)), 6);
-        $rows[] = $eventsMenu;
-        $rows[] = $mainMenu;
-
-        $answersOptionsFormatedMessage = BotmanHelper::getConcatenatedKeyValueArrayList($answersOptionsFormated, $this->botmanDriver);
-
-        $this->getBot()->reply(__('botman.answers').':'.$this->lb.$this->lb.$answersOptionsFormatedMessage);
-
-        $questionText = __('botman.general_choose_option');
-
-        if ($this->botmanDriver instanceof TelegramDriver) {
-            $buttonsQuestion = [];
-            $buttonsKeyboard = $rows;
-        } else {
-            $buttonsQuestion = $rows;
-            $buttonsKeyboard = [];
-        }
-
-        $this->ask(
-            $botmanService->getQuestion($questionText, $buttonsQuestion),
-            function (Answer $answer) use ($botmanService, $event, $eventsMenu, $mainMenu, $option, $answersOptions, $answersOptionsFormated, $numAnswer) {
-                if (in_array($answer, $mainMenu)) {
-                    return $this->manageMainMenu($answer);
-                } elseif (in_array($answer, $eventsMenu)) {
-                    return $this->manageCurrentMenu($answer);
-                } elseif (in_array($answer, $numAnswer)) {
-                    $answer = str_replace($this->botmanEmojisHelper->getEmoji('check').' ', '', $botmanService->getAnswer($answer));
-                    $answer = $answersOptionsFormated[intval($answer) - 1];
-                    $answer = str_replace($this->botmanEmojisHelper->getEmoji('check').' ', '', $answer);
-                    if ($answer == __('general.none')) {
-                        Attendance::setAnswers($this->casteller->getId(), $event->getId(), [], Attendance::getSourceId('telegram'));
-                        $this->getBot()->reply(__('botman.your_answers').__('general.none'));
-                    } else {
-                        $attendance = Attendance::getAttendanceCastellerEvent($this->casteller->getId(), $event->getId());
-                        $optionsArray = [array_search($answer, $answersOptions)];
-
-                        if ($attendance && ! is_null($attendance->getOptions())) {
-                            if (in_array($optionsArray[0], $attendance->getOptions())) {
-                                $optionsArray = array_diff($attendance->getOptions(), $optionsArray);
-                            } else {
-                                $optionsArray = array_merge($optionsArray, $attendance->getOptions());
-                            }
-                        }
-
-                        Attendance::setAnswers($this->casteller->getId(), $event->getId(), array_values($optionsArray), Attendance::getSourceId('telegram'));
-
-                        $attendance = Attendance::getAttendanceCastellerEvent($this->casteller->getId(), $event->getId());
-                        $this->getBot()->reply(__('botman.your_answers').$this->lb.BotmanHelper::getOptionNames($attendance, $this->botmanDriver));
-                    }
-
-                    return $this->askOptions($event, $option);
-                } elseif ($answer == __('botman.back') | $answer == $this->botmanEmojisHelper->getEmoji('eventsTop')) {
-                    $attendance = Attendance::getAttendanceCasteller($this->casteller->getId());
-                    $eventAttendance = $attendance->where('event_id', $event->getId())->first();
-
-                    return $this->askSetAttendanceEvent($event, $eventAttendance, $option);
-                } else {
-                    return $this->repeat(__('botman.general_use_menu'));
-                }
-            },
-            $botmanService->getKeyBoard($buttonsKeyboard)
-        );
+        return $this->askSetAttendanceEvent($event, $eventAttendance, $option);
     }
 
     private function askVerifyAttendanceEvent(Event $event)

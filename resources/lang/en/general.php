@@ -98,6 +98,8 @@ return [
 
     "success_message" => "Congrats! Your request has been processed successfully!",
     "error_message" => "Oops... it seems something went wrong while processing your request",
-    "view_more" => "View more..."
+    "view_more" => "View more...",
+    "form" => "Form",
+    "saving" => "Saving",
 
 ];

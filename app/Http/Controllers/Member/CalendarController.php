@@ -51,6 +51,28 @@ class CalendarController extends Controller
         return view('members.modals.get-event-form', $data_content);
     }
 
+    /** Dedicated event form page */
+    public function getEventForm(Event $event)
+    {
+        $casteller = Auth::user()->casteller;
+
+        if ($event->getCollaId() != $casteller->getCollaId()) {
+            abort(404);
+        }
+
+        $attendance = Attendance::getAttendanceCastellerEvent($casteller->getId(), $event->getId());
+        $userOptions = $attendance ? $attendance->getOptions() : [];
+
+        return view('members.event-form', [
+            'event' => $event,
+            'schema' => $event->form_schema ? json_encode($event->form_schema) : '[]',
+            'userOptions' => json_encode($userOptions ?: (object)[]),
+            'attendance' => $attendance,
+            'casteller' => $casteller,
+            'colla' => Colla::getCurrent(),
+        ]);
+    }
+
 
     /** get upcoming events via AJAX*/
     public function getEventAttendanceAjax(Request $request): JsonResponse
@@ -91,7 +113,7 @@ class CalendarController extends Controller
                     <i class="fa fa-calendar"></i>
                 </button>',
                 'isOpen' => $event->isOpen(),
-                'dropDownButton' => (count($event->getAttendanceAnswersOptions()) > 0 | $event->getCompanions()) ? '<i class="fa-solid fa-question-circle" style="font-size: 23px;"></i>' : '',
+                'dropDownButton' => (is_array($event->form_schema) && count($event->form_schema) > 0 | $event->getCompanions()) ? '<i class="fa-solid fa-question-circle" style="font-size: 23px;"></i>' : '',
             ];
             $data->data[] = $array_event;
         }

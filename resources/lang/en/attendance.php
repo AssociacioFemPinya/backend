@@ -15,4 +15,8 @@ return [
     "tags" => "Tags",
     "1" => "Yes",
     "2" => "No",
+    "no_form_configured" => "This event has no form configured.",
+    "event_closed" => "The event is closed. Answers cannot be modified.",
+    "event_open" => "The event is open. You can fill in the form.",
+    "form_saved_success" => "Answers saved successfully!",
 ];

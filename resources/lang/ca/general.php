@@ -98,6 +98,8 @@ return [
 
     "success_message" => "Felicitats! La teva petició s'ha processat correctament!",
     "error_message" => "Uix...sembla que hi ha hagut un error processant la teva petició",
-    "view_more" => "Veure més..."
+    "view_more" => "Veure més...",
+    "form" => "Formulari",
+    "saving" => "Desant",
 
 ];

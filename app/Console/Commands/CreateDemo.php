@@ -449,31 +449,6 @@ class CreateDemo extends Command
             $addedEventTags[] = $tagManager->createTag($colla, $parametersBag);
         }
 
-        $eventAnswersActuacionsTags = [];
-        foreach ($this->eventAnswersActuacions as $eventAnswer) {
-            $parametersBag = new ParameterBag();
-            $tag = [];
-            $tag['name'] = $eventAnswer[1];
-            $tag['value'] = $eventAnswer[0];
-            $tag['type'] = 'ATTENDANCE';
-            $tag['group'] = null;
-            $tag['colla_id'] = $id_colla;
-            $parametersBag->add($tag);
-            $eventAnswersActuacionsTags[] = $tagManager->createTag($colla, $parametersBag);
-        }
-
-        $eventAnswersAssajosTags = [];
-        foreach ($this->eventAnswersAssajos as $eventAnswer) {
-            $parametersBag = new ParameterBag();
-            $tag = [];
-            $tag['name'] = $eventAnswer[1];
-            $tag['value'] = $eventAnswer[0];
-            $tag['type'] = 'ATTENDANCE';
-            $tag['group'] = null;
-            $tag['colla_id'] = $id_colla;
-            $parametersBag->add($tag);
-            $eventAnswersAssajosTags[] = $tagManager->createTag($colla, $parametersBag);
-        }
 
         $allEvents = $colla->getEvents();
         $assajos = $colla->events()->where('type', 1)->get();
@@ -496,47 +471,8 @@ class CreateDemo extends Command
         $bar->finish();
 
         $this->newLine();
-
-        $this->newLine();
-        $this->line('Assignant Answers als assajos...');
-        $this->newLine();
-
-        $bar = $this->output->createProgressBar(count($assajos));
-
-        $bar->start();
-
-        foreach ($assajos as $assaig) {
-            foreach ($eventAnswersAssajosTags as $eventAnswersAssajosTag) {
-                $assaig->attendanceAnswers()->attach($eventAnswersAssajosTag->getId());
-                //$assaig->tags()->attach(array_column($eventAnswersAssajosTags, 'tag_id'));
-            }
-
-            $bar->advance();
-        }
-
-        $bar->finish();
-
-        $this->newLine();
-
-        $this->newLine();
-        $this->line('Assignant Answers a les Actuacions...');
-        $this->newLine();
-
-        $bar = $this->output->createProgressBar(count($actuacions));
-
-        $bar->start();
-
-        foreach ($actuacions as $actuacio) {
-            foreach ($eventAnswersActuacionsTags as $eventAnswersActuacionsTag) {
-                $actuacio->attendanceAnswers()->attach($eventAnswersActuacionsTag->getId());
-            }
-            $bar->advance();
-        }
-
-        $bar->finish();
-        $this->newLine(2);
-
     }
+
 
     /** create events demo */
     private function attendances($id_colla, $lang)
@@ -561,7 +497,6 @@ class CreateDemo extends Command
 
         foreach ($events as $event) {
 
-            $answers = $event->getAttendanceAnswers()->toArray();
 
             // DEIXEM SENSE ASSISTÈNCIA ALMENYS A UN TERÇ DELS CASTELLERS
             $castellersTaken = $colla->castellers()->take($faker->numberBetween(((count($castellers) * 33) / 100), count($castellers)))->get();
@@ -574,7 +509,7 @@ class CreateDemo extends Command
                 $attendance['status'] = $faker->numberBetween(1, 3);
 
                 if ($attendance['status'] === 1) {
-                    $attendance['options'] = (! empty($answers)) ? json_encode($faker->randomElements(array_column($answers, 'id_tag'))) : null;
+                    $attendance['options'] = null;
                     $attendance['companions'] = ($event->getCompanions()) ? $faker->numberBetween(0, 5) : null;
                 }
 

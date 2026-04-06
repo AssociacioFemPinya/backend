@@ -246,19 +246,6 @@
                     });
             });
 
-            $(document).on('click', '.btn-attendance-form', function (event) {
-                const eventId = $(event.currentTarget).data("event_id");
-                const url = `{{ route('member.get.event-form-modal', ':eventId') }}`.replace(':eventId', eventId);
-
-                $.get(url)
-                    .done(function(data) {
-                        $('#modalEventInfoContent').html(data);
-                        $('#modalEventInfo').modal('show');
-                    })
-                    .fail(function(xhr) {
-                        alert(xhr.responseJSON.message);
-                    });
-            });
 
             $(document).on('click', '.btn-google-calendar', function (event) {
                 const urlGoogleCalendar = $(event.currentTarget).data("url_google_calendar");
