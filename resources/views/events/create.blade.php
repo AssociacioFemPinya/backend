@@ -366,8 +366,30 @@
         $(function ()
         {
             // Init FormBuilder
+            @php
+                $language = strtolower((string) Auth()->user()->getLanguage());
+                // $formBuilderLocale = [
+                //     'ca' => 'ca-ES',
+                //     'ca-es' => 'ca-ES',
+                //     'ca_es' => 'ca-ES',
+                //     'es' => 'es-ES',
+                //     'es-es' => 'es-ES',
+                //     'es_es' => 'es-ES',
+                //     'fr' => 'fr-FR',
+                //     'fr-fr' => 'fr-FR',
+                //     'fr_fr' => 'fr-FR',
+                //     'en' => 'en-US',
+                //     'en-us' => 'en-US',
+                //     'en_us' => 'en-US',
+                // ][$language] ?? 'en-US';
+                $formBuilderLocale = 'es-ES';
+            @endphp
             var formBuilderOptions = {
-                locale: 'ca-ES',
+                i18n: {
+                    // Apuntamos a tu propia carpeta local
+                    location: '/js/plugins/formbuilder/lang/'
+                },
+                locale: 'es-ES', // El nombre del archivo sin el .lang
                 controlPosition: 'left',
                 dataType: 'json',
                 disableFields: ['file', 'hidden', 'button'],

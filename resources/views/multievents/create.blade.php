@@ -539,8 +539,25 @@
             $('#open_date_select').change();
 
             // Form Builder initialization
+            @php
+                $language = strtolower((string) Auth()->user()->getLanguage());
+                $formBuilderLocale = [
+                    'ca' => 'ca-ES',
+                    'ca-es' => 'ca-ES',
+                    'ca_es' => 'ca-ES',
+                    'es' => 'es-ES',
+                    'es-es' => 'es-ES',
+                    'es_es' => 'es-ES',
+                    'fr' => 'fr-FR',
+                    'fr-fr' => 'fr-FR',
+                    'fr_fr' => 'fr-FR',
+                    'en' => 'en-US',
+                    'en-us' => 'en-US',
+                    'en_us' => 'en-US',
+                ][$language] ?? 'en-US';
+            @endphp
             var formBuilderOptions = {
-                locale: 'ca-ES',
+                locale: "{{ $formBuilderLocale }}",
                 controlPosition: 'left',
                 dataType: 'json',
                 disableFields: ['file', 'hidden', 'button'],
