@@ -132,7 +132,7 @@ class MultieventController extends Controller
             $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
 
             if ($request->open_date_select === 'now') {
-                $openDate = $now;
+                $eventOpenDate = $now;
             } elseif ($request->open_date_select === 'before_starts') {
                 switch ($request->open_date_mode) {
                     case 'months':
