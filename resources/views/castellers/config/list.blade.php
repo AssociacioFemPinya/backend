@@ -16,6 +16,16 @@
         #castellers td{
             cursor:pointer;
         }
+
+        .toggle-all-switch[data-indeterminate="true"] + .switchery {
+            box-shadow: inset 0 0 0 16px #f0ad4e;
+            border-color: #f0ad4e;
+        }
+
+        .toggle-all-switch[data-indeterminate="true"] + .switchery > small {
+            left: 50%;
+            transform: translateX(-50%);
+        }
     </style>
 @endsection
 
@@ -106,18 +116,6 @@
                 document.querySelectorAll('.toggle-all-switch[data-indeterminate="true"]').forEach(function (element) {
                     element.indeterminate = true;
                     element.setAttribute('aria-checked', 'mixed');
-
-                    var switcheryElement = element.nextElementSibling;
-                    if (switcheryElement && switcheryElement.classList && switcheryElement.classList.contains('switchery')) {
-                        switcheryElement.style.boxShadow = 'inset 0 0 0 16px #f0ad4e';
-                        switcheryElement.style.borderColor = '#f0ad4e';
-
-                        var jack = switcheryElement.querySelector('small');
-                        if (jack) {
-                            jack.style.left = '50%';
-                            jack.style.transform = 'translateX(-50%)';
-                        }
-                    }
                 });
             });
         </script>
