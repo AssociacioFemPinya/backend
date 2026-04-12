@@ -557,7 +557,9 @@
                 ][$language] ?? 'en-US';
             @endphp
             var formBuilderOptions = {
-                locale: "{{ $formBuilderLocale }}",
+                i18n: {
+                    locale: "{{ $formBuilderLocale }}"
+                },
                 controlPosition: 'left',
                 dataType: 'json',
                 disableFields: ['file', 'hidden', 'button'],
@@ -569,6 +571,51 @@
                     'textarea': ['className', 'access'],
                     'date': ['className', 'access'],
                     'number': ['className', 'access']
+                },
+                onOpenFieldEdit: function () {
+                    var $editor = $('#fb-editor');
+
+                    var getNextOptionValueId = function () {
+                        var maxValue = 0;
+
+                        $editor.find('.option-value').each(function () {
+                            var currentValue = parseInt($(this).val(), 10);
+
+                            if (!isNaN(currentValue) && currentValue > maxValue) {
+                                maxValue = currentValue;
+                            }
+                        });
+
+                        return maxValue + 1;
+                    };
+
+                    var nextOptionValueId = getNextOptionValueId();
+
+                    $editor
+                        .off('input.formBuilderOptionValueSync', '.option-label')
+                        .on('input.formBuilderOptionValueSync', '.option-label', function () {
+                            var $labelInput = $(this);
+                            var $optionRow = $labelInput.closest('li');
+                            var $optionValue = $optionRow.find('.option-value').first();
+
+                            if (!$optionValue.length) {
+                                return;
+                            }
+
+                            $optionValue.hide().attr('readonly', true);
+
+                            if ($optionValue.val()) {
+                                return;
+                            }
+
+                            $optionValue.val(nextOptionValueId++).trigger('change');
+                        })
+                        .off('focusin.formBuilderOptionValueReadonly', '.option-value')
+                        .on('focusin.formBuilderOptionValueReadonly', '.option-value', function () {
+                            $(this).hide().attr('readonly', true);
+                        });
+
+                    $editor.find('.option-value').hide().attr('readonly', true);
                 }
             };
             @php

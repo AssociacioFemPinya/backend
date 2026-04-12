@@ -352,6 +352,9 @@
     <script src="{!! asset('js/plugins/select2/js/select2.full.min.js') !!}"></script>
     <script src="{{ asset('js/plugins/cloudflare-switchery/js/switchery.js') }}"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+
     <script type="text/javascript" src="{!! asset('js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') !!}"></script>
     @if (Auth()->user()->language=='ca')
         <script type="text/javascript" src="{!! asset('js/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.ca.min.js') !!}"></script>
@@ -359,37 +362,32 @@
         <script type="text/javascript" src="{!! asset('js/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') !!}"></script>
     @endif
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-    <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
-
     <script>
         $(function ()
         {
             // Init FormBuilder
             @php
-                $language = strtolower((string) Auth()->user()->getLanguage());
-                // $formBuilderLocale = [
-                //     'ca' => 'ca-ES',
-                //     'ca-es' => 'ca-ES',
-                //     'ca_es' => 'ca-ES',
-                //     'es' => 'es-ES',
-                //     'es-es' => 'es-ES',
-                //     'es_es' => 'es-ES',
-                //     'fr' => 'fr-FR',
-                //     'fr-fr' => 'fr-FR',
-                //     'fr_fr' => 'fr-FR',
-                //     'en' => 'en-US',
-                //     'en-us' => 'en-US',
-                //     'en_us' => 'en-US',
-                // ][$language] ?? 'en-US';
-                $formBuilderLocale = 'es-ES';
+                    $language = strtolower((string) Auth()->user()->getLanguage());
+                    $formBuilderLocale = [
+                        'ca' => 'ca-ES',
+                        'ca-es' => 'ca-ES',
+                        'ca_es' => 'ca-ES',
+                        'es' => 'es-ES',
+                        'es-es' => 'es-ES',
+                        'es_es' => 'es-ES',
+                        'fr' => 'fr-FR',
+                        'fr-fr' => 'fr-FR',
+                        'fr_fr' => 'fr-FR',
+                        'en' => 'en-US',
+                        'en-us' => 'en-US',
+                        'en_us' => 'en-US',
+                    ][$language] ?? 'en-US';
             @endphp
             var formBuilderOptions = {
                 i18n: {
-                    // Apuntamos a tu propia carpeta local
-                    location: '/js/plugins/formbuilder/lang/'
+                    location: '/js/plugins/formbuilder/lang/',
+                    locale: "{{ $formBuilderLocale }}"
                 },
-                locale: 'es-ES', // El nombre del archivo sin el .lang
                 controlPosition: 'left',
                 dataType: 'json',
                 disableFields: ['file', 'hidden', 'button'],
@@ -401,6 +399,51 @@
                     'textarea': ['className', 'access'],
                     'date': ['className', 'access'],
                     'number': ['className', 'access']
+                },
+                onOpenFieldEdit: function () {
+                    var $editor = $('#fb-editor');
+
+                    var getNextOptionValueId = function () {
+                        var maxValue = 0;
+
+                        $editor.find('.option-value').each(function () {
+                            var currentValue = parseInt($(this).val(), 10);
+
+                            if (!isNaN(currentValue) && currentValue > maxValue) {
+                                maxValue = currentValue;
+                            }
+                        });
+
+                        return maxValue + 1;
+                    };
+
+                    var nextOptionValueId = getNextOptionValueId();
+
+                    $editor
+                        .off('input.formBuilderOptionValueSync', '.option-label')
+                        .on('input.formBuilderOptionValueSync', '.option-label', function () {
+                            var $labelInput = $(this);
+                            var $optionRow = $labelInput.closest('li');
+                            var $optionValue = $optionRow.find('.option-value').first();
+
+                            if (!$optionValue.length) {
+                                return;
+                            }
+
+                            $optionValue.hide().attr('readonly', true);
+
+                            if ($optionValue.val()) {
+                                return;
+                            }
+
+                            $optionValue.val(nextOptionValueId++).trigger('change');
+                        })
+                        .off('focusin.formBuilderOptionValueReadonly', '.option-value')
+                        .on('focusin.formBuilderOptionValueReadonly', '.option-value', function () {
+                            $(this).hide().attr('readonly', true);
+                        });
+
+                    $editor.find('.option-value').hide().attr('readonly', true);
                 }
             };
             @if(isset($event) && $event->form_schema)
