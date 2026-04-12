@@ -166,9 +166,14 @@ class CastellerConfigController extends Controller
             abort(404);
         }
 
+        $validated = $request->validate([
+            'fieldname' => 'required|string|in:telegram_enabled,auth_token_enabled',
+            'status' => 'required|integer|in:0,1',
+        ]);
+
         $colla = Colla::getCurrent();
-        $field = $request->fieldname;
-        $status = (int) $request->status;
+        $field = $validated['fieldname'];
+        $status = (int) $validated['status'];
 
         DB::table('casteller_config')
             ->whereIn('casteller_id', function ($query) use ($colla) {
