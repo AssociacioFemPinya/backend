@@ -181,7 +181,10 @@ class CastellerConfigController extends Controller
                     ->from('castellers')
                     ->where('colla_id', $colla->getId());
             })
-            ->update([$field => $status]);
+            ->update([
+                $field => $status,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
 
         return new JsonResponse(['status' => 'ok'], Response::HTTP_OK);
     }
