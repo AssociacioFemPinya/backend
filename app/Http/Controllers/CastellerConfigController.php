@@ -153,4 +153,32 @@ class CastellerConfigController extends Controller
 
         return Response::HTTP_OK;
     }
+
+    /** set all CastellerConfig status for telegram or auth_token via AJAX
+     * @return JsonResponse
+     *
+     * @throws AuthorizationException
+     */
+    public function postSetAllStatusAjax(Request $request): JsonResponse
+    {
+        $user = $this->user();
+
+        if (! $user->can('edit casteller config')) {
+            abort(404);
+        }
+
+        $colla = Colla::getCurrent();
+        $field = $request->fieldname;
+        $status = (int) $request->status;
+
+        DB::table('casteller_config')
+            ->whereIn('casteller_id', function ($query) use ($colla) {
+                $query->select('id_casteller')
+                    ->from('castellers')
+                    ->where('colla_id', $colla->getId());
+            })
+            ->update([$field => $status]);
+
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_OK);
+    }
 }

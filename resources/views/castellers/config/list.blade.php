@@ -35,6 +35,28 @@
         <div class="row">
             @include('components.castellers-filter-header')
         </div>
+        
+        @can('edit casteller config')
+        <div class="row" style="padding-top: 20px; padding-bottom: 15px;">
+            <div class="col-md-6">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="margin-bottom: 0; font-weight: 500; white-space: nowrap;">
+                        <i class="fa fa-paper-plane"></i> {!! trans('casteller.telegram_enabled') !!}
+                    </label>
+                    <input type="checkbox" class="js-switchery toggle-all-switch" data-field="telegram_enabled" style="position: relative;">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="margin-bottom: 0; font-weight: 500; white-space: nowrap;">
+                        <i class="fa fa-globe"></i> {!! trans('casteller.auth_token_enabled') !!}
+                    </label>
+                    <input type="checkbox" class="js-switchery toggle-all-switch" data-field="auth_token_enabled" style="position: relative;">
+                </div>
+            </div>
+        </div>
+        @endcan
+
         <div class="row" style="padding-top: 25px;">
             <div class="col-md-12">
                 <div class="table-responsive">
@@ -140,7 +162,7 @@
 
                         $('#totalCastellers').html(api.page.info().recordsTotal);
 
-                        let elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery'));
+                        let elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery:not(.toggle-all-switch)'));
 
                         @if(!Auth::user()->can('edit casteller config'))
                             elems.forEach(function (html) {
@@ -186,6 +208,12 @@
 
             @can('edit casteller config')
 
+                // Initialize toggle-all switches
+                let toggleAllElems = Array.prototype.slice.call(document.querySelectorAll('.toggle-all-switch'));
+                toggleAllElems.forEach(function (html) {
+                    new Switchery(html, {size: 'small'});
+                });
+
                 function setStatus(id_casteller, status, fieldname)
                 {
                     $.post( "{{ route('castellers.config.set-status') }}",
@@ -230,6 +258,19 @@
                     setStatus(id_casteller, status, fieldname);
                 });
 
+                $('.toggle-all-switch').on('change', function() {
+                    var field = $(this).data('field');
+                    var status = $(this).prop('checked') ? 1 : 0;
+                    
+                    $.post("{{ route('castellers.config.set-all-status') }}", {
+                        'fieldname': field,
+                        'status': status,
+                    }, function(response) {
+                        $('#castellers').DataTable().draw();
+                    }).fail(function(xhr) {
+                        alert('Error updating: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    });
+                });
 
             @endcan
 
