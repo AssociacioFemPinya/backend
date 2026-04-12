@@ -155,7 +155,6 @@ class CastellerConfigController extends Controller
     }
 
     /** set all CastellerConfig status for telegram or auth_token via AJAX
-     * @return JsonResponse
      *
      * @throws AuthorizationException
      */
