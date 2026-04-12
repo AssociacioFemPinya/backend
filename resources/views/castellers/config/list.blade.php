@@ -38,29 +38,34 @@
         
         @can('edit casteller config')
         @php
-            $castellersCollection = collect($castellers ?? []);
+            if (isset($castellers)) {
+                $castellersCollection = collect($castellers);
 
-            $telegramStates = $castellersCollection->pluck('telegram_enabled')
-                ->map(function ($value) {
-                    return (bool) $value;
-                })
-                ->unique()
-                ->values();
+                $telegramStates = $castellersCollection->pluck('telegram_enabled')
+                    ->map(function ($value) {
+                        return (bool) $value;
+                    })
+                    ->unique()
+                    ->values();
 
-            $authTokenStates = $castellersCollection->pluck('auth_token_enabled')
-                ->map(function ($value) {
-                    return (bool) $value;
-                })
-                ->unique()
-                ->values();
+                $authTokenStates = $castellersCollection->pluck('auth_token_enabled')
+                    ->map(function ($value) {
+                        return (bool) $value;
+                    })
+                    ->unique()
+                    ->values();
 
-            $telegramToggleState = $telegramStates->count() === 1
-                ? ($telegramStates->first() ? 'all' : 'none')
-                : ($telegramStates->count() > 1 ? 'mixed' : 'none');
+                $telegramToggleState = $telegramStates->count() === 1
+                    ? ($telegramStates->first() ? 'all' : 'none')
+                    : ($telegramStates->count() > 1 ? 'mixed' : 'none');
 
-            $authTokenToggleState = $authTokenStates->count() === 1
-                ? ($authTokenStates->first() ? 'all' : 'none')
-                : ($authTokenStates->count() > 1 ? 'mixed' : 'none');
+                $authTokenToggleState = $authTokenStates->count() === 1
+                    ? ($authTokenStates->first() ? 'all' : 'none')
+                    : ($authTokenStates->count() > 1 ? 'mixed' : 'none');
+            } else {
+                $telegramToggleState = 'mixed';
+                $authTokenToggleState = 'mixed';
+            }
         @endphp
         <div class="row" style="padding-top: 20px; padding-bottom: 15px;">
             <div class="col-md-6">
