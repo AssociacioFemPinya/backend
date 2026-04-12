@@ -103,6 +103,7 @@
                     <div>
                         <i id="resetFilter" class="fa-solid fa-2x fa-arrow-rotate-right pr-15 text-primary" data-toggle="tooltip" data-placement="right" title="{!! trans('general.tooltip_reset_filter') !!}"></i>
                         <a href="{{ route('event.attendance.list-attenders-csv', $event->getId()) }}"><i id="exportFilter" class="fa-solid fa-2x fa-cloud-arrow-down text-primary pr-15 " data-toggle="tooltip" data-placement="right" title="{!! trans('general.tooltip_export_attendance') !!}"></i></a>
+                        <a href="{{ route('event.attendance.dashboard', $event->getId()) }}"><i id="dashboardStats" class="fa-solid fa-2x fa-chart-column text-primary pr-15" data-toggle="tooltip" data-placement="right" title="{!! trans('attendance.dashboard_title') !!}"></i></a>
                         <i id="sendReminder" class="fa-solid fa-2x fa-bell text-primary" data-toggle="tooltip" data-placement="right" title="{!! trans('notifications.tooltip_send_reminder') !!}"></i>
 
                     </div>

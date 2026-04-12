@@ -10,6 +10,7 @@ use App\Enums\CastellersStatusEnum;
 use App\Enums\FilterSearchTypesEnum;
 use App\Enums\TypeTags;
 use App\Event;
+use App\Exports\AttendanceDashboardAggregatesExport;
 use App\Helpers\Humans;
 use App\Services\CsvExporter;
 use App\Services\NotificationService;
@@ -22,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EventAttendanceController extends Controller
 {
@@ -43,6 +45,260 @@ class EventAttendanceController extends Controller
         $data_content['statuses'] = Casteller::getStatuses();
 
         return view('events.attendance.list', $data_content);
+    }
+
+    /** Show aggregated stats dashboard for event attendance form responses */
+    public function getDashboard(Event $event): View
+    {
+        $user = $this->user();
+
+        if (! $user->can('view events') && ! $user->can('edit events')) {
+            abort(404);
+        }
+
+        $this->authorize('getEvent', $event);
+
+        $data_content['event'] = $event;
+        $data_content['dashboard'] = $this->buildFormResponseStats($event);
+
+        return view('events.attendance.dashboard', $data_content);
+    }
+
+    public function exportDashboardAggregatesExcel(Event $event)
+    {
+        $user = $this->user();
+
+        if (! $user->can('view events') && ! $user->can('edit events')) {
+            abort(404);
+        }
+
+        $this->authorize('getEvent', $event);
+
+        $dashboard = $this->buildFormResponseStats($event);
+
+        $headings = [
+            trans('attendance.dashboard_questions'),
+            trans('attendance.dashboard_option'),
+            trans('attendance.dashboard_responses'),
+            trans('attendance.dashboard_percentage'),
+        ];
+
+        $rows = $this->buildDashboardAggregateRows($dashboard['questions']);
+        $date = now()->format('Y-m-d');
+
+        return Excel::download(
+            new AttendanceDashboardAggregatesExport($rows, $headings),
+            "attendance_dashboard_{$event->getId()}_{$date}.xlsx",
+            \Maatwebsite\Excel\Excel::XLSX
+        );
+    }
+
+    public function exportDashboardAggregatesOds(Event $event)
+    {
+        $user = $this->user();
+
+        if (! $user->can('view events') && ! $user->can('edit events')) {
+            abort(404);
+        }
+
+        $this->authorize('getEvent', $event);
+
+        $dashboard = $this->buildFormResponseStats($event);
+
+        $headings = [
+            trans('attendance.dashboard_questions'),
+            trans('attendance.dashboard_option'),
+            trans('attendance.dashboard_responses'),
+            trans('attendance.dashboard_percentage'),
+        ];
+
+        $rows = $this->buildDashboardAggregateRows($dashboard['questions']);
+        $date = now()->format('Y-m-d');
+
+        return Excel::download(
+            new AttendanceDashboardAggregatesExport($rows, $headings),
+            "attendance_dashboard_{$event->getId()}_{$date}.ods",
+            \Maatwebsite\Excel\Excel::ODS
+        );
+    }
+
+    private function buildDashboardAggregateRows(array $questions): array
+    {
+        $rows = [];
+
+        foreach ($questions as $question) {
+            if (empty($question['option_rows'])) {
+                continue;
+            }
+
+            foreach ($question['option_rows'] as $row) {
+                $rows[] = [
+                    $question['label'],
+                    $row['label'],
+                    $row['count'],
+                    $row['percentage'].'%',
+                ];
+            }
+        }
+
+        return $rows;
+    }
+
+    private function buildFormResponseStats(Event $event): array
+    {
+        $schema = is_array($event->form_schema) ? $event->form_schema : [];
+        $eligibleCastellers = Casteller::filter($event->getColla())
+            ->withStatus(CastellersStatusEnum::ActiveAll())
+            ->withTags($event->getCastellerTags()->pluck('id_tag')->toArray(), FilterSearchTypesEnum::OR)
+            ->eloquentBuilder()
+            ->select('castellers.id_casteller')
+            ->get();
+
+        $eligibleCastellerIds = $eligibleCastellers->pluck('id_casteller')->toArray();
+        $eligibleCastellersCount = count($eligibleCastellerIds);
+
+        $attendances = $event->attendances->whereIn('casteller_id', $eligibleCastellerIds);
+
+        $questions = [];
+        foreach ($schema as $field) {
+            $name = $field['name'] ?? null;
+            if (! $name) {
+                continue;
+            }
+
+            $type = $field['type'] ?? 'text';
+
+            // Skip non-input components included by formBuilder.
+            if (in_array($type, ['header', 'paragraph', 'button'], true)) {
+                continue;
+            }
+
+            $question = [
+                'name' => $name,
+                'label' => $field['label'] ?? $name,
+                'type' => $type,
+                'counts' => [],
+                'value_to_label' => [],
+                'answered' => 0,
+            ];
+
+            if (isset($field['values']) && is_array($field['values'])) {
+                foreach ($field['values'] as $option) {
+                    $optionValue = trim((string) ($option['value'] ?? ''));
+                    $optionLabel = trim((string) ($option['label'] ?? $optionValue));
+                    if ($optionLabel !== '') {
+                        $question['counts'][$optionLabel] = 0;
+                    }
+                    if ($optionValue !== '' && $optionLabel !== '') {
+                        $question['value_to_label'][$optionValue] = $optionLabel;
+                    }
+                }
+            }
+
+            $questions[$name] = $question;
+        }
+
+        $respondents = 0;
+        foreach ($attendances as $attendance) {
+            $options = $attendance->getOptions() ?: [];
+            if (empty($options)) {
+                continue;
+            }
+
+            $respondents++;
+
+            foreach ($questions as $name => &$question) {
+                if (! array_key_exists($name, $options)) {
+                    continue;
+                }
+
+                $rawValue = $options[$name];
+                $values = is_array($rawValue) ? $rawValue : [$rawValue];
+                $hasAnswer = false;
+
+                foreach ($values as $value) {
+                    $cleanValue = trim((string) $value);
+                    if ($cleanValue === '') {
+                        continue;
+                    }
+
+                    $hasAnswer = true;
+
+                    if (! empty($question['value_to_label'])) {
+                        $cleanValue = $question['value_to_label'][$cleanValue] ?? $cleanValue;
+                    }
+
+                    if (! isset($question['counts'][$cleanValue])) {
+                        $question['counts'][$cleanValue] = 0;
+                    }
+
+                    $question['counts'][$cleanValue]++;
+                }
+
+                if ($hasAnswer) {
+                    $question['answered']++;
+                }
+            }
+            unset($question);
+        }
+
+        $preparedQuestions = [];
+        foreach ($questions as $question) {
+            arsort($question['counts']);
+
+            $labels = array_keys($question['counts']);
+            $data = array_values($question['counts']);
+
+            if (count($labels) > 10) {
+                $labels = array_slice($labels, 0, 9);
+                $dataTop = array_slice($data, 0, 9);
+                $otherCount = array_sum(array_slice($data, 9));
+                if ($otherCount > 0) {
+                    $labels[] = __('attendance.dashboard_other');
+                    $dataTop[] = $otherCount;
+                }
+                $data = $dataTop;
+            }
+
+            $completionRate = $eligibleCastellersCount > 0
+                ? round(($question['answered'] / $eligibleCastellersCount) * 100, 1)
+                : 0;
+
+            $responsesCountForQuestion = array_sum($data);
+            $optionRows = [];
+            foreach ($labels as $index => $label) {
+                $count = $data[$index] ?? 0;
+                $optionRows[] = [
+                    'label' => $label,
+                    'count' => $count,
+                    'percentage' => $responsesCountForQuestion > 0
+                        ? round(($count / $responsesCountForQuestion) * 100, 1)
+                        : 0,
+                ];
+            }
+
+            $preparedQuestions[] = [
+                'name' => $question['name'],
+                'label' => $question['label'],
+                'type' => $question['type'],
+                'labels' => $labels,
+                'data' => $data,
+                'option_rows' => $optionRows,
+                'answered' => $question['answered'],
+                'total' => $eligibleCastellersCount,
+                'completion_rate' => $completionRate,
+            ];
+        }
+
+        return [
+            'totals' => [
+                'registered_attendances' => $attendances->count(),
+                'responses' => $respondents,
+                'questions' => count($preparedQuestions),
+            ],
+            'questions' => $preparedQuestions,
+            'has_schema' => ! empty($preparedQuestions),
+        ];
     }
 
     public function listAttendersCsv(Request $request, Event $event)

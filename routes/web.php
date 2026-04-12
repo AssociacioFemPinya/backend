@@ -159,6 +159,9 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view 
 
     // Attendance
     Route::get('event/attendance/{event}', 'EventAttendanceController@getIndex')->where('event', '[0-9]+')->name('event.attendance');
+    Route::get('event/attendance/dashboard/{event}', 'EventAttendanceController@getDashboard')->where('event', '[0-9]+')->name('event.attendance.dashboard');
+    Route::get('event/attendance/dashboard/export-aggregates-excel/{event}', 'EventAttendanceController@exportDashboardAggregatesExcel')->where('event', '[0-9]+')->name('event.attendance.dashboard.export-aggregates-excel');
+    Route::get('event/attendance/dashboard/export-aggregates-ods/{event}', 'EventAttendanceController@exportDashboardAggregatesOds')->where('event', '[0-9]+')->name('event.attendance.dashboard.export-aggregates-ods');
     Route::get('event/attendance/list-attenders-csv/{event}', 'EventAttendanceController@listAttendersCsv')->where('event', '[0-9]+')->name('event.attendance.list-attenders-csv');
     Route::post('event/attendance/list-attenders-ajax/{event}', 'EventAttendanceController@postListAttendersAjax')->where('event', '[0-9]+')->name('event.attendance.list-attenders');
     Route::post('event/attendance/set-status-ajax', 'EventAttendanceController@postSetStatusAjax')->name('event.attendance.set-status');
