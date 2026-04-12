@@ -272,7 +272,7 @@
                 // Initialize toggle-all switches
                 let toggleAllElems = Array.prototype.slice.call(document.querySelectorAll('.toggle-all-switch'));
                 toggleAllElems.forEach(function (html) {
-                    new Switchery(html, {size: 'small'});
+                    html.switchery = new Switchery(html, {size: 'small'});
                 });
 
                 function setStatus(id_casteller, status, fieldname)
@@ -320,15 +320,24 @@
                 });
 
                 $('.toggle-all-switch').on('change', function() {
-                    var field = $(this).data('field');
-                    var status = $(this).prop('checked') ? 1 : 0;
-                    
+                    var toggle = this;
+                    var field = $(toggle).data('field');
+                    var status = $(toggle).prop('checked') ? 1 : 0;
+                    var previousChecked = !$(toggle).prop('checked');
+
                     $.post("{{ route('castellers.config.set-all-status') }}", {
                         'fieldname': field,
                         'status': status,
                     }, function(response) {
                         $('#castellers').DataTable().draw();
                     }).fail(function(xhr) {
+                        $(toggle).prop('checked', previousChecked);
+
+                        if (toggle.switchery) {
+                            toggle.switchery.setPosition(true);
+                        }
+
+                        $('#castellers').DataTable().draw();
                         alert('Error updating: ' + (xhr.responseJSON?.message || 'Unknown error'));
                     });
                 });
