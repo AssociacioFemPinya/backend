@@ -127,7 +127,7 @@ final class Event extends Model
 
     public function hasAttendanceAnswers(): bool
     {
-        return !empty($this->form_schema);
+        return ! empty($this->form_schema);
     }
 
     /** get a count of confirmed attendance to event */
@@ -217,7 +217,6 @@ final class Event extends Model
     {
         return $this->belongsToMany(Tag::class, 'event_casteller_tag', 'event_id', 'tag_id');
     }
-
 
     public function attendances(): ?HasMany
     {
@@ -325,7 +324,6 @@ final class Event extends Model
     {
         return $this->castellerTags()->where('type', TypeTags::Castellers()->value())->get();
     }
-
 
     public function getRondes(): ?Collection
     {

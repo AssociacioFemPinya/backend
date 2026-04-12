@@ -75,8 +75,6 @@ final class TagsController extends Controller
         return view('tags.list', $data_content);
     }
 
-
-
     /**get Modal add Tag via AJAX*/
     public function getAddTagModalAjax($type = TypeTags::CASTELLERS): View
     {
@@ -309,7 +307,6 @@ final class TagsController extends Controller
 
         return redirect()->to(route('events.tags'));
     }
-
 
     public function getEditTagsModalAjax(Tag $tag): View
     {

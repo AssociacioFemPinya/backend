@@ -173,8 +173,12 @@ class Humans
     public static function readAttendanceAnswersText(Casteller|Event $casteller, ?Attendance $attendance, ?Event $event = null): ?string
     {
         $attendanceOptions = is_null($attendance) || is_null($attendance->getOptions()) ? [] : $attendance->getOptions();
-        if (empty($attendanceOptions)) return '';
-        if (!$event && $attendance) $event = $attendance->getEvent();
+        if (empty($attendanceOptions)) {
+            return '';
+        }
+        if (! $event && $attendance) {
+            $event = $attendance->getEvent();
+        }
 
         if (is_array($attendanceOptions) && array_keys($attendanceOptions) !== range(0, count($attendanceOptions) - 1)) {
             $schemaDict = [];
@@ -192,8 +196,9 @@ class Humans
                     $val = implode(', ', $val);
                 }
                 $label = $schemaDict[$key] ?? $key;
-                $parsedOptions[] = $label . ': ' . $val;
+                $parsedOptions[] = $label.': '.$val;
             }
+
             return implode("\n", $parsedOptions);
         }
 
@@ -227,25 +232,24 @@ class Humans
 
             $parsedOptions = [];
             foreach ($attendanceOptions as $key => $val) {
-                if(is_array($val)){
+                if (is_array($val)) {
                     $val = implode(', ', $val);
                 }
                 $label = $schemaDict[$key] ?? $key;
-                $parsedOptions[] = "<b>" . e($label) . "</b>: " . e($val);
+                $parsedOptions[] = '<b>'.e($label).'</b>: '.e($val);
             }
             $text = implode('<br>', $parsedOptions);
         }
 
         if (strlen(strip_tags($text)) > 50) {
-            $shortText = substr(strip_tags($text), 0, 50) . '...';
+            $shortText = substr(strip_tags($text), 0, 50).'...';
             $fullTextHtml = htmlentities($text, ENT_QUOTES, 'UTF-8');
-            return $shortText . ' <a href="#" onclick="event.preventDefault(); showFullTextModal(\'Respostes\', \''.$fullTextHtml.'\');">Veure més</a>';
+
+            return $shortText.' <a href="#" onclick="event.preventDefault(); showFullTextModal(\'Respostes\', \''.$fullTextHtml.'\');">Veure més</a>';
         }
 
         return $text;
     }
-
-
 
     /** Read for humans selectable answers of an Attendance ..*/
     public static function readSelectableAttendanceAnswers(Event $event, ?Attendance $attendance): string
@@ -254,7 +258,8 @@ class Humans
             $butonBtn = $event->isOpen() && $attendance && $attendance->getStatus() == AttendanceStatus::YES ? 'btn-primary' : 'btn-secondary disabled';
             if ($attendance && $attendance->getStatus() == AttendanceStatus::YES) {
                 $formUrl = route('member.event.form', $event->getId());
-                return '<a href="'.$formUrl.'" class="btn btn-sm '.$butonBtn.' pull-right"><i class="fa fa-list-alt"></i> ' . trans('general.form') . '</a>';
+
+                return '<a href="'.$formUrl.'" class="btn btn-sm '.$butonBtn.' pull-right"><i class="fa fa-list-alt"></i> '.trans('general.form').'</a>';
             }
         }
 

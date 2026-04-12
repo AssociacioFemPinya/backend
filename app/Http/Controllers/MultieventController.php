@@ -37,7 +37,7 @@ class MultieventController extends Controller
         $data_content['type_add'] = 'GROUP';
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        
+
         $data_content['types'] = Multievent::getTypes();
 
         return view('multievents.create', $data_content);
@@ -231,7 +231,7 @@ class MultieventController extends Controller
         $data_content['multievent'] = $multievent;
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
         $data_content['tags_casteller'] = $colla->getTags(TypeTags::CASTELLERS);
-        
+
         $data_content['types'] = Multievent::getTypes();
 
         return view('multievents.create', $data_content);

@@ -4,7 +4,6 @@ namespace App;
 
 use App\Enums\AttendanceStatus;
 use App\Enums\ScaledAttendanceStatus;
-use App\Enums\TypeTags;
 use App\Helpers\Humans;
 use App\Managers\AttendanceManager;
 use App\Repositories\AttendanceRepository;
@@ -298,7 +297,65 @@ class Attendance extends Model
         return json_decode($this->getAttribute('options'), true);
     }
 
+    /**
+     * Returns a list of human-readable answer strings from form builder data.
+     */
+    public function getOptionsNames(): array
+    {
+        $options = $this->getOptions();
 
+        if (empty($options)) {
+            return [];
+        }
+
+        // New form builder format must be associative and keyed by field name.
+        if (array_keys($options) === range(0, count($options) - 1)) {
+            return [];
+        }
+
+        $schemaLabels = [];
+        $valueToLabelByField = [];
+        $event = $this->getEvent();
+
+        if (! is_null($event) && is_array($event->form_schema)) {
+            foreach ($event->form_schema as $field) {
+                if (isset($field['name']) && isset($field['label'])) {
+                    $schemaLabels[$field['name']] = $field['label'];
+                }
+
+                if (isset($field['name']) && isset($field['values']) && is_array($field['values'])) {
+                    foreach ($field['values'] as $option) {
+                        $optionValue = trim((string) ($option['value'] ?? ''));
+                        $optionLabel = trim((string) ($option['label'] ?? $optionValue));
+
+                        if ($optionValue !== '' && $optionLabel !== '') {
+                            $valueToLabelByField[$field['name']][$optionValue] = $optionLabel;
+                        }
+                    }
+                }
+            }
+        }
+
+        $formatted = [];
+        foreach ($options as $key => $value) {
+            if (is_array($value)) {
+                $value = array_map(function ($item) use ($key, $valueToLabelByField) {
+                    $clean = trim((string) $item);
+
+                    return $valueToLabelByField[$key][$clean] ?? $clean;
+                }, $value);
+                $value = implode(', ', $value);
+            } else {
+                $clean = trim((string) $value);
+                $value = $valueToLabelByField[$key][$clean] ?? $clean;
+            }
+
+            $label = $schemaLabels[$key] ?? $key;
+            $formatted[] = $label.': '.$value;
+        }
+
+        return $formatted;
+    }
 
     public function getUpdatedAtParsed(bool $shortDate = false): ?string
     {

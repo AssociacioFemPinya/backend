@@ -573,8 +573,17 @@ class EventsConversation extends Conversation
 
     private function askOptions(Event $event, string $option)
     {
-        $formUrl = url('/member/event/' . $event->getId() . '/form');
-        $this->getBot()->reply(__('botman.form_link_reply') . "\n" . $formUrl);
+        $formPath = '/member/event/'.$event->getId().'/form';
+        $authToken = $this->casteller->authConfig?->getAuthToken();
+        $authTokenEnabled = (bool) $this->casteller->getCastellerConfig()?->getAuthTokenEnabled();
+
+        if ($authTokenEnabled && ! empty($authToken)) {
+            $formUrl = url('/member/login').'?auth_token='.urlencode($authToken).'&redirect='.urlencode($formPath);
+        } else {
+            $formUrl = url($formPath);
+        }
+
+        $this->getBot()->reply(__('botman.form_link_reply')."\n".$formUrl);
 
         // Return to the previous menu
         $attendance = Attendance::getAttendanceCasteller($this->casteller->getId());

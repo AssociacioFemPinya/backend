@@ -362,8 +362,8 @@ class TecnicaConversation extends Conversation
                             return $this->askOfferEvents(EventTypeNameEnum::Activitat()->value(), $this->option, 3, $type);
                     }
                 } elseif (in_array($answer, $eventsAttendanceEventAnswersMenu)) {
-                    $appUrl = url('/event/attendance/' . $event->getId());
-                    $this->getBot()->reply(__('botman.form_answers_link_reply') . "\n" . $appUrl);
+                    $appUrl = url('/event/attendance/'.$event->getId());
+                    $this->getBot()->reply(__('botman.form_answers_link_reply')."\n".$appUrl);
 
                     return $this->repeat(__('botman.conversation_ask_castellers_attendance_event'));
                 } else {

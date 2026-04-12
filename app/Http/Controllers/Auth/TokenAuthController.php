@@ -5,16 +5,26 @@ namespace App\Http\Controllers\Auth;
 use App\AuthConfig;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class TokenAuthController extends Controller
 {
     /** login as authenticableMember with token */
-    public function login(): RedirectResponse
+    public function login(Request $request): RedirectResponse
     {
         $authConfig = AuthConfig::find(Auth::User()->id_auth_config);
         $sessionExpires = $authConfig->getColla()->config->getMemberSessionExpire();
         Auth::guard('member')->login($authConfig, ! $sessionExpires);
+
+        $redirect = $request->query('redirect');
+        if (is_string($redirect)
+            && Str::startsWith($redirect, '/member')
+            && ! Str::startsWith($redirect, '//')
+            && ! Str::contains($redirect, '://')) {
+            return redirect()->to($redirect);
+        }
 
         return redirect()->intended(route('member.calendar'));
     }

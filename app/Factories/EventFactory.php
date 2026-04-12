@@ -99,8 +99,6 @@ class EventFactory
             self::addOrUpdateCastellerTags($event, []);
         }
 
-
-
         return $event;
     }
 
@@ -132,8 +130,6 @@ class EventFactory
         }
     }
 
-
-
     private static function removeTagsFromEvent(Event $event)
     {
         foreach ($event->getTags() as $tag) {
@@ -147,8 +143,6 @@ class EventFactory
             $event->removeCastellerTag($tag);
         }
     }
-
-
 
     private static function addTagToEvent(Event $event, string $tag): void
     {
@@ -173,6 +167,4 @@ class EventFactory
 
         }
     }
-
-
 }

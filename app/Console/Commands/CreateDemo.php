@@ -449,7 +449,6 @@ class CreateDemo extends Command
             $addedEventTags[] = $tagManager->createTag($colla, $parametersBag);
         }
 
-
         $allEvents = $colla->getEvents();
         $assajos = $colla->events()->where('type', 1)->get();
         $actuacions = $colla->events()->where('type', 2)->get();
@@ -473,7 +472,6 @@ class CreateDemo extends Command
         $this->newLine();
     }
 
-
     /** create events demo */
     private function attendances($id_colla, $lang)
     {
@@ -496,7 +494,6 @@ class CreateDemo extends Command
         $bar->start();
 
         foreach ($events as $event) {
-
 
             // DEIXEM SENSE ASSISTÈNCIA ALMENYS A UN TERÇ DELS CASTELLERS
             $castellersTaken = $colla->castellers()->take($faker->numberBetween(((count($castellers) * 33) / 100), count($castellers)))->get();

@@ -66,13 +66,12 @@ class CalendarController extends Controller
         return view('members.event-form', [
             'event' => $event,
             'schema' => $event->form_schema ? json_encode($event->form_schema) : '[]',
-            'userOptions' => json_encode($userOptions ?: (object)[]),
+            'userOptions' => json_encode($userOptions ?: (object) []),
             'attendance' => $attendance,
             'casteller' => $casteller,
             'colla' => Colla::getCurrent(),
         ]);
     }
-
 
     /** get upcoming events via AJAX*/
     public function getEventAttendanceAjax(Request $request): JsonResponse

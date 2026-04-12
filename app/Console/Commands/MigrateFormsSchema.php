@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Event;
 use App\Attendance;
+use App\Event;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class MigrateFormsSchema extends Command
@@ -42,7 +42,7 @@ class MigrateFormsSchema extends Command
     {
         $events = Event::has('attendanceAnswers')->with('attendanceAnswers')->get();
 
-        $this->info("Found " . $events->count() . " events with old attendance tags.");
+        $this->info('Found '.$events->count().' events with old attendance tags.');
 
         $bar = $this->output->createProgressBar(count($events));
 
@@ -57,23 +57,23 @@ class MigrateFormsSchema extends Command
                     $options[] = [
                         'label' => $tag->name,
                         'value' => (string) $tag->id_tag,
-                        'selected' => false
+                        'selected' => false,
                     ];
                     $tagIdToValue[$tag->id_tag] = (string) $tag->id_tag;
                 }
 
-                $checkboxName = 'legacy-tags-' . $event->id_event;
+                $checkboxName = 'legacy-tags-'.$event->id_event;
 
                 $formSchema = [
                     [
-                        "type" => "checkbox-group",
-                        "required" => false,
-                        "label" => "Respostes",
-                        "toggle" => false,
-                        "inline" => false,
-                        "name" => $checkboxName,
-                        "values" => $options
-                    ]
+                        'type' => 'checkbox-group',
+                        'required' => false,
+                        'label' => 'Respostes',
+                        'toggle' => false,
+                        'inline' => false,
+                        'name' => $checkboxName,
+                        'values' => $options,
+                    ],
                 ];
 
                 $event->form_schema = $formSchema;
@@ -83,25 +83,25 @@ class MigrateFormsSchema extends Command
                 // Form builder output will be: {"legacy-tags-123": ["28", "29"]}
                 $attendances = Attendance::where('event_id', $event->id_event)->whereNotNull('options')->get();
                 foreach ($attendances as $attendance) {
-                    $oldOptions = $attendance->options; 
-                    if (is_array($oldOptions) && !empty($oldOptions)) {
+                    $oldOptions = $attendance->options;
+                    if (is_array($oldOptions) && ! empty($oldOptions)) {
                         // Check if it's already migrated (has string keys)
                         if (array_keys($oldOptions) !== range(0, count($oldOptions) - 1)) {
                             continue;
                         }
-                        
+
                         $attendance->options = [
-                            $checkboxName => array_map('strval', $oldOptions)
+                            $checkboxName => array_map('strval', $oldOptions),
                         ];
                         $attendance->save();
                     } elseif (is_string($oldOptions)) {
                         $decoded = json_decode($oldOptions, true);
-                        if (is_array($decoded) && !empty($decoded)) {
-                             if (array_keys($decoded) !== range(0, count($decoded) - 1)) {
+                        if (is_array($decoded) && ! empty($decoded)) {
+                            if (array_keys($decoded) !== range(0, count($decoded) - 1)) {
                                 continue;
                             }
                             $attendance->options = [
-                                $checkboxName => array_map('strval', $decoded)
+                                $checkboxName => array_map('strval', $decoded),
                             ];
                             $attendance->save();
                         }
@@ -116,7 +116,8 @@ class MigrateFormsSchema extends Command
             $this->info("\nMigration completed successfully.");
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error("\nError migrating: " . $e->getMessage());
+            $this->error("\nError migrating: ".$e->getMessage());
+
             return 1;
         }
 
