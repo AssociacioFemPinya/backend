@@ -37,13 +37,46 @@
         </div>
         
         @can('edit casteller config')
+        @php
+            $castellersCollection = collect($castellers ?? []);
+
+            $telegramStates = $castellersCollection->pluck('telegram_enabled')
+                ->map(function ($value) {
+                    return (bool) $value;
+                })
+                ->unique()
+                ->values();
+
+            $authTokenStates = $castellersCollection->pluck('auth_token_enabled')
+                ->map(function ($value) {
+                    return (bool) $value;
+                })
+                ->unique()
+                ->values();
+
+            $telegramToggleState = $telegramStates->count() === 1
+                ? ($telegramStates->first() ? 'all' : 'none')
+                : ($telegramStates->count() > 1 ? 'mixed' : 'none');
+
+            $authTokenToggleState = $authTokenStates->count() === 1
+                ? ($authTokenStates->first() ? 'all' : 'none')
+                : ($authTokenStates->count() > 1 ? 'mixed' : 'none');
+        @endphp
         <div class="row" style="padding-top: 20px; padding-bottom: 15px;">
             <div class="col-md-6">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <label style="margin-bottom: 0; font-weight: 500; white-space: nowrap;">
                         <i class="fa fa-paper-plane"></i> {!! trans('casteller.telegram_enabled') !!}
                     </label>
-                    <input type="checkbox" class="js-switchery toggle-all-switch" data-field="telegram_enabled" style="position: relative;">
+                    <input
+                        type="checkbox"
+                        class="js-switchery toggle-all-switch"
+                        data-field="telegram_enabled"
+                        data-initial-state="{{ $telegramToggleState }}"
+                        data-indeterminate="{{ $telegramToggleState === 'mixed' ? 'true' : 'false' }}"
+                        style="position: relative;"
+                        {{ $telegramToggleState === 'all' ? 'checked' : '' }}
+                    >
                 </div>
             </div>
             <div class="col-md-6">
@@ -51,10 +84,38 @@
                     <label style="margin-bottom: 0; font-weight: 500; white-space: nowrap;">
                         <i class="fa fa-globe"></i> {!! trans('casteller.auth_token_enabled') !!}
                     </label>
-                    <input type="checkbox" class="js-switchery toggle-all-switch" data-field="auth_token_enabled" style="position: relative;">
+                    <input
+                        type="checkbox"
+                        class="js-switchery toggle-all-switch"
+                        data-field="auth_token_enabled"
+                        data-initial-state="{{ $authTokenToggleState }}"
+                        data-indeterminate="{{ $authTokenToggleState === 'mixed' ? 'true' : 'false' }}"
+                        style="position: relative;"
+                        {{ $authTokenToggleState === 'all' ? 'checked' : '' }}
+                    >
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.toggle-all-switch[data-indeterminate="true"]').forEach(function (element) {
+                    element.indeterminate = true;
+                    element.setAttribute('aria-checked', 'mixed');
+
+                    var switcheryElement = element.nextElementSibling;
+                    if (switcheryElement && switcheryElement.classList && switcheryElement.classList.contains('switchery')) {
+                        switcheryElement.style.boxShadow = 'inset 0 0 0 16px #f0ad4e';
+                        switcheryElement.style.borderColor = '#f0ad4e';
+
+                        var jack = switcheryElement.querySelector('small');
+                        if (jack) {
+                            jack.style.left = '50%';
+                            jack.style.transform = 'translateX(-50%)';
+                        }
+                    }
+                });
+            });
+        </script>
         @endcan
 
         <div class="row" style="padding-top: 25px;">
