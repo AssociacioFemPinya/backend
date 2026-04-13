@@ -41,7 +41,7 @@ class RegisterNotificationsController extends Controller
             abort(404);
         }
 
-        if($notification){
+        if ($notification) {
             $this->authorize('getNotification', $notification);
         }
 
