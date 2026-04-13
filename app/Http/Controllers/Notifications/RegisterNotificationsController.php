@@ -40,7 +40,10 @@ class RegisterNotificationsController extends Controller
         if (! $user->can('view notifications') && ! $user->can('edit notifications')) {
             abort(404);
         }
-        $this->authorize('getNotification', $notification);
+
+        if ($notification) {
+            $this->authorize('getNotification', $notification);
+        }
 
         $colla = Colla::getCurrent();
         $notificationsFilter = NotificationLog::filter($colla);
