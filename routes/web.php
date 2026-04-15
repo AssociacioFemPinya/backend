@@ -144,6 +144,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view casteller config|
 Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit casteller config'], function()
 {
     Route::post('castellers/config/set-status-ajax', 'CastellerConfigController@postSetStatusAjax')->name('castellers.config.set-status');
+    Route::post('castellers/config/set-all-status-ajax', 'CastellerConfigController@postSetAllStatusAjax')->name('castellers.config.set-all-status');
 });
 
 // VIEW EVENTS
