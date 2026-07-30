@@ -20,8 +20,7 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-          sail:
-            ipv4_address: 172.21.0.2
+          fempinya-local:
         depends_on:
             - db
     db:
@@ -39,8 +38,9 @@ services:
             - 'sail-mariadb:/var/lib/mysql'
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
-          sail:
-            ipv4_address: 172.21.0.3
+          fempinya-local:
+            aliases:
+                - backend-db
         healthcheck:
             test:
                 - CMD
@@ -60,12 +60,9 @@ services:
     #     networks:
     #     - fempinya
 networks:
-    sail:
-        driver: bridge
-        name: sail
-        ipam:
-          config:
-          - subnet: "172.21.0.0/24"
+    fempinya-local:
+        external: true
+        name: fempinya-local
 
 volumes:
     sail-mariadb:
