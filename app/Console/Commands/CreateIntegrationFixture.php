@@ -6,6 +6,10 @@ use App\Attendance;
 use App\Casteller;
 use App\Colla;
 use App\Event;
+use App\Notification;
+use App\NotificationOrder;
+use App\Tag;
+use App\Enums\TypeTags;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -69,6 +73,7 @@ class CreateIntegrationFixture extends Command
                 'companions' => true,
                 'status' => 1,
                 'companionsCount' => 1,
+                'locationLink' => 'https://www.google.com/maps/search/?api=1&query=Local+de+la+colla',
             ],
             [
                 'name' => 'Actuació a la plaça',
@@ -99,6 +104,7 @@ class CreateIntegrationFixture extends Command
                 'comments' => 'Assaig específic de la canalla.',
                 'companions' => false,
                 'status' => null,
+                'openDate' => Carbon::now()->addDay(),
             ],
             [
                 'name' => 'Diada de diumenge',
@@ -109,17 +115,31 @@ class CreateIntegrationFixture extends Command
                 'comments' => 'Diada principal del cap de setmana.',
                 'companions' => false,
                 'status' => 1,
+                'closeDate' => Carbon::now()->subHour(),
             ],
         ];
 
         foreach ($events as $index => $definition) {
             $event = $this->upsertEvent($colla, $definition);
 
-            if ($definition['status'] !== null) {
-                Attendance::setStatus($casteller->getId(), $event->getId(), $definition['status']);
+            if ($index === 0) {
+                $event->attendanceAnswers()->sync($this->attendanceAnswerIds($colla));
             }
-            if (isset($definition['companionsCount'])) {
-                Attendance::setCompanions($casteller->getId(), $event->getId(), $definition['companionsCount']);
+
+            if ($this->registrationHasNotOpened($definition)) {
+                // The active integration user cannot have responded before the
+                // registration window opens; remove any state left by a prior run.
+                Attendance::query()
+                    ->where('casteller_id', $casteller->getId())
+                    ->where('event_id', $event->getId())
+                    ->delete();
+            } else {
+                if ($definition['status'] !== null) {
+                    Attendance::setStatus($casteller->getId(), $event->getId(), $definition['status']);
+                }
+                if (isset($definition['companionsCount'])) {
+                    Attendance::setCompanions($casteller->getId(), $event->getId(), $definition['companionsCount']);
+                }
             }
 
             foreach ($supportingCastellers as $supportingCasteller) {
@@ -131,8 +151,16 @@ class CreateIntegrationFixture extends Command
             }
         }
 
+        $this->upsertNotifications($colla, $casteller);
+
         $this->line('Integration fixture ready: casteller '.$casteller->getId().', 4 castellers, 5 upcoming events.');
         return self::SUCCESS;
+    }
+
+    private function registrationHasNotOpened(array $definition): bool
+    {
+        return isset($definition['openDate'])
+            && Carbon::parse($definition['openDate'])->isFuture();
     }
 
     private function upsertEvent(Colla $colla, array $definition): Event
@@ -146,16 +174,62 @@ class CreateIntegrationFixture extends Command
         $event->setAttribute('colla_id', $colla->getId());
         $event->setAttribute('name', $definition['name']);
         $event->setAttribute('start_date', $startDate);
-        $event->setAttribute('open_date', Carbon::now()->subDay());
-        $event->setAttribute('close_date', $startDate->copy()->addMinutes($definition['duration']));
+        $event->setAttribute('open_date', $definition['openDate'] ?? Carbon::now()->subDay());
+        $event->setAttribute('close_date', $definition['closeDate'] ?? $startDate->copy()->addMinutes($definition['duration']));
         $event->setAttribute('duration', $definition['duration']);
         $event->setAttribute('type', $definition['type']);
         $event->setAttribute('address', $definition['address']);
+        $event->setAttribute('location_link', $definition['locationLink'] ?? null);
         $event->setAttribute('comments', $definition['comments']);
         $event->setAttribute('companions', $definition['companions']);
         $event->setAttribute('visibility', 1);
         $event->save();
 
         return $event;
+    }
+
+    private function attendanceAnswerIds(Colla $colla): array
+    {
+        return collect([
+            ['name' => 'Arribaré tard', 'value' => 'late'],
+            ['name' => 'Necessito cotxe', 'value' => 'needs_car'],
+        ])->map(function (array $answer) use ($colla): int {
+            $tag = Tag::query()->where('colla_id', $colla->getId())
+                ->where('value', $answer['value'])
+                ->where('type', TypeTags::Attendance()->value())
+                ->first() ?? new Tag();
+            $tag->setAttribute('colla_id', $colla->getId());
+            $tag->setAttribute('value', $answer['value']);
+            $tag->setAttribute('type', TypeTags::Attendance()->value());
+            $tag->setAttribute('name', $answer['name']);
+            $tag->save();
+
+            return $tag->getId();
+        })->all();
+    }
+
+    private function upsertNotifications(Colla $colla, Casteller $casteller): void
+    {
+        foreach ([
+            ['title' => 'Recordatori d’assaig', 'message' => 'Demà tens l’assaig general a les 19:30.', 'read' => false],
+            ['title' => 'Informació de la diada', 'message' => 'Consulta els detalls de la propera actuació.', 'read' => true],
+        ] as $definition) {
+            $notification = Notification::query()->where('colla_id', $colla->getId())
+                ->where('title', $definition['title'])->first() ?? new Notification();
+            $notification->setAttribute('colla_id', $colla->getId());
+            $notification->setAttribute('title', $definition['title']);
+            $notification->setAttribute('data', serialize(['message' => $definition['message']]));
+            $notification->setAttribute('template', 'message');
+            $notification->setAttribute('type', 1);
+            $notification->setAttribute('visible', 1);
+            $notification->save();
+
+            $order = NotificationOrder::query()->where('notification_id', $notification->getId())
+                ->where('casteller_id', $casteller->getId())->first() ?? new NotificationOrder();
+            $order->setAttribute('notification_id', $notification->getId());
+            $order->setAttribute('casteller_id', $casteller->getId());
+            $order->setAttribute('read_at', $definition['read'] ? Carbon::now()->subHour() : null);
+            $order->saveQuietly();
+        }
     }
 }
