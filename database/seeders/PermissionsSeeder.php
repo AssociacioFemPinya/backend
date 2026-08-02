@@ -23,43 +23,40 @@ class PermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'dashboard']);
-        Permission::create(['name' => 'profile']);
-
-        Permission::create(['name' => 'view colla']);
-        Permission::create(['name' => 'edit colla']);
-
-        Permission::create(['name' => 'view BBDD']);
-        Permission::create(['name' => 'edit BBDD']);
-
-        Permission::create(['name' => 'view casteller config']);
-        Permission::create(['name' => 'edit casteller config']);
-
-        Permission::create(['name' => 'view events']);
-        Permission::create(['name' => 'edit events']);
-
-        Permission::create(['name' => 'view boards']);
-        Permission::create(['name' => 'edit boards']);
-
-        Permission::create(['name' => 'view notifications']);
-        Permission::create(['name' => 'edit notifications']);
-
-        Permission::create(['name' => 'view casteller personals']);
-        Permission::create(['name' => 'edit casteller personals']);
+        foreach ([
+            'dashboard',
+            'profile',
+            'view colla',
+            'edit colla',
+            'view BBDD',
+            'edit BBDD',
+            'view casteller config',
+            'edit casteller config',
+            'view events',
+            'edit events',
+            'view boards',
+            'edit boards',
+            'view notifications',
+            'edit notifications',
+            'view casteller personals',
+            'edit casteller personals',
+        ] as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
 
 
         // create roles
 
         // has access to everything automatically
-        $role1 = Role::create(['name' => 'Super-Admin']);
+        $role1 = Role::firstOrCreate(['name' => 'Super-Admin', 'guard_name' => 'web']);
 
         // basic user
-        $role2 = Role::create(['name' => 'User']);
+        $role2 = Role::firstOrCreate(['name' => 'User', 'guard_name' => 'web']);
         $role2->givePermissionTo('dashboard');
         $role2->givePermissionTo('profile');
 
         // colla admin -> has acccess to everything on that colla
-        $role3 = Role::create(['name' => 'Colla-Admin']);
+        $role3 = Role::firstOrCreate(['name' => 'Colla-Admin', 'guard_name' => 'web']);
         $role3->givePermissionTo('dashboard');
         $role3->givePermissionTo('profile');
         $role3->givePermissionTo('view colla');
