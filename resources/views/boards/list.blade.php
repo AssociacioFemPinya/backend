@@ -3,6 +3,7 @@
 @section('title', trans('general.templates'))
 @section('css_before')
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/dataTables.bootstrap4.css') }}">
+    <link rel="stylesheet" href="{!! asset('js/plugins/cloudflare-switchery/css/switchery.min.css') !!}">
 @endsection
 @section('css_after')
     <style>
@@ -95,6 +96,7 @@
                                 <th>{!! trans('boards.type') !!}</th>
                                 <th>{!! trans('boards.base') !!}</th>
                                 <th>{!! trans('boards.share') !!}</th>
+                                <th>{!! trans('boards.visible') !!}</th>
                                 <th>{!! trans('boards.added_to') !!}</th>
                                 <th>#</th>
                             </tr>
@@ -121,7 +123,12 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <input type="checkbox" data-linkedBoardId={!! (string) $board->getId() !!} {!! $board->is_public? "checked":"" !!} class="form-check-input isPublicCheck">
+                                        {!!  \App\Helpers\RenderHelper::fieldSwitcher($board->getIsPublic(), 'data-id_board', $board->getId(), 'is_public', 'is_public', 'is_public'); !!}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        {!!  \App\Helpers\RenderHelper::fieldSwitcher($board->getIsVisible(), 'data-id_board', $board->getId(), 'visible', 'visible', 'visible'); !!}
                                     </div>
                                 </td>
                                 <td class="d-flex justify-content-center">{!! date('d/m/Y', strtotime($board->created_at)) !!}</td>
@@ -233,6 +240,7 @@
 @section('js')
 <script src="{{ asset('js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('js/plugins/cloudflare-switchery/js/switchery.js') }}"></script>
 
 <script type="text/javascript">
     $(function () {
@@ -259,20 +267,27 @@
                 { "data": "type", "name": "type"},
                 { "data": "base", "name": "base" },
                 { "data": "isPubic", "name": "isPublic" },
+                { "data": "visible", "name": "visible" },
                 { "data": "added", "name": "added" },
                 { "data": "btns", "name": "btns", "orderable": false },
 
             ],
 
             "columnDefs": [
-                { "width": "30%", "targets": 0 },
-                { "width": "14%", "targets": 1 },
-                { "width": "14%", "targets": 2 },
-                { "width": "14%", "targets": 3 },
-                { "width": "14%", "targets": 4 },
-                { "width": "14%", "targets": 5 }
+                { "width": "25%", "targets": 0 },
+                { "width": "12%", "targets": 1 },
+                { "width": "12%", "targets": 2 },
+                { "width": "12%", "targets": 3 },
+                { "width": "12%", "targets": 4 },
+                { "width": "12%", "targets": 5 },
+                { "width": "17%", "targets": 6 }
             ],
             "responsive": true
+        });
+
+        let elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery'));
+        elems.forEach(function (html) {
+           new Switchery(html, {size: 'small'});
         });
 
         $('#boards').on('click','.btn-delete-board', function()
@@ -291,20 +306,40 @@
             $('#modalAddBoard').modal('show');
         });
 
-        $('#boards').on('change','.isPublicCheck', function()
+        function setProperty(id_board, status, fieldname)
         {
-            $.post("{{ route('boards.setPublicBoard') }}",
+            $.post( "{{ route('boards.setPropertyAjax') }}",
+                {   'id_board': id_board,
+                    'status': status,
+                    'fieldname': fieldname,
+            });
+        }
+
+        $('#boards').on('change', '.js-switchery', function ()
+        {
+
+            var status;
+            var id_board = $(this).data().id_board;
+
+            if($(this).hasClass('is_public')){
+                var fieldname = 'is_public'
+            }else if($(this).hasClass('visible')){
+                var fieldname = 'visible'
+            }
+
+            if($(this).hasClass('active'))
             {
-                id_board: $(this).attr('data-linkedBoardId'),
-                is_public: $(this).prop('checked')? 1:0
-            },
-            function(data, status) {
-                if(status === "success") {
-                    console.log("Post successfully created!")
-                }
-            },
-            "json");
-            console.log('set to public');
+                $(this).removeClass( "active" );
+                $(this).addClass( "inactive" );
+                status = 0;
+            }
+            else if($(this).hasClass('inactive'))
+            {
+                $(this).removeClass( "inactive" );
+                $(this).addClass( "active" );
+                status = 1;
+            }
+            setProperty(id_board, status, fieldname);
         });
 
         $('#boards').on('click', '.btn-preview', function()
