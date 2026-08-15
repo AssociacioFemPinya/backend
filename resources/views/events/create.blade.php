@@ -205,6 +205,7 @@
                             <option value="date" @if(old('close_date_select') == "date") selected @endif>{!! trans('general.select_date') !!}</option>
                             <option value="before_starts" @if(old('close_date_select') == "before_starts") selected @endif>{!! trans('event.before_starts') !!}</option>
                             <option value="when_starts" @if(old('close_date_select') == "when_starts") selected @endif>{!! trans('event.when_starts') !!}</option>
+                            <option value="when_ends" @if(old('close_date_select') == "when_ends") selected @endif>{!! trans('event.when_ends') !!}</option>
                         </select>
                     </div>
                     <div class="col-md-4" id="div_close_date">
@@ -422,7 +423,7 @@
             {
                 var val = $('#close_date_select').val();
 
-                if(val==='when_starts')
+                if(val==='when_starts' || val==='when_ends')
                 {
                     $('#div_close_date').hide();
                     $('#div_close_time').hide();

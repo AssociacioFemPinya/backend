@@ -128,6 +128,7 @@ class MultieventController extends Controller
 
             $eventStartDate = str_replace('/', '-', $date);
             $eventStartDate = date('Y-m-d', strtotime($eventStartDate)).' '.$baseHour.':'.$baseMinute.':00';
+            $eventEndDate = Carbon::parse($eventStartDate)->addMinutes($request->duration)->roundMinute(5)->toDateTimeString();
 
             $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
 
@@ -155,6 +156,8 @@ class MultieventController extends Controller
 
             if ($request->close_date_select === 'when_starts') {
                 $eventCloseDate = $eventStartDate;
+            } elseif ($request->close_date_select === 'when_ends') {
+                $closeDate = $eventEndDate;
             } elseif ($request->close_date_select === 'before_starts') {
                 switch ($request->close_date_mode) {
                     case 'months':
@@ -343,6 +346,7 @@ class MultieventController extends Controller
         foreach ($eventDatesFormatted as $date) {
             $eventStartDate = str_replace('/', '-', $date);
             $eventStartDate = date('Y-m-d', strtotime($eventStartDate)).' '.$baseHour.':'.$baseMinute.':00';
+            $eventEndDate = Carbon::parse($eventStartDate)->addMinutes($duration)->roundMinute(5)->toDateTimeString();
 
             $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
 
@@ -370,6 +374,8 @@ class MultieventController extends Controller
 
             if ($request->close_date_select === 'when_starts') {
                 $eventCloseDate = $eventStartDate;
+            } elseif ($request->close_date_select === 'when_ends') {
+                $closeDate = $eventEndDate;
             } elseif ($request->close_date_select === 'before_starts') {
                 switch ($request->close_date_mode) {
                     case 'months':

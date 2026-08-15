@@ -42,4 +42,5 @@ return [
     "location_link" => "Enllaç localització",
     "close_cant_be_before_open" => "La data de tancament de les inscripcions no pot ser anterior a la d'obertura.",
     "add_google_calendar" => "Afegir a Google Calendar",
+    "when_ends" => "Quan acabi l'esdeveniment",
 ];

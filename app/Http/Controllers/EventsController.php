@@ -212,6 +212,7 @@ class EventsController extends Controller
 
         $startDate = str_replace('/', '-', $request->start_date);
         $startDate = date('Y-m-d', strtotime($startDate)).' '.$request->hour.':'.$request->min.':00';
+        $endDate = Carbon::parse($startDate)->addMinutes((string) $request->duration)->roundMinute(5)->toDateTimeString();
 
         $now = DateHelper::dateTimeToCurrentTimezone(Carbon::now()->toDateTimeString());
         //open date
@@ -241,6 +242,8 @@ class EventsController extends Controller
         //close date
         if ($request->close_date_select === 'when_starts') {
             $closeDate = $startDate;
+        } elseif ($request->close_date_select === 'when_ends') {
+            $closeDate = $endDate;
         } elseif ($request->close_date_select === 'before_starts') {
             switch ($request->close_date_mode) {
                 case 'months':
@@ -339,6 +342,7 @@ class EventsController extends Controller
 
         $startDate = str_replace('/', '-', $request->start_date);
         $startDate = date('Y-m-d', strtotime($startDate)).' '.$request->hour.':'.$request->min.':00';
+        $endDate = Carbon::parse($startDate)->addMinutes($request->duration)->roundMinute(5)->toDateTimeString();
 
         //open date
         if ($request->open_date_select === 'now') {
@@ -367,6 +371,8 @@ class EventsController extends Controller
         //close date
         if ($request->close_date_select === 'when_starts') {
             $closeDate = $startDate;
+        } elseif ($request->close_date_select === 'when_ends') {
+            $closeDate = $endDate;
         } elseif ($request->close_date_select === 'before_starts') {
             switch ($request->close_date_mode) {
                 case 'months':
