@@ -6,6 +6,7 @@ namespace App;
 
 use App\Enums\BasesEnum;
 use App\Traits\TimeStampsGetterTrait;
+use App\Traits\FilterableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,13 +15,15 @@ use Illuminate\Support\Collection;
 
 class Board extends Model
 {
-    use TimeStampsGetterTrait;
+    use TimeStampsGetterTrait, FilterableTrait;
 
     protected $table = 'boards';
 
     protected $primaryKey = 'id_board';
 
     public $timestamps = true;
+
+    protected static $filterClass = \App\Services\Filters\BoardsFilter::class;
 
     protected $casts = [
         'data' => 'array',
@@ -206,9 +209,14 @@ class Board extends Model
         return $this->getAttribute('html_puntals');
     }
 
-    public function getIsPublic(): ?boolean
+    public function getIsPublic(): ?bool
     {
         return (bool) $this->getAttribute('is_public');
+    }
+
+    public function getIsVisible(): ?bool
+    {
+        return (bool) $this->getAttribute('visible');
     }
 
     public function getEvents(): ?Collection

@@ -230,7 +230,7 @@ final class BoardsController extends Controller
         return redirect()->route('boards.list');
     }
 
-    public function postSetPublicBoard(Request $request): JsonResponse
+    public function postSetProperty(Request $request): JsonResponse
     {
 
         $user = $this->user();
@@ -241,7 +241,7 @@ final class BoardsController extends Controller
 
         $request->validate([
             'id_board' => 'required|numeric',
-            'is_public' => 'required',
+            'property' => 'required',
         ]);
 
         $board = Board::find($request->input('id_board'));
@@ -250,6 +250,36 @@ final class BoardsController extends Controller
 
         return new JsonResponse($board->is_public, Response::HTTP_OK);
     }
+
+    /** set Board property via AJAX
+     * @return array|mixed
+     *
+     * @throws AuthorizationException
+     */
+    public function postSetPropertyAjax(Request $request)
+    {
+
+        $user = $this->user();
+
+        if (! $user->can('edit boards')) {
+            abort(404);
+        }
+
+        $request->validate([
+            'id_board' => 'required|numeric',
+            'status' => 'required',
+            'fieldname' => 'required',
+        ]);
+
+        $board = Board::find($request->input('id_board'));
+        $status = $request->status;
+        $field = $request->fieldname;
+        $board->$field = $status;
+        $board->save();
+
+        return new JsonResponse($status, Response::HTTP_OK);
+    }
+
 
     /**Add board*/
     public function postAddBoard(Request $request): View

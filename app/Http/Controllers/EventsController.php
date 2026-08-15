@@ -10,6 +10,7 @@ use App\Helpers\DateHelper;
 use App\Helpers\Humans;
 use App\Managers\EventsManager;
 use App\Managers\MultieventManager;
+use App\Board;
 use App\Multievent;
 use App\Period;
 use Carbon\Carbon;
@@ -35,10 +36,16 @@ class EventsController extends Controller
 
         $colla = Colla::getCurrent();
 
+        $boards = Board::filter($colla)
+            ->visible()
+            ->eloquentBuilder()
+            ->orderBy('name')
+            ->get();
+
         $data_content['periods'] = $colla->getSortedPeriods();
         $data_content['currentPeriod'] = $colla->getCurrentPeriod();
         $data_content['tags'] = $colla->getTags(TypeTags::EVENTS);
-        $data_content['boardsColla'] = $colla->getBoards();
+        $data_content['boardsColla'] = $boards;
         $data_content['tags_event_type'] = Event::getTypes();
         $data_content['multievents'] = $colla->multievents()->orderBy('name')->get();
 

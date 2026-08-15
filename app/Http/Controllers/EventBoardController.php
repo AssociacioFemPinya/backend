@@ -71,10 +71,16 @@ final class EventBoardController extends Controller
 
         $positions = $colla->getTags(TypeTags::POSITIONS); //Tag::currentTags(TypeTags::POSITIONS, $colla, true
 
+        $boards = Board::filter($colla)
+            ->visible()
+            ->eloquentBuilder()
+            ->orderBy('name')
+            ->get();
+
         $data_content['colla'] = $colla;
         $data_content['event'] = $event;
         $data_content['positions'] = $positions;
-        $data_content['boardsColla'] = $colla->getBoards();
+        $data_content['boardsColla'] = $boards;
         $data_content['board'] = $board;
         $data_content['boardEvent'] = $boardEvent;
         $data_content['boardEventId'] = $boardEvent->getId();

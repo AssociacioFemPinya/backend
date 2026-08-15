@@ -104,5 +104,5 @@ return [
     "option_remove_all_but_yes" => "Borra a todo el mundo excepto los SÍ",
     "empty_board" => "Borrar a todo el mundo",
     "empty_board_warning" => "Seguro que quieres borrar a todo el mundo? Esta acción no se puede deshacer.",
-
+    "visible" => "Visible",
 ];
