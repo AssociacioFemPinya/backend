@@ -72,5 +72,6 @@ return [
     "events_assigned_to_existing_multievent" => "Les événements ont été correctement assignés au multi-événement existant.",
     'events_already_in_multievent' => 'Certains des événements sélectionnés font déjà partie d\'un multi-événement',
     'duplicate_date_warning' => 'Attention: Dates en double détectées',
-    'duplicate_date_warning_message' => 'Des événements avec la même date ont été détectés. Les événements avec la même date ne peuvent pas être assignés à un multi-événement.'
+    'duplicate_date_warning_message' => 'Des événements avec la même date ont été détectés. Les événements avec la même date ne peuvent pas être assignés à un multi-événement.',
+    "when_ends" => "Quand l'événement sera terminé",
 ];

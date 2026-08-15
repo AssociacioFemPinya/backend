@@ -42,4 +42,5 @@ return [
     "location_link" => "Link localización",
     "close_cant_be_before_open" => "La fecha de cierre de las inscripciones no puede ser anterior a la de apertura.",
     "add_google_calendar" => "Añadir a Google Calendar",
+    "when_ends" => "Cuando termina el evento",
 ];

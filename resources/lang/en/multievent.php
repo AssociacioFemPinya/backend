@@ -42,4 +42,5 @@ return [
     "location_link" => "Location link",
     "close_cant_be_before_open" => "Closing date for registering can't be previous to the starting one.",
     "add_google_calendar" => "Add to Google Calendar",
+    "when_ends" => "When the event ends",
 ];
