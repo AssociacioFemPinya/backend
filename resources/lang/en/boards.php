@@ -105,4 +105,6 @@ return [
     "option_remove_all_but_yes" => "Remove everyone except YES",
     "empty_board" => "Clear everyone",
     "empty_board_warning" => "Are you sure you want to clear everyone? This action cannot be undone.",
+    "hide_positions" => "☰ Hide Positions",
+    "show_positions" => "☰ Show Positions",
 ];

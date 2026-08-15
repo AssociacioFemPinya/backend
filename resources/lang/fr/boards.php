@@ -105,4 +105,6 @@ return [
     "option_remove_all_but_yes" => "Supprimez tout le monde sauf les OUI",
     "empty_board" => "Effacez tout le monde",
     "empty_board_warning" => "Êtes-vous sûr de vouloir effacer tout le monde? Cette action ne peut pas être annulée.",
+    "hide_positions" => "☰ Dissimuler des positions",
+    "show_positions" => "☰ Révéler des positions",
 ];

@@ -302,6 +302,61 @@
             top: 10px;
         }
 
+        #blockPositions {
+            overflow-y: auto !important;   /* Força la barra vertical SIEMPRE si el contingut sobrepassa l'alçada */
+            overflow-x: hidden !important; /* Evita qualsevol desplaçament horitzontal molest dins del cercador */
+        }
+
+        #board {
+            overflow: auto !important; /* Activa tant la barra vertical com l'horitzontal si el castell és gegant */
+        }
+
+        html, body {
+            overflow: hidden !important;
+        }
+
+    #btnToggleblockPositions {
+        white-space: nowrap !important;
+        border-radius: 0 5px 5px 0 !important;
+        padding: 10px 5px !important;
+        position: relative !important;
+        display: inline-block !important;
+        width: 100% !important;
+    }
+
+    #buttonContainer {
+        width: 100% !important;
+        padding: 10px 15px 0 15px !important;
+        display: block !important;
+        position: relative !important;
+    }
+
+    @media (min-width: 768px) {
+        #positionsContainer {
+            display: flex !important;
+            flex-wrap: wrap;
+        }
+
+        #blockPositions   { order: 1; }
+        #buttonContainer  { order: 2; }
+        #board           { order: 3; }
+
+        #buttonContainer {
+            width: 0 !important;
+            padding: 0 !important;
+            overflow: visible;
+            position: relative !important;
+            z-index: 1050;
+            flex-shrink: 0;
+        }
+
+        #btnToggleblockPositions {
+            width: auto !important;
+            writing-mode: vertical-rl;
+            position: absolute !important;
+            left: 5px !important;
+        }
+    }
     </style>
 @endsection
 
@@ -366,42 +421,47 @@
 
 
 
-
-
     <div class="row pr-2 pl-2">
 
+        <div id="buttonContainer" class="pt-10">
+            <button id="btnToggleblockPositions" class="btn btn-secondary" type="button">
+                {!! trans('boards.hide_positions') !!}
+            </button>
+        </div>
         <div class="col-sm-12 col-md-3 pr-10 pt-10 positions-block" id="blockPositions">
             <div class="mb-10 text-right">
                 <div class="row d-block">
-                    <div id="blockPositionsContent" class="d-flex " style="margin: 0 15px">
+                    <div id="blockPositionsContent" class="d-flex" style="margin: 0 15px">
                         <div class="d-flex pt-5 pr-5">
-                            <div class="input-group-prepend"  data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_search') !!}">
-                                <button class="btn btn-secondary" disabled><i class="fa fa-search"></i></button>
+                            <div class="input-group-prepend js-tooltip-enabled" data-toggle="tooltip" data-placement="right" title="" data-original-title="Busca als camps del nom i a l'alias">
+                                <button class="btn btn-secondary" disabled=""><i class="fa fa-search"></i></button>
                             </div>
-                            <input type="text" id="searchByNameText" placeholder="{!! trans('general.text_to_search') !!}" class="form-control">
+                            <input type="text" id="searchByNameText" placeholder="text per cercar" class="form-control">
                         </div>
                         <div class="d-flex icons pt-5">
-                            <i id="emptyBoard" class="fa-regular fa-user fa-2x btn-empty-board pr-5 pointer" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_empty_board') !!}"></i>
-                            <i id="removeMissingCastellers" class="fa-solid fa-user-slash fa-2x btn-remove-missing pr-5 pointer" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_remove_missing') !!}"></i>
-                            <i class="fa-solid fa-user-xmark fa-2x pr-5 btn-trash text-muted" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_empty_row') !!}"></i>
+                            <i id="emptyBoard" class="fa-regular fa-user fa-2x btn-empty-board pr-5 pointer js-tooltip-enabled" data-toggle="tooltip" data-placement="right" title="" data-original-title="Clica per esborrar a tothom"></i>
+                            <i id="removeMissingCastellers" class="fa-solid fa-user-slash fa-2x btn-remove-missing pr-5 pointer js-tooltip-enabled" data-toggle="tooltip" data-placement="right" title="" data-original-title="Clica per esborrar les persones absents"></i>
+                            <i class="fa-solid fa-user-xmark fa-2x pr-5 btn-trash text-muted js-tooltip-enabled" data-toggle="tooltip" data-placement="right" title="" data-original-title="Seleccioneu una casella de la plantilla i després premeu aquest botó per suprimir-ne la persona que hi ha assignada."></i>
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
             <div class="block block-bordered mb-2">
                 <div class="block-header block-header-default">
-                    <span class="font-w600 h5 m-0" id="positionName"></span>
+                    <span class="font-w600 h5 m-0" id="positionName">Resultats de la cerca:</span>
                 </div>
                 <div class="block-content">
-                    <div class="row" id="positionRows"></div>
+                    <div class="row" id="positionRows">
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-9" id="board">
-            <div id="pinya" class="ml-10 mt-5">
-                {!!  $board?->getHtmlPinya() !!}
+
+        <div class="col-12 col-md-9" id="board" style="transition: all 0.3s ease;">
+            <div id="pinya" class="ml-10 mt-5" style="transition: transform 0.3s ease;">
+                <!-- Aquí Laravel injecta els teus divs absoluts (top: 362px; left: 434px) -->
+                {!! $board?->getHtmlPinya() !!}
             </div>
 
         </div>
@@ -514,6 +574,8 @@
         let btnTrash = $('.btn-trash');
         let firstPointerType = null;
         var timeout = null;
+        var showPositions = "{!! trans('boards.show_positions') !!}";
+        var hidePositions = "{!! trans('boards.hide_positions') !!}";
 
         jQuery(window).one('pointermove', function (e) {
             firstPointerType = e.originalEvent.pointerType;
@@ -772,8 +834,46 @@
 
         }
 
+        function ajustarAlçadaPanells() {
+            var blockPositions = $('#blockPositions');
+            var board = $('#board');
+
+            var topDistance = blockPositions.offset().top;
+            var realDistance = window.innerHeight - topDistance;
+
+            blockPositions.css('height', realDistance + 'px');
+            board.css('height', realDistance + 'px');
+        }
+
+
         $(function ()
         {
+            $('#btnToggleblockPositions').on('click', function() {
+                var blockPositions = $('#blockPositions');
+                var board = $('#board');
+                var button = $(this);
+
+                if (board.hasClass('col-md-9')) {
+                    blockPositions.hide(200);
+                    board.removeClass('col-md-9').addClass('col-md-12');
+                    button.text(showPositions);
+                } else {
+                    blockPositions.show(200);
+                    board.removeClass('col-md-12').addClass('col-md-9');
+                    button.text(hidePositions);
+                }
+                ajustarAlçadaPanells();
+
+            });
+
+            setTimeout(function() {
+                ajustarAlçadaPanells();
+            }, 200);
+
+            $(window).on('resize', function() {
+                ajustarAlçadaPanells();
+            });
+
             $('#pinya div').html('');
 
             $('#base').change(function(){
