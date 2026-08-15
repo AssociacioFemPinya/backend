@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Filters;
 
-use App\Colla;
 use App\Board;
+use App\Colla;
 
 class BoardsFilter extends BaseFilter
 {

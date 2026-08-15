@@ -280,7 +280,6 @@ final class BoardsController extends Controller
         return new JsonResponse($status, Response::HTTP_OK);
     }
 
-
     /**Add board*/
     public function postAddBoard(Request $request): View
     {

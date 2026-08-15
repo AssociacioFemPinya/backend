@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Board;
 use App\Colla;
 use App\Enums\FilterSearchTypesEnum;
 use App\Enums\TypeTags;
@@ -10,7 +11,6 @@ use App\Helpers\DateHelper;
 use App\Helpers\Humans;
 use App\Managers\EventsManager;
 use App\Managers\MultieventManager;
-use App\Board;
 use App\Multievent;
 use App\Period;
 use Carbon\Carbon;

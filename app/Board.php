@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App;
 
 use App\Enums\BasesEnum;
-use App\Traits\TimeStampsGetterTrait;
 use App\Traits\FilterableTrait;
+use App\Traits\TimeStampsGetterTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 
 class Board extends Model
 {
-    use TimeStampsGetterTrait, FilterableTrait;
+    use FilterableTrait, TimeStampsGetterTrait;
 
     protected $table = 'boards';
 
