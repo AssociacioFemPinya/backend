@@ -104,4 +104,8 @@ return [
     "option_remove_all_but_yes" => "Esborra tothom excepte els SÍ",
     "empty_board" => "Esborrar a tothom",
     "empty_board_warning" => "Segur que voleu esborrar a tothom? Aquesta acció no es pot desfer.",
+    "hide_positions" => "☰ Ocultar Posicions",
+    "show_positions" => "☰ Mostrar Posicions",
+
 ];
+
