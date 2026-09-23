@@ -27,4 +27,5 @@ return [
     "verify_touch_verifying" => "Vérification...",
     "verify_touch_success" => "Présence vérifiée avec succès. Merci !",
     "verify_touch_error" => "Erreur de vérification de la présence. Contactez un admin.",
+    "attendance_confirmed" => "Présence confirmée",
 ];

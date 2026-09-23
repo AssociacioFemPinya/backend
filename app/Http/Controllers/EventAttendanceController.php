@@ -469,7 +469,19 @@ class EventAttendanceController extends Controller
         $castellers = Casteller::filter($colla)
             ->withStatus(CastellersStatusEnum::ActiveAll())
             ->eloquentBuilder()
-            ->get(['id_casteller', 'name', 'last_name', 'alias']);
+            ->leftJoin('attendance', function ($join) use ($event) {
+                $join->on('castellers.id_casteller', '=', 'attendance.casteller_id')
+                    ->where('attendance.event_id', '=', $event->getId());
+            })
+            ->select([
+                'castellers.id_casteller',
+                'castellers.name',
+                'castellers.last_name',
+                'castellers.alias',
+                'attendance.status as attendance_status',
+                'attendance.status_verified as attendance_status_verified',
+            ])
+            ->get();
 
         $attendanceStatusYes = AttendanceStatus::YES;
 

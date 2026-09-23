@@ -27,4 +27,5 @@ return [
     "verify_touch_verifying" => "Verifying...",
     "verify_touch_success" => "Attendance verified successfully. Thank you!",
     "verify_touch_error" => "Error verifying attendance. Contact an admin.",
+    "attendance_confirmed" => "Attendance confirmed",
 ];

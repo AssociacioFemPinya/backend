@@ -234,8 +234,11 @@
                 
                 let displayName = c.alias ? c.alias : c.name;
                 let fullName = (c.name || '') + ' ' + (c.last_name || '');
+                let confirmedIcon = (c.attendance_status_verified == {{ $attendanceStatusYes }})
+                    ? '<i class="fa fa-check text-success mr-5" title="{{ __("attendance.status_verified") }}"></i> '
+                    : '';
                 
-                div.innerHTML = `<span class="casteller-alias">${displayName}</span> <span class="casteller-name">${fullName !== displayName ? fullName : ''}</span>`;
+                div.innerHTML = `${confirmedIcon}<span class="casteller-alias">${displayName}</span> <span class="casteller-name">${fullName !== displayName ? fullName : ''}</span>`;
                 
                 div.addEventListener('click', function() {
                     $('#modal-casteller-name').text(displayName + (fullName !== displayName ? ' (' + fullName + ')' : ''));
@@ -271,6 +274,14 @@
                     $('#confirmModal').modal('hide');
                     btn.prop('disabled', false).html("{{ __('attendance.verify_touch_yes') }} <i class='fa fa-check'></i>");
                     
+                    // Update in-memory casteller record
+                    var verifiedCasteller = castellers.find(function(item) {
+                        return item.id_casteller == castellerId;
+                    });
+                    if (verifiedCasteller) {
+                        verifiedCasteller.attendance_status_verified = {{ $attendanceStatusYes }};
+                    }
+
                     // Reset input
                     myKeyboard.clearInput();
                     inputElement.value = "";

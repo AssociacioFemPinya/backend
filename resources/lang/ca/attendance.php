@@ -27,4 +27,5 @@ return [
     "verify_touch_verifying" => "Verificant...",
     "verify_touch_success" => "Assistència verificada correctament. Gràcies!",
     "verify_touch_error" => "Error verificant assistència. Contacta amb un admin.",
+    "attendance_confirmed" => "Assistència confirmada",
 ];
