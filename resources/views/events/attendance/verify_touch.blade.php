@@ -219,7 +219,7 @@
                 emptyStateEl.className = 'text-center p-20 text-muted';
 
                 const titleEl = document.createElement('h4');
-                titleEl.textContent = '{{ __("attendance.verify_touch_no_castellers") }} "' + query + '"';
+titleEl.textContent = @json(__('attendance.verify_touch_no_castellers')) + ' "' + query + '"';
 
                 emptyStateEl.appendChild(titleEl);
                 listEl.appendChild(emptyStateEl);
