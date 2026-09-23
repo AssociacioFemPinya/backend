@@ -62,10 +62,16 @@
     }
     
     .casteller-item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #eee;
+        text-align: left;
         font-size: 1.8rem;
         padding: 20px;
         cursor: pointer;
-        border-bottom: 1px solid #eee;
         transition: background 0.1s;
     }
     .casteller-item:hover, .casteller-item:active {
