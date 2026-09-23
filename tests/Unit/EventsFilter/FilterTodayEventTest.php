@@ -20,7 +20,8 @@ class FilterTodayEventTest extends TestCase
         ];
 
         Event::factory()->state($set_colla)->today()->count(2)->create();
-        $eventsResponse = (new EventsFilter($colla))->upcoming()->eloquentBuilder()->count();
+        Event::factory()->state($set_colla)->past()->count(1)->create();
+        $eventsResponse = (new EventsFilter($colla))->today()->eloquentBuilder()->count();
         $this->assertEquals(2, $eventsResponse);
     }
 }
