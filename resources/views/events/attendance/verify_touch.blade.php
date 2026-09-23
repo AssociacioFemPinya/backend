@@ -229,7 +229,8 @@
             // Opcional: paginar o limitar para que no explote la memoria visual.
             // Top 40 matches is more than enough for a scroll view.
             filtered.slice(0, 40).forEach(c => {
-                const div = document.createElement('div');
+                const div = document.createElement('button');
+                div.type = 'button';
                 div.className = 'casteller-item';
                 
                 let displayName = c.alias ? c.alias : c.name;
