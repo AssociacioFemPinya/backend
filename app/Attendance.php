@@ -295,7 +295,7 @@ class Attendance extends Model
             return [];
         }
 
-        return json_decode($this->getAttribute('options'));
+        return json_decode($this->getAttribute('options'), true);
     }
 
     public function getOptionsNames(): array

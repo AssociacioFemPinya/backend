@@ -16,6 +16,7 @@
         #castellers td{
             cursor:pointer;
         }
+
     </style>
 @endsection
 
@@ -35,6 +36,74 @@
         <div class="row">
             @include('components.castellers-filter-header')
         </div>
+        
+        @can('edit casteller config')
+        @php
+            if (isset($castellers)) {
+                $castellersCollection = collect($castellers);
+
+                $telegramStates = $castellersCollection->pluck('telegram_enabled')
+                    ->map(function ($value) {
+                        return (bool) $value;
+                    })
+                    ->unique()
+                    ->values();
+
+                $authTokenStates = $castellersCollection->pluck('auth_token_enabled')
+                    ->map(function ($value) {
+                        return (bool) $value;
+                    })
+                    ->unique()
+                    ->values();
+
+                $telegramToggleState = $telegramStates->count() === 1
+                    ? ($telegramStates->first() ? 'all' : 'none')
+                    : ($telegramStates->count() > 1 ? 'mixed' : 'none');
+
+                $authTokenToggleState = $authTokenStates->count() === 1
+                    ? ($authTokenStates->first() ? 'all' : 'none')
+                    : ($authTokenStates->count() > 1 ? 'mixed' : 'none');
+            } else {
+                $telegramToggleState = 'mixed';
+                $authTokenToggleState = 'mixed';
+            }
+        @endphp
+        <div class="row" style="padding-top: 20px; padding-bottom: 15px;">
+            <div class="col-md-6">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="margin-bottom: 0; font-weight: 500; white-space: nowrap;">
+                        <i class="fa fa-paper-plane"></i> {!! trans('casteller.telegram_enabled') !!}
+                    </label>
+                    <input
+                        type="checkbox"
+                        class="js-switchery toggle-all-switch"
+                        data-field="telegram_enabled"
+                        data-initial-state="{{ $telegramToggleState }}"
+                        data-state="{{ $telegramToggleState }}"
+                        style="position: relative;"
+                        {{ $telegramToggleState === 'all' ? 'checked' : '' }}
+                    >
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="margin-bottom: 0; font-weight: 500; white-space: nowrap;">
+                        <i class="fa fa-globe"></i> {!! trans('casteller.auth_token_enabled') !!}
+                    </label>
+                    <input
+                        type="checkbox"
+                        class="js-switchery toggle-all-switch"
+                        data-field="auth_token_enabled"
+                        data-initial-state="{{ $authTokenToggleState }}"
+                        data-state="{{ $authTokenToggleState }}"
+                        style="position: relative;"
+                        {{ $authTokenToggleState === 'all' ? 'checked' : '' }}
+                    >
+                </div>
+            </div>
+        </div>
+        @endcan
+
         <div class="row" style="padding-top: 25px;">
             <div class="col-md-12">
                 <div class="table-responsive">
@@ -66,6 +135,24 @@
     <div class="modal-dialog modal-lg modal-dialog-popin" role="document">
         <div class="modal-content" id="modalCredentialsMailContent">
             <!-- MODAL CONTENT -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirmGlobalSwitch" tabindex="-1" role="dialog" aria-labelledby="modalConfirmGlobalSwitchLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmGlobalSwitchLabel">{!! trans('casteller.confirm_global_switch_title') !!}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="globalSwitchConfirmBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-alt-secondary" data-dismiss="modal">{!! trans('general.close') !!}</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmGlobalSwitch">{!! trans('general.update') !!}</button>
+            </div>
         </div>
     </div>
 </div>
@@ -140,7 +227,7 @@
 
                         $('#totalCastellers').html(api.page.info().recordsTotal);
 
-                        let elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery'));
+                        let elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery:not(.toggle-all-switch)'));
 
                         @if(!Auth::user()->can('edit casteller config'))
                             elems.forEach(function (html) {
@@ -186,6 +273,55 @@
 
             @can('edit casteller config')
 
+                var globalToggleTranslations = {
+                    telegram_enabled: {
+                        enable: @json(trans('casteller.enable_all_telegram')),
+                        disable: @json(trans('casteller.disable_all_telegram')),
+                    },
+                    auth_token_enabled: {
+                        enable: @json(trans('casteller.enable_all_web_access')),
+                        disable: @json(trans('casteller.disable_all_web_access')),
+                    }
+                };
+
+                function applyGlobalToggleState(toggle, state)
+                {
+                    var isAll = state === 'all';
+
+                    $(toggle).prop('checked', isAll);
+                    $(toggle).attr('data-state', state);
+                    $(toggle).attr('aria-checked', isAll ? 'true' : 'false');
+
+                    if (toggle.switchery) {
+                        toggle.switchery.setPosition(false);
+                    }
+                }
+
+                // Initialize toggle-all switches
+                let toggleAllElems = Array.prototype.slice.call(document.querySelectorAll('.toggle-all-switch'));
+                toggleAllElems.forEach(function (html) {
+                    html.switchery = new Switchery(html, {size: 'small'});
+                    applyGlobalToggleState(html, $(html).data('initial-state'));
+                });
+
+                var pendingGlobalSwitch = null;
+
+                function runGlobalSwitchRequest(toggle, field, status, previousState)
+                {
+                    $.post("{{ route('castellers.config.set-all-status') }}", {
+                        'fieldname': field,
+                        'status': status,
+                    }, function() {
+                        var nextState = status === 1 ? 'all' : 'none';
+                        applyGlobalToggleState(toggle, nextState);
+                        $('#castellers').DataTable().draw();
+                    }).fail(function(xhr) {
+                        applyGlobalToggleState(toggle, previousState);
+                        $('#castellers').DataTable().draw();
+                        alert('Error updating: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    });
+                }
+
                 function setStatus(id_casteller, status, fieldname)
                 {
                     $.post( "{{ route('castellers.config.set-status') }}",
@@ -230,6 +366,54 @@
                     setStatus(id_casteller, status, fieldname);
                 });
 
+                $('.toggle-all-switch').on('change', function() {
+                    var toggle = this;
+                    var field = $(toggle).data('field');
+                    var status = $(toggle).prop('checked') ? 1 : 0;
+                    var previousState = $(toggle).attr('data-state') || 'none';
+                    var message = status === 1
+                        ? globalToggleTranslations[field].enable
+                        : globalToggleTranslations[field].disable;
+
+                    applyGlobalToggleState(toggle, status === 1 ? 'all' : 'none');
+
+                    pendingGlobalSwitch = {
+                        toggle: toggle,
+                        field: field,
+                        status: status,
+                        previousState: previousState,
+                    };
+
+                    $('#globalSwitchConfirmBody').text(message);
+                    $('#modalConfirmGlobalSwitch').modal('show');
+                });
+
+                $('#btnConfirmGlobalSwitch').on('click', function() {
+                    if (!pendingGlobalSwitch) {
+                        $('#modalConfirmGlobalSwitch').modal('hide');
+                        return;
+                    }
+
+                    var requestData = pendingGlobalSwitch;
+                    pendingGlobalSwitch = null;
+                    $('#modalConfirmGlobalSwitch').modal('hide');
+
+                    runGlobalSwitchRequest(
+                        requestData.toggle,
+                        requestData.field,
+                        requestData.status,
+                        requestData.previousState
+                    );
+                });
+
+                $('#modalConfirmGlobalSwitch').on('hidden.bs.modal', function() {
+                    if (!pendingGlobalSwitch) {
+                        return;
+                    }
+
+                    applyGlobalToggleState(pendingGlobalSwitch.toggle, pendingGlobalSwitch.previousState);
+                    pendingGlobalSwitch = null;
+                });
 
             @endcan
 
