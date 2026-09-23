@@ -222,11 +222,12 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view 
     Route::get('event/board/load-map/{boardEvent}/{base}', [EventBoardController::class, 'getLoadMapAjax'])->name('event.board.load-map-ajax');
     Route::get('event/board/load-base/{boardEvent}/{base}', [EventBoardController::class, 'getLoadBase'])->name('event.board.load-base');
     Route::post('event/board/swap-castellers/{eventBoardId}', [EventBoardController::class, 'postSwapCastellersAjax'])->where('eventBoardId', '[0-9]+')->name('event.board.swap-castellers');
-    Route::get('event/board/casteller-info/{boardEvent}/{divId}/{base}', [EventBoardController::class, 'getCastellerInfoAjax'])->where('boardEvent', '[0-9]+')->where('$divId', '[0-9]+')->name('event.board.casteller-info');
+    Route::get('event/board/casteller-info/{boardEvent}/{divId}/{base}', [EventBoardController::class, 'getCastellerInfoAjax'])->where('boardEvent', '[0-9]+')->where('divId', '[0-9]+')->name('event.board.casteller-info');
     Route::post('event/board/empty-row-pinya/{boardEvent}', [EventBoardController::class, 'postAjaxEmptyRow'])->where('boardEvent', '[0-9]+')->name('event-board.empty-row-pinya');
     Route::post('event/board/to-display', [EventBoardController::class, 'postToDisplay'])->name('event.board.to-display');
     Route::post('event/board/add-favourite', [EventBoardController::class, 'postAddFavourite'])->name('event.board.add-favourite');
     Route::post('event/board/destroy/{boardEvent}', [EventBoardController::Class, 'postDestroyBoardEvent'])->where('boardEvent', '[0-9]+')->name('event.board.destroy');
+    Route::post('event-board/{boardEvent}/undo-action', [EventBoardController::class, 'undoAction'])->name('event.board.undo-action');
     Route::get('event/rondes/{event}', [EventRondesController::class, 'getList'])->where('event', '[0-9]+')->name('event.rondes');
     Route::post('event/rondes/list-ajax/{event}', [EventRondesController::class, 'postListAjax'])->where('event', '[0-9]+')->name('event.rondes.list-ajax');
     Route::post('event/rondes/add-ronda-ajax/{event}', [EventRondesController::class, 'postAddRondaAjax'])->where('event', '[0-9]+')->name('event.rondes.add-ronda-ajax');

@@ -95,6 +95,7 @@ return [
     "tooltip_import_pinya" => "Importez les positions d'une autre Pinya",
     "tooltip_remove_missing" => "Cliquez pour supprimer toutes les personnes absentes",
     "tooltip_empty_board" => "Cliquez pour effacer tout le monde",
+    "tooltip_undo" => "Annulez la dernière action",
     "edit_pinya" => "Éditez la Pinya",
     "select_structure" => "Sélectionnez une structure",
     "remove_missing_castellers" => "Supprimez les personnes absentes",

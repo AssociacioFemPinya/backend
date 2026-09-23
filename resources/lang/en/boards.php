@@ -95,6 +95,7 @@ return [
     "tooltip_import_pinya" => "Import positions from another Pinya",
     "tooltip_remove_missing" => "Click to remove all absent people",
     "tooltip_empty_board" => "Click to clear everyone",
+    "tooltip_undo" => "Undo last action",
     "edit_pinya" => "Edit the Pinya",
     "select_structure" => "Select a structure",
     "remove_missing_castellers" => "Remove absent people",

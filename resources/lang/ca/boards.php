@@ -94,6 +94,7 @@ return [
     "tooltip_import_pinya" => "Importa les posicions d'una altra Pinya",
     "tooltip_remove_missing" => "Clica per esborrar les persones absents",
     "tooltip_empty_board" => "Clica per esborrar a tothom",
+    "tooltip_undo" => "Desfés l'última acció",
     "edit_pinya" => "Edita la Pinya",
     "select_structure" => "Selecciona una estructura",
     "remove_missing_castellers" => "Esborrar les persones absents",

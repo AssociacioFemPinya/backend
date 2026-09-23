@@ -53,7 +53,7 @@ return [
             'sslmode' => env('DB_SSLMODE', 'prefer'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CAPATH => env('MYSQL_ATTR_SSL_CAPATH'),
-                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', true),
             ]) : [],
         ],
 

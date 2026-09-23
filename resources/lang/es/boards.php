@@ -94,6 +94,7 @@ return [
     "tooltip_import_pinya" => "Importa las posiciones de otra Piña",
     "tooltip_remove_missing" => "Clica para borrar todas las personas ausentes",
     "tooltip_empty_board" => "Clica per borrar a todo el mundo",
+    "tooltip_undo" => "Deshacer última acción",
     "edit_pinya" => "Edita la Piña",
     "select_structure" => "Selecciona una estructura",
     "remove_missing_castellers" => "Borrar les personas ausentes",
