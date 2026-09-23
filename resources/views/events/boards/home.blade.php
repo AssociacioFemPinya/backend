@@ -381,6 +381,7 @@
                             <input type="text" id="searchByNameText" placeholder="{!! trans('general.text_to_search') !!}" class="form-control">
                         </div>
                         <div class="d-flex icons pt-5">
+                            <i id="undoAction" class="fa-solid fa-undo fa-2x pr-5 pointer disabled" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_undo') !!}"></i>
                             <i id="emptyBoard" class="fa-regular fa-user fa-2x btn-empty-board pr-5 pointer" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_empty_board') !!}"></i>
                             <i id="removeMissingCastellers" class="fa-solid fa-user-slash fa-2x btn-remove-missing pr-5 pointer" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_remove_missing') !!}"></i>
                             <i class="fa-solid fa-user-xmark fa-2x pr-5 btn-trash text-muted" data-toggle="tooltip" data-placement="right" title="{!! trans('boards.tooltip_empty_row') !!}"></i>
@@ -512,8 +513,19 @@
         let boardEventId = parseInt({{ $boardEvent->getId() }});
         let base = 'PINYA';
         let btnTrash = $('.btn-trash');
+        let btnUndo = $('#undoAction');
         let firstPointerType = null;
         var timeout = null;
+
+        function enableUndo() {
+            btnUndo.removeClass('disabled');
+            btnUndo.addClass('text-info');
+        }
+
+        function disableUndo() {
+            btnUndo.addClass('disabled');
+            btnUndo.removeClass('text-info');
+        }
 
         jQuery(window).one('pointermove', function (e) {
             firstPointerType = e.originalEvent.pointerType;
@@ -619,29 +631,70 @@
             let url = "{{ route('event.board.put-casteller-ajax', ['eventBoardId' => ':eventBoardId']) }}";
             url = url.replace(':eventBoardId', boardEventId);
 
-            $.post(url, {castellerId: idCasteller, rowId: idRow, eventId: {{ $event->getId() }}, base: base})
-                .then(function(result, status){
-                    castellerDiv(result.divId, result.castellerName, result.castellerHeight, result.castellerAttendance, result.castellerVerifiedAttendance, result.castellerShoulderHeight, result.castellerActivePinya,result.hasAttendanceAnswers);
-                    loadCastellersList();
-                }).fail(function(result, status){
-                }
-            );
+            $.post('{{ route("event.board.undo-action", ["boardEvent" => $boardEvent->getId()]) }}', {
+                action: 'put_casteller',
+                castellerId: idCasteller,
+                rowId: idRow,
+                base: base
+            }).done(function() {
+                enableUndo();
+
+                $.post(url, {castellerId: idCasteller, rowId: idRow, eventId: {{ $event->getId() }}, base: base})
+                    .then(function(result, status){
+                        castellerDiv(result.divId, result.castellerName, result.castellerHeight, result.castellerAttendance, result.castellerVerifiedAttendance, result.castellerShoulderHeight, result.castellerActivePinya,result.hasAttendanceAnswers);
+                        loadCastellersList();
+                    }).fail(function(result, status){
+                    }
+                );
+            });
 
             resetVars();
         }
 
         function emptyRow(idRow, boardEventId){
+            let infoUrl = "{{ route('event.board.casteller-info', ['boardEvent' => $boardEvent->getId(), 'divId' => ':divId', 'base' => ':base']) }}";
+            infoUrl = infoUrl.replace(':divId', idRow).replace(':base', base);
 
-            let url = "{{ route('event-board.empty-row-pinya', ['boardEvent' => ':boardEvent']) }}";
-            url = url.replace(':boardEvent', boardEventId);
+            if ($('#' + idRow).html() !== '') {
+                $.ajax({
+                    url: infoUrl,
+                    type: 'GET',
+                    async: false,
+                    success: function(result) {
+                        $.post('{{ route("event.board.undo-action", ["boardEvent" => $boardEvent->getId()]) }}', {
+                            action: 'empty_row',
+                            rowId: idRow,
+                            castellerId: result.castellerId,
+                            base: base
+                        }).done(function() {
+                            enableUndo();
 
-            $.post(url, {divId: idRow, eventId: {{ $event->getId() }}, base: base})
-                .then(function(result, status){
-                    $('#' + idRow).html('');
-                    loadCastellersList();
-                }).fail(function(result, status){
-                }
-            );
+                            let url = "{{ route('event-board.empty-row-pinya', ['boardEvent' => ':boardEvent']) }}";
+                            url = url.replace(':boardEvent', boardEventId);
+
+                            $.post(url, {divId: idRow, eventId: {{ $event->getId() }}, base: base})
+                                .then(function(result, status){
+                                    $('#' + idRow).html('');
+                                    loadCastellersList();
+                                })
+                                .fail(function(result, status){
+                                });
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        let url = "{{ route('event-board.empty-row-pinya', ['boardEvent' => ':boardEvent']) }}";
+                        url = url.replace(':boardEvent', boardEventId);
+
+                        $.post(url, {divId: idRow, eventId: {{ $event->getId() }}, base: base})
+                            .then(function(result, status){
+                                $('#' + idRow).html('');
+                                loadCastellersList();
+                            })
+                            .fail(function(result, status){
+                            });
+                    }
+                });
+            }
 
             resetVars();
         }
@@ -696,6 +749,14 @@
 
             let url = "{{ route('event.board.swap-castellers', ['eventBoardId' => ':eventBoardId']) }}";
             url = url.replace(':eventBoardId', boardEventId);
+
+            $.post('{{ route("event.board.undo-action", ["boardEvent" => $boardEvent->getId()]) }}', {
+                action: 'swap_castellers',
+                rowId: idRow,
+                rowSwapId: idRowSwap,
+                base: base
+            });
+            enableUndo();
 
             $.post(url, {rowId: idRow, rowSwapId: idRowSwap, eventId: {{ $event->getId() }}, base: base})
                 .then(function(result, status){
@@ -932,19 +993,60 @@
 
             });
 
+            $(".btn-empty-board").on('click', function(){
+                $('#modalEmptyBoard').modal('show');
+            });
+
             $(".btn-empty-board-form").on('click', function(){
 
                 let url = "{{ route('event.board.empty-board-ajax', ['boardEvent' => ':boardEvent']) }}";
                 url = url.replace(':boardEvent', boardEventId);
 
-                $.post(url)
-                    .then(function(result, status){
-                            $('#pinya div').html('');
-                            loadMap(boardEventId, base);
-                            loadCastellersList();
-                    })
-                    .fail(function(result, status){
-                    });
+                let url_map = "{{ route('event.board.load-map-ajax', ['boardEvent' => ':boardEvent', 'base' => ':base']) }}";
+                url_map = url_map.replace(':boardEvent', boardEventId);
+                url_map = url_map.replace(':base', base);
+
+                $('#modalEmptyBoard').modal('hide');
+
+                $.get(url_map).then(function(result) {
+                    if (result && result.length > 0) {
+                        let positions = [];
+                        result.forEach(function(item) {
+                            positions.push({
+                                casteller_id: item.casteller.id_casteller,
+                                div_id: item.row.div_id
+                            });
+                        });
+
+                        $.post('{{ route("event.board.undo-action", ["boardEvent" => $boardEvent->getId()]) }}', {
+                            action: 'empty_board',
+                            positions: positions
+                        }).done(function() {
+                            enableUndo();
+
+                            $.post(url)
+                                .then(function(result, status){
+                                    $('#pinya div').html('');
+                                    loadMap(boardEventId, base);
+                                    loadCastellersList();
+                                })
+                                .fail(function(result, status){
+                                    console.error("Error al vaciar el tablero", result);
+                                });
+                        });
+                    } else {
+                        $.post(url)
+                            .then(function(result, status){
+                                $('#pinya div').html('');
+                                loadMap(boardEventId, base);
+                                loadCastellersList();
+                            })
+                            .fail(function(result, status){
+                                console.error("Error al vaciar el tablero", result);
+                            });
+                    }
+                }).fail(function(error) {
+                });
 
                 resetVars();
             });
@@ -960,21 +1062,79 @@
                 let url = "{{ route('event.board.remove-missing-ajax', ['boardEvent' => ':boardEvent']) }}";
                 url = url.replace(':boardEvent', boardEventId);
 
-               $.post(url,
-                        {
-                            attendanceType: attendanceTypeEventValue,
-                            attendanceStatus: attendanceStatusEventValue,
-                        }
-                    )
-                    .then(function(result, status){
+                $('#modalRemoveMissingCastellers').modal('hide');
 
-                            result.forEach(function(e, i) {
-                                $('#' + e.row.div_id).html('');
+                let url_map = "{{ route('event.board.load-map-ajax', ['boardEvent' => ':boardEvent', 'base' => ':base']) }}";
+                url_map = url_map.replace(':boardEvent', boardEventId);
+                url_map = url_map.replace(':base', base);
+
+                $.get(url_map).then(function(result) {
+                    if (result && result.length > 0) {
+                        let positionsToRecord = [];
+
+                        result.forEach(function(item) {
+                            let attendance = item.casteller.castellerAttendance;
+                            let verifiedAttendance = item.casteller.castellerVerifiedAttendance;
+                            let shouldRemove = false;
+
+                            if (attendanceTypeEventValue === 'status') {
+                                if (attendanceStatusEventValue === 'onlyNo' && attendance == 2) {
+                                    shouldRemove = true;
+                                } 
+                                else if (attendanceStatusEventValue === 'allButYes' && attendance != 1) {
+                                    shouldRemove = true;
+                                }
+                            } else { // status_verified
+                                if (attendanceStatusEventValue === 'onlyNo' && verifiedAttendance == 2) {
+                                    shouldRemove = true;
+                                } 
+                                else if (attendanceStatusEventValue === 'allButYes' && verifiedAttendance != 1) {
+                                    shouldRemove = true;
+                                }
+                            }
+
+                            if (shouldRemove) {
+                                positionsToRecord.push({
+                                    casteller_id: item.casteller.id_casteller,
+                                    div_id: item.row.div_id
+                                });
+                            }
+                        });
+
+                        if (positionsToRecord.length > 0) {
+                            $.post('{{ route("event.board.undo-action", ["boardEvent" => $boardEvent->getId()]) }}', {
+                                action: 'remove_missing',
+                                positions: positionsToRecord
+                            }).done(function() {
+                                enableUndo();
+
+                                $.post(url, {
+                                    attendanceType: attendanceTypeEventValue,
+                                    attendanceStatus: attendanceStatusEventValue,
+                                }).then(function(result) {
+                                    if (result) {
+                                        result.forEach(function(e) {
+                                            $('#' + e.row.div_id).html('');
+                                        });
+                                        loadCastellersList();
+                                    }
+                                });
                             });
-                            loadCastellersList();
-                    })
-                    .fail(function(result, status){
-                    });
+                        } else {
+                            $.post(url, {
+                                attendanceType: attendanceTypeEventValue,
+                                attendanceStatus: attendanceStatusEventValue,
+                            }).then(function(result) {
+                                if (result) {
+                                    result.forEach(function(e) {
+                                        $('#' + e.row.div_id).html('');
+                                    });
+                                    loadCastellersList();
+                                }
+                            });
+                        }
+                    }
+                });
 
                 resetVars();
             });
@@ -1048,6 +1208,50 @@
             $('#editBoardEvent').on('click', function() {
                 $(this).tooltip('hide');
                 $('#modalEditBoardEvent').modal('show');
+            });
+
+            $('#undoAction').on('click', function() {
+                if ($(this).hasClass('disabled')) {
+                    return;
+                }
+
+                $(this).tooltip('hide');
+
+                $.post("{{ route('event.board.undo-action', ['boardEvent' => $boardEvent->getId()]) }}")
+                    .done(function(response) {
+                        if (response.status) {
+                            switch (response.action) {
+                                case 'empty_row':
+                                    $('#' + response.divId).html('');
+                                    break;
+                                case 'restore_casteller':
+                                    castellerDiv(
+                                        response.divId,
+                                        response.castellerName,
+                                        response.castellerHeight, 
+                                        response.castellerAttendance,
+                                        response.castellerVerifiedAttendance,
+                                        response.castellerShoulderHeight,
+                                        response.castellerActivePinya,
+                                        response.hasAttendanceAnswers
+                                    );
+                                    break;
+                                case 'swap_back':
+                                case 'reload_map':
+                                    $('#pinya div').html('');
+                                    loadMap(boardEventId, base);
+                                    break;
+                            }
+
+                            loadCastellersList();
+
+                            if (!response.hasMoreActions) {
+                                disableUndo();
+                            }
+                        } else {
+                            disableUndo();
+                        }
+                    });
             });
 
             $("#toDisplay").on('click', function(e){

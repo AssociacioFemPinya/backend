@@ -528,6 +528,7 @@ final class EventBoardController extends Controller
                 'castellerStatusVerified' => trans('attendance.attendance_status_verified').': <i class="'.(RenderHelper::getAttendanceIcon($attendance?->getStatusVerified())).'"></i>',
                 'castellerTags' => Humans::readCastellerColumn($casteller, 'tags', 'left'),
                 'castellerAttendanceTags' => Humans::readAttendanceAnswersTags($attendance),
+                'castellerId' => $casteller->getId(),
             ],
 
             Response::HTTP_OK);
@@ -763,5 +764,164 @@ final class EventBoardController extends Controller
         Session::flash('status_ok', trans('event.eventboard_destroyed'));
 
         return redirect(route('event.board', ['event' => $id_event]));
+    }
+
+    /**
+     * Undo last board action
+     */
+    public function undoAction(Request $request, EventBoardManager $eventBoardManager, BoardEvent $boardEvent): JsonResponse
+    {
+        $eventId = $boardEvent->getEventId();
+        $user = $this->user();
+        $lastAction = session()->get('board_actions_'.$boardEvent->getId(), []);
+
+        $maxHistoryActions = 20;
+
+        if ($request->has('action')) {
+            $actionData = $request->all();
+            $lastAction[] = $actionData;
+
+            if (count($lastAction) > $maxHistoryActions) {
+                $lastAction = array_slice($lastAction, count($lastAction) - $maxHistoryActions);
+            }
+
+            session()->put('board_actions_'.$boardEvent->getId(), $lastAction);
+
+            return new JsonResponse(['status' => true], Response::HTTP_OK);
+        }
+
+        if (empty($lastAction)) {
+            return new JsonResponse(['status' => false], Response::HTTP_OK);
+        }
+
+        $lastActionData = array_pop($lastAction);
+        session()->put('board_actions_'.$boardEvent->getId(), $lastAction);
+
+        try {
+            switch ($lastActionData['action']) {
+                case 'put_casteller':
+                    $rowId = $lastActionData['rowId'];
+                    $row = Row::query()->where('div_id', $rowId)->first();
+
+                    if ($row) {
+                        $boardPosition = $eventBoardManager->findBoardPositionByRow($boardEvent, $row);
+                        if ($boardPosition) {
+                            $boardPosition->delete();
+                        }
+                    }
+
+                    return new JsonResponse(
+                        [
+                            'status' => true,
+                            'action' => 'empty_row',
+                            'divId' => $rowId,
+                            'hasMoreActions' => ! empty($lastAction),
+                        ],
+                        Response::HTTP_OK
+                    );
+
+                case 'swap_castellers':
+                    $rowId = $lastActionData['rowId'];
+                    $rowSwapId = $lastActionData['rowSwapId'];
+
+                    $row = Row::query()->where('div_id', $rowId)->first();
+                    $rowSwap = Row::query()->where('div_id', $rowSwapId)->first();
+
+                    if ($row && $rowSwap) {
+                        $eventBoardManager->swapCastellersOnBoard($boardEvent, $row, $rowSwap);
+                    }
+
+                    return new JsonResponse(
+                        [
+                            'status' => true,
+                            'action' => 'swap_back',
+                            'rowId' => $rowId,
+                            'rowSwapId' => $rowSwapId,
+                            'hasMoreActions' => ! empty($lastAction),
+                        ],
+                        Response::HTTP_OK
+                    );
+
+                case 'empty_row':
+                    if (isset($lastActionData['castellerId']) && isset($lastActionData['rowId'])) {
+                        $casteller = Casteller::find($lastActionData['castellerId']);
+                        $row = Row::query()->where('div_id', $lastActionData['rowId'])->first();
+
+                        if ($casteller && $row) {
+                            $boardPosition = $eventBoardManager->putCastellerOnBoard($boardEvent, $casteller, $row);
+                            $attendance = $casteller->getEventAttendance($eventId);
+
+                            return new JsonResponse(
+                                [
+                                    'status' => true,
+                                    'action' => 'restore_casteller',
+                                    'divId' => $lastActionData['rowId'],
+                                    'castellerName' => $casteller->getDisplayName(),
+                                    'castellerHeight' => $casteller->getRelativeHeight(),
+                                    'castellerAttendance' => ($attendance) ? $attendance->getStatus() : '??',
+                                    'castellerVerifiedAttendance' => ($attendance) ? $attendance->getStatusVerified() : '??',
+                                    'castellerShoulderHeight' => $casteller->getRelativeShoulderHeight(),
+                                    'castellerActivePinya' => $casteller->isActivePinya(),
+                                    'hasAttendanceAnswers' => ($attendance && ! empty($attendance->getOptions())),
+                                    'hasMoreActions' => ! empty($lastAction),
+                                ],
+                                Response::HTTP_OK
+                            );
+                        }
+                    }
+                    break;
+
+                case 'empty_board':
+                    if (isset($lastActionData['positions']) && is_array($lastActionData['positions'])) {
+
+                        foreach ($lastActionData['positions'] as $position) {
+                            $casteller = Casteller::find($position['casteller_id']);
+                            $row = Row::query()->where('div_id', $position['div_id'])->first();
+
+                            if ($casteller && $row) {
+                                $result = $eventBoardManager->putCastellerOnBoard($boardEvent, $casteller, $row);
+                            }
+                        }
+
+                        return new JsonResponse(
+                            [
+                                'status' => true,
+                                'action' => 'reload_map',
+                                'hasMoreActions' => ! empty($lastAction),
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                    break;
+
+                case 'remove_missing':
+                    if (isset($lastActionData['positions']) && is_array($lastActionData['positions'])) {
+                        $restoredCount = 0;
+
+                        foreach ($lastActionData['positions'] as $position) {
+                            $casteller = Casteller::find($position['casteller_id']);
+                            $row = Row::query()->where('div_id', $position['div_id'])->first();
+
+                            if ($casteller && $row) {
+                                $result = $eventBoardManager->putCastellerOnBoard($boardEvent, $casteller, $row);
+                            }
+                        }
+
+                        return new JsonResponse(
+                            [
+                                'status' => true,
+                                'action' => 'reload_map',
+                                'hasMoreActions' => ! empty($lastAction),
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                    break;
+            }
+        } catch (\Exception $e) {
+            return new JsonResponse(false, Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse(false, Response::HTTP_NOT_FOUND);
     }
 }

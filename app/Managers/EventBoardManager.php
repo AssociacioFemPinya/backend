@@ -93,61 +93,82 @@ final class EventBoardManager
         $boardPosition = $this->boardEventRepository->fetchBoardPositionFromRowInBoardEvent($boardEvent, $row);
         $boardPositionSwap = $this->boardEventRepository->fetchBoardPositionFromRowInBoardEvent($boardEvent, $rowSwap);
 
-        $isCastellerInBoard = $this->boardEventRepository
-            ->fetchBoardPositionFromCastellerInBoardEvent($boardPosition->getBoardEvent(), $boardPosition->getCasteller());
+        if (! $boardPosition && $boardPositionSwap) {
+            $isCastellerSwapInBoard = $this->boardEventRepository
+                ->fetchBoardPositionFromCastellerInBoardEvent($boardPositionSwap->getBoardEvent(), $boardPositionSwap->getCasteller());
 
-        //Change casteller row
-        if (! $boardPositionSwap && $isCastellerInBoard) {
+            if ($isCastellerSwapInBoard) {
+                $updatedBoardPosition = $this
+                    ->boardEventRepository->updateBoardPosition($boardPositionSwap, $boardPositionSwap->getCasteller(), $row);
 
-            $updatedBoardPosition = $this
-                ->boardEventRepository->updateBoardPosition($boardPosition, $boardPosition->getCasteller(), $rowSwap);
+                $this->boardEventRepository->start();
 
-            $this->boardEventRepository->start();
+                try {
+                    $updatedBoardPosition->save();
+                    $this->boardEventRepository->success();
 
-            try {
-                $updatedBoardPosition->save();
+                    return [$updatedBoardPosition, null];
+                } catch (\Exception $e) {
+                    $this->boardEventRepository->fail();
 
-                $this->boardEventRepository->success();
-
-                return [$updatedBoardPosition, null];
-            } catch (\Exception $e) {
-
-                $this->boardEventRepository->fail();
-                //TODO: send exception to slack $e->getMessage()
-
-                return null;
+                    return null;
+                }
             }
         }
 
-        //Swap castellers rows
-        $isCastellerSwapInBoard = $this->boardEventRepository
-            ->fetchBoardPositionFromCastellerInBoardEvent($boardPositionSwap->getBoardEvent(), $boardPositionSwap->getCasteller());
+        if ($boardPosition && ! $boardPositionSwap) {
+            $isCastellerInBoard = $this->boardEventRepository
+                ->fetchBoardPositionFromCastellerInBoardEvent($boardPosition->getBoardEvent(), $boardPosition->getCasteller());
 
-        if ($isCastellerInBoard && $isCastellerSwapInBoard) {
+            if ($isCastellerInBoard) {
+                $updatedBoardPosition = $this
+                    ->boardEventRepository->updateBoardPosition($boardPosition, $boardPosition->getCasteller(), $rowSwap);
 
-            $newBoardPosition = $this->boardEventRepository
-                ->createBoardPosition($boardEvent, $boardPosition->getCasteller(), $rowSwap);
-            $boardPosition->delete();
+                $this->boardEventRepository->start();
 
-            $newBoardPositionSwap = $this->boardEventRepository
-                ->createBoardPosition($boardEvent, $boardPositionSwap->getCasteller(), $row);
-            $boardPositionSwap->delete();
+                try {
+                    $updatedBoardPosition->save();
+                    $this->boardEventRepository->success();
 
-            $this->boardEventRepository->start();
+                    return [$updatedBoardPosition, null];
+                } catch (\Exception $e) {
+                    $this->boardEventRepository->fail();
 
-            try {
-                $newBoardPosition->save();
-                $newBoardPositionSwap->save();
+                    return null;
+                }
+            }
+        }
 
-                $this->boardEventRepository->success();
+        if ($boardPosition && $boardPositionSwap) {
+            $isCastellerInBoard = $this->boardEventRepository
+                ->fetchBoardPositionFromCastellerInBoardEvent($boardPosition->getBoardEvent(), $boardPosition->getCasteller());
 
-                return [$newBoardPosition, $newBoardPositionSwap];
-            } catch (\Exception $e) {
+            $isCastellerSwapInBoard = $this->boardEventRepository
+                ->fetchBoardPositionFromCastellerInBoardEvent($boardPositionSwap->getBoardEvent(), $boardPositionSwap->getCasteller());
 
-                $this->boardEventRepository->fail();
-                //TODO: send exception to slack $e->getMessage()
+            if ($isCastellerInBoard && $isCastellerSwapInBoard) {
+                $newBoardPosition = $this->boardEventRepository
+                    ->createBoardPosition($boardEvent, $boardPosition->getCasteller(), $rowSwap);
+                $boardPosition->delete();
 
-                return null;
+                $newBoardPositionSwap = $this->boardEventRepository
+                    ->createBoardPosition($boardEvent, $boardPositionSwap->getCasteller(), $row);
+                $boardPositionSwap->delete();
+
+                $this->boardEventRepository->start();
+
+                try {
+                    $newBoardPosition->save();
+                    $newBoardPositionSwap->save();
+
+                    $this->boardEventRepository->success();
+
+                    return [$newBoardPosition, $newBoardPositionSwap];
+                } catch (\Exception $e) {
+                    $this->boardEventRepository->fail();
+
+                    return null;
+                }
             }
         }
 
@@ -258,5 +279,13 @@ final class EventBoardManager
             $this->boardEventRepository->saveBoardPosition($boardPosition);
         }
 
+    }
+
+    public function findBoardPositionByRow(BoardEvent $boardEvent, Row $row): ?BoardPosition
+    {
+        return BoardPosition::query()
+            ->where('board_event_id', $boardEvent->getId())
+            ->where('row_id', $row->getId())
+            ->first();
     }
 }
