@@ -238,7 +238,7 @@
                     ? '<i class="fa fa-check text-success mr-5" title="{{ __("attendance.status_verified") }}"></i> '
                     : '';
                 
-                div.innerHTML = `${confirmedIcon}<span class="casteller-alias">${displayName}</span> <span class="casteller-name">${fullName !== displayName ? fullName : ''}</span>`;
+div.innerHTML = confirmedIcon; const aliasEl = document.createElement('span'); aliasEl.className = 'casteller-alias'; aliasEl.textContent = displayName; div.appendChild(aliasEl); if (fullName !== displayName) { const nameEl = document.createElement('span'); nameEl.className = 'casteller-name'; nameEl.textContent = fullName; div.appendChild(nameEl); }
                 
                 div.addEventListener('click', function() {
                     $('#modal-casteller-name').text(displayName + (fullName !== displayName ? ' (' + fullName + ')' : ''));
