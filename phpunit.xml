@@ -40,5 +40,6 @@
         <server name="DB_DATABASE" value="testing"/>
         <server name="DB_USERNAME" value="user"/>
         <server name="DB_PASSWORD" value="password"/>
+        <server name="USER_TIMEZONE" value="UTC"/>
     </php>
 </phpunit>
