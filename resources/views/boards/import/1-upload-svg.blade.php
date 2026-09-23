@@ -116,7 +116,7 @@
                 xml = data.target.result;
                 xml = $.parseXML(xml);
 				
-                svg = $(xml).find('rect'); /*funcions formes rect*/
+let svg = $(xml).find('rect'); /*funcions formes rect*/
 				txt = $(xml).find('tspan'); /*funcions text*/
 								
 				/*Obtenim la mida de la imatge del SVG importat fent servir l'atribut ViewBox*/				
