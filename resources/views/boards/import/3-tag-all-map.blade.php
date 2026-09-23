@@ -273,9 +273,12 @@
             }
         });
 
-        $('#BtnNameOk').on('click', function ()
+        $('#BtnNameOk').on('click', async function ()
         {
+            if (selectedDivs.length === 0) return;
+
             $('#spinnerAddName').show();
+            $('#BtnNameOk, #BtnRemoveRow, #btnClearSelections').prop('disabled', true);
 
             let position = $('#position').val();
             position = position.split('+=+');
@@ -289,42 +292,7 @@
             function updatePosition(rowId) {
                 let box = $('#'+rowId);
 
-                if(core) {
-                    if(side === "") {
-                        box.html(position);
-                    } else {
-                        let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
-                        box.html(position+' '+cl_side);
-                        box.attr('data-row', row);
-                        box.attr('data-side', side);
-                    }
-                } else {
-                    if(side === "") {
-                        box.html(position+' '+cord);
-                    } else {
-                        let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
-                        box.html(position+' '+cord+' '+cl_side);
-                        box.attr('data-row', row);
-                        box.attr('data-side', side);
-                    }
-                }
-
-                box.css('border', '1px solid #'+row_colors[row]);
-                box.css('background-color','#'+row_colors[row]);
-                box.css('line-height', '28px');
-
-                box.addClass('cord_'+cord);
-                box.attr('data-cord', cord);
-                box.attr('data-position', position);
-                box.attr('data-id_position', id_pos);
-                box.attr('data-row', row);
-                box.attr('data-side', side);
-
-                if (multiSelectMode) {
-                    box.removeClass('selected-multiple');
-                }
-
-                $.post( "{!! route('boards.tag-position', ['board' => $board, 'map' => $type_map]) !!}",
+                return $.post( "{!! route('boards.tag-position', ['board' => $board, 'map' => $type_map]) !!}",
                     {
                         rowId: rowId,
                         position: position,
@@ -333,28 +301,68 @@
                         core: core,
                         row: row,
                         side: side
+                    })
+                    .done(function( response ) {
+                        if(response) {
+                            if(core) {
+                                if(side === "") {
+                                    box.html(position);
+                                } else {
+                                    let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
+                                    box.html(position+' '+cl_side);
+                                    box.attr('data-row', row);
+                                    box.attr('data-side', side);
+                                }
+                            } else {
+                                if(side === "") {
+                                    box.html(position+' '+cord);
+                                } else {
+                                    let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
+                                    box.html(position+' '+cord+' '+cl_side);
+                                    box.attr('data-row', row);
+                                    box.attr('data-side', side);
+                                }
+                            }
+
+                            box.css('border', '1px solid #'+row_colors[row]);
+                            box.css('background-color','#'+row_colors[row]);
+                            box.css('line-height', '28px');
+
+                            box.addClass('cord_'+cord);
+                            box.attr('data-cord', cord);
+                            box.attr('data-position', position);
+                            box.attr('data-id_position', id_pos);
+                            box.attr('data-row', row);
+                            box.attr('data-side', side);
+
+                            if (multiSelectMode) {
+                                selectedDivs = selectedDivs.filter(id => id !== rowId);
+                                box.removeClass('selected-multiple');
+                            }
+                        }
                     });
             }
 
-            if (selectedDivs.length > 0) {
-                let totalToProcess = selectedDivs.length;
-                let processed = 0;
-
-                selectedDivs.forEach(function(rowId) {
-                    updatePosition(rowId);
-                    processed++;
-
-                    if (processed === totalToProcess) {
-                        $('#spinnerAddName').hide();
-                        $('#divDone').show();
-                        setTimeout(function(){
-                            $('#divDone').hide(200);
-                        }, 2000);
-
-                        selectedDivs = [];
-                        $('#divInputs').css('visibility', 'hidden');
+            try {
+                const toProcess = [...selectedDivs];
+                for (const rowId of toProcess) {
+                    try {
+                        await updatePosition(rowId);
+                    } catch (e) {
+                        console.error('Error updating position for rowId: ' + rowId, e);
                     }
-                });
+                }
+            } finally {
+                $('#spinnerAddName').hide();
+                $('#BtnNameOk, #BtnRemoveRow, #btnClearSelections').prop('disabled', false);
+
+                if (selectedDivs.length === 0) {
+                    $('#divInputs').css('visibility', 'hidden');
+                    $('#divDone').show();
+                    setTimeout(function(){
+                        $('#divDone').hide(200);
+                    }, 2000);
+                }
             }
         });
 
