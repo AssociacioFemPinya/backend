@@ -241,8 +241,8 @@ titleEl.textContent = @json(__('attendance.verify_touch_no_castellers')) + ' "' 
                 
                 let displayName = c.alias ? c.alias : c.name;
                 let fullName = (c.name || '') + ' ' + (c.last_name || '');
-                let confirmedIcon = (c.attendance_status_verified == {{ $attendanceStatusYes }})
-                    ? '<i class="fa fa-check text-success mr-5" title="{{ __("attendance.status_verified") }}"></i> '
+let confirmedIcon = (c.attendance_status_verified == {{ $attendanceStatusYes }})
+                    ? '<i class="fa fa-check text-success mr-5" aria-hidden="true"></i><span class="sr-only">{{ __("attendance.status_verified") }}</span> '
                     : '';
                 
 div.innerHTML = confirmedIcon; const aliasEl = document.createElement('span'); aliasEl.className = 'casteller-alias'; aliasEl.textContent = displayName; div.appendChild(aliasEl); if (fullName !== displayName) { const nameEl = document.createElement('span'); nameEl.className = 'casteller-name'; nameEl.textContent = fullName; div.appendChild(nameEl); }
