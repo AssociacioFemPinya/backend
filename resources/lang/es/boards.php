@@ -32,7 +32,7 @@ return [
     "done_next_step" => "Hecho. Siguiente paso",
     "select_other_row_baix" => "Hecho. Seleccionar otro «baix»",
     "step_select_all_row_txt" => "Seleccione cada una de las casillas para asignarle una posición, un número de cordón y la fila de la base «:BASE» a la que pertenece.",
-    "step_select_all_row_explanation" => "Clique sobre una o varias de las casillas, asígnele una posición, un número de cordón —si forma parte del núcleo, no es necesario— y la fila  a la que pertenece.",
+    "step_select_all_row_explanation" => "Clique sobre una o varias de las casillas, asígneles una posición, un número de cordón —si forma parte del núcleo, no es necesario— y la fila  a la que pertenece.",
     "select_other_row" => "Hecho. Seleccionar otra posición.",
     "remove_selection" => "Eliminar selección",
     "remove_positions" => "Eliminar posiciones",
