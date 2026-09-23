@@ -105,8 +105,10 @@
         $('#result_pinya').on('click', 'div', function ()
         {
             if (currentSelected && currentSelected !== $(this).attr('id')) {
-                $('#' + currentSelected).css('border', '1px solid grey');
-                $('#' + currentSelected).css('line-height', '28px');
+                let previous = $('#' + currentSelected);
+                let hasName = previous.html().trim() !== '';
+                previous.css('border', hasName ? '4px solid grey' : '1px solid grey');
+                previous.css('line-height', hasName ? '23px' : '28px');
             }
 
             id_row = $(this).attr('id');
