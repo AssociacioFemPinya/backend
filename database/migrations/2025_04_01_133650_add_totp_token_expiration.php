@@ -26,7 +26,7 @@ class AddTotpTokenExpiration extends Migration
     public function down()
     {
         Schema::table('colla_config', function (Blueprint $table) {
-			$table->dropColumn('totp_token_expiration');
+            $table->dropColumn('totp_token_expiration');
         });
     }
 }

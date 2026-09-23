@@ -14,7 +14,7 @@ class AddTemplateNotificationsTable extends Migration
     public function up()
     {
         Schema::table('notifications', function (Blueprint $table) {
-			$table->string('template')->after('body');
+            $table->string('template')->after('body');
         });
     }
 

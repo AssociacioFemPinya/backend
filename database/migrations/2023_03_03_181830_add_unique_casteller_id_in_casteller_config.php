@@ -19,8 +19,8 @@ class AddUniqueCastelleridInCastellerConfig extends Migration
             $table->dropForeign(['casteller_id']);
             $table->dropUnique(['casteller_id']);
             $table->foreign('casteller_id')
-            ->references('id_casteller')->on('castellers')
-            ->onDelete('cascade');
+                ->references('id_casteller')->on('castellers')
+                ->onDelete('cascade');
         });
     }
 }

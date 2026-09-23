@@ -13,17 +13,17 @@ return [
     |
     */
 
-    "failed"   => "Les credencials no concorden amb els nostres registres.",
-    "throttle" => "Heu superat el nombre màxim d'intents d'accés. Torneu a intentar-ho d'aquí a :seconds segons.",
-    "remember_me" => "Recorda'm",
-    "e-mail" => "Adreça electrònica",
-    "password" => "Contrasenya",
-    "confirm_password" => "Confirmeu la contrasenya",
-    "login" => "Entra",
-    "password_lost" => "Heu oblidat la contrasenya?",
-    "ups" => "Atenció!",
-    "problems" => "Hi ha hagut algun problema.",
-    "reset_password" => "Reinicia la contrasenya",
-    "password_reset_link" => "Envia l'enllaç per restablir la contrasenya",
+    'failed' => 'Les credencials no concorden amb els nostres registres.',
+    'throttle' => "Heu superat el nombre màxim d'intents d'accés. Torneu a intentar-ho d'aquí a :seconds segons.",
+    'remember_me' => "Recorda'm",
+    'e-mail' => 'Adreça electrònica',
+    'password' => 'Contrasenya',
+    'confirm_password' => 'Confirmeu la contrasenya',
+    'login' => 'Entra',
+    'password_lost' => 'Heu oblidat la contrasenya?',
+    'ups' => 'Atenció!',
+    'problems' => 'Hi ha hagut algun problema.',
+    'reset_password' => 'Reinicia la contrasenya',
+    'password_reset_link' => "Envia l'enllaç per restablir la contrasenya",
 
 ];

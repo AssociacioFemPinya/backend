@@ -17,8 +17,8 @@ class AddCastellerIdNotificationsTable extends Migration
             $table->integer('casteller_id')->unsigned()->nullable()->default(null)->after('user_id');
 
             $table->foreign('casteller_id')
-            ->references('id_casteller')->on('castellers')
-            ->onDelete('cascade');
+                ->references('id_casteller')->on('castellers')
+                ->onDelete('cascade');
 
             $table->dropForeign('notifications_casteller_id_foreign');
 

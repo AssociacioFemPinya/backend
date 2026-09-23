@@ -47,7 +47,6 @@ class CreateCastellersTable extends Migration
             $table->tinyInteger('status');
             $table->timestamps();
 
-
             $table->foreign('colla_id')
                 ->references('id_colla')->on('colles')
                 ->onDelete('cascade');

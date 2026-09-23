@@ -17,7 +17,6 @@ class AddNameBoardEvent extends Migration
             $table->string('name')->after('board_id')->nullable();
         });
 
-
     }
 
     /**

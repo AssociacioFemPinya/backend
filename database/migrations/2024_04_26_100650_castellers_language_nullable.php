@@ -14,13 +14,13 @@ class CastellersLanguageNullable extends Migration
     public function up()
     {
         Schema::table('castellers', function (Blueprint $table) {
-			$table->string('language', 2)->nullable()->change();
+            $table->string('language', 2)->nullable()->change();
         });
 
         DB::table('castellers')
             ->update([
-                "language" => null
-        ]);
+                'language' => null,
+            ]);
     }
 
     /**
@@ -36,9 +36,9 @@ class CastellersLanguageNullable extends Migration
         });
 
         DB::table('castellers')
-            ->where('language',null)
+            ->where('language', null)
             ->update([
-                "language" => "ca"
-        ]);
+                'language' => 'ca',
+            ]);
     }
 }

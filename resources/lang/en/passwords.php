@@ -13,10 +13,10 @@ return [
     |
     */
 
-    "reset"     => "Your password has been reset.",
-    "sent"      => "An email to reset the password has been sent.",
-    "throttled" => "You need to wait to try it again.",
-    "token"     => "The password recovery code is incorrect.",
-    "user"      => "This email address is not registered.",
+    'reset' => 'Your password has been reset.',
+    'sent' => 'An email to reset the password has been sent.',
+    'throttled' => 'You need to wait to try it again.',
+    'token' => 'The password recovery code is incorrect.',
+    'user' => 'This email address is not registered.',
 
 ];

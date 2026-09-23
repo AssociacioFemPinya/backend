@@ -13,13 +13,13 @@ return [
     |
     */
 
-    "error"   => "Hi ha hagut un error.",
-    "400"   => "La petició no es pot processar perquè la sintaxi és errònia.",
-    "401"   => "No teniu autorització per accedir a aquesta pàgina.",
-    "403"   => "No teniu permís per accedir a aquesta pàgina.",
-    "404"   => "No s'ha trobat la pàgina que busqueu.",
-    "419"   => "La sessió ha expirat.",
-    "500"   => "La petició no es pot processar perquè la sintaxi és errònia.",
-    "503"   => "El servei no està disponible ara mateix.",
+    'error' => 'Hi ha hagut un error.',
+    '400' => 'La petició no es pot processar perquè la sintaxi és errònia.',
+    '401' => 'No teniu autorització per accedir a aquesta pàgina.',
+    '403' => 'No teniu permís per accedir a aquesta pàgina.',
+    '404' => "No s'ha trobat la pàgina que busqueu.",
+    '419' => 'La sessió ha expirat.',
+    '500' => 'La petició no es pot processar perquè la sintaxi és errònia.',
+    '503' => 'El servei no està disponible ara mateix.',
 
 ];

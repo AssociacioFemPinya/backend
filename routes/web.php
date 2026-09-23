@@ -17,24 +17,22 @@ use App\Http\Controllers\CollaConfigController;
 use App\Http\Controllers\EventBoardController;
 use App\Http\Controllers\EventRondesController;
 use App\Http\Controllers\EventsController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TagsController;
 use App\Http\Controllers\Notifications\NotificationsController;
+use App\Http\Controllers\Notifications\RegisterNotificationsController;
 use App\Http\Controllers\Notifications\RemindersController;
 use App\Http\Controllers\Notifications\ScheduledNotificationsController;
-use App\Http\Controllers\Notifications\RegisterNotificationsController;
-
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TagsController;
 
 Auth::routes(['register' => false]);
 
 // NON-LOGUED USERS
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
 });
 
 // ALL LOGUED USERS -> BASIC PERMISSIONS
-Route::group(['middleware' => ['role_or_permission:Super-Admin|dashboard|profile']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin|dashboard|profile']], function () {
     Route::get('dashboard/{event?}', 'HomeController@dashboard')->name('dashboard');
     //User profile
     Route::get('profile/user', 'ProfileController@getSetupUser')->name('profile.user');
@@ -43,14 +41,12 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|dashboard|profile
 });
 
 // VIEW COLLA
-Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view colla|edit colla']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view colla|edit colla']], function () {
     Route::get('profile/colla', [ProfileController::class, 'getSetupColla'])->name('profile.colla');
 });
 
 // EDIT COLLA
-Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit colla']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit colla']], function () {
     //Colla profile
     Route::post('profile/colla/colla', 'ProfileController@postUpdateColla')->name('profile.colla.update');
     Route::post('profile/colla/edit-config', [CollaConfigController::class, 'postUpdateCollaConfig'])->name('profile.colla.update-colla-config');
@@ -69,12 +65,10 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit 
     Route::get('profile/colla/periods/edit-period-modal/{period}', 'PeriodController@getEditPeriodModalAjax')->name('profile.colla.periods.edit-period-modal');
     Route::post('profile/colla/periods/update/{period}', 'PeriodController@postUpdatePeriod')->name('profile.colla.periods.update');
 
-
 });
 
 // MANAGE ALL COLLES AND USERS
-Route::group(['middleware' => ['role_or_permission:Super-Admin']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin']], function () {
     Route::get('admin/colles', 'CollesController@getList')->name('admin.colles');
     Route::get('admin/colles/add-colla-modal', 'CollesController@getAddCollaModal')->name('admin.colles.add-colla-modal');
     Route::post('admin/colles/add', 'CollesController@postStoreColla')->name('admin.colles.add');
@@ -85,16 +79,15 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin']], function()
 });
 
 // VIEW CASTELLERS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|view BBDD|edit BBDD'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|view BBDD|edit BBDD'], function () {
     Route::get('castellers/list', [CastellersController::class, 'getList'])->name('castellers.list');
     Route::post('castellers/list-ajax', [CastellersController::class, 'postListAjax'])->name('castellers.list-ajax');
     Route::get('castellers/edit/{casteller}', [CastellersController::class, 'getCardCasteller'])->where('casteller', '[0-9]+')->name('castellers.edit');
     Route::get('castellers/edit/card-edit-ajax/{casteller}', 'CastellersController@getCardEditCastellerAjax')->where('casteller', '[0-9]+')->name('castellers.edit.card-edit');
 
-    Route::view('castellers/upload-form','fileupload');
+    Route::view('castellers/upload-form', 'fileupload');
 
-    Route::post('castellers/upload-form/fileupload',[CastellersController::class,'postAddCastellerExcel'])->name('uploadcastellers');
+    Route::post('castellers/upload-form/fileupload', [CastellersController::class, 'postAddCastellerExcel'])->name('uploadcastellers');
     Route::get('castellers/export/', [CastellersController::class, 'castellersExportExcel'])->name('castellers.export');
     Route::get('castellers/exportods/', [CastellersController::class, 'castellersExportOds'])->name('castellers.exportods');
 
@@ -109,15 +102,13 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view BBDD|edit BBDD'],
 });
 
 // EDIT CASTELLERS OR CASTELLER PERSONALS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD|edit casteller personals'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD|edit casteller personals'], function () {
     Route::post('castellers/update/{casteller}', 'CastellersController@postUpdateCasteller')->where('casteller', '[0-9]+')->name('castellers.update');
 });
 
 // EDIT CASTELLERS
 
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD'], function () {
     Route::post('castellers/add', 'CastellersController@postAddCasteller')->name('castellers.add');
     Route::post('castellers/delete/{casteller}', 'CastellersController@postDestroyCasteller')->where('casteller', '[0-9]+')->name('castellers.destroy');
 
@@ -132,8 +123,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit BBDD'], function(
 });
 
 // VIEW CASTELLER CONFIG
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|view casteller config|edit casteller config'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|view casteller config|edit casteller config'], function () {
     Route::get('castellers/config/list', 'CastellerConfigController@getList')->name('castellers.config.list');
     Route::post('castellers/config/list-ajax', 'CastellerConfigController@postListAjax')->name('castellers.config.list-ajax');
     Route::get('castellers/config/credentials-mail-modal/{casteller}', 'CastellerConfigController@getCredentialsMailModalAjax')->name('castellers.config.credentials-mail-modal');
@@ -141,14 +131,12 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view casteller config|
 });
 
 // EDIT CASTELLER CONFIG
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit casteller config'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit casteller config'], function () {
     Route::post('castellers/config/set-status-ajax', 'CastellerConfigController@postSetStatusAjax')->name('castellers.config.set-status');
 });
 
 // VIEW EVENTS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit events'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit events'], function () {
     Route::get('events/list', [EventsController::class, 'getList'])->name('events.list');
     Route::post('events/list-ajax/{time}', [EventsController::class, 'postListAjax'])->name('events.list-ajax');
     Route::get('events/tags', 'TagsController@getListEvents')->name('events.tags');
@@ -173,8 +161,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|view events|edit event
 });
 
 // EDIT EVENTS
-Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit events'], function()
-{
+Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit events'], function () {
     Route::get('events/create', 'EventsController@getCreate')->name('events.create');
     Route::post('events/add', 'EventsController@postStoreEvent')->name('events.add');
     Route::get('events/edit/{event}', 'EventsController@getEditEvent')->where('event', '[0-9]+')->name('events.edit');
@@ -197,9 +184,7 @@ Route::group(['role_or_permission:Super-Admin|Colla-Admin|edit events'], functio
 
 // BOARDS [todo]
 
-Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view boards|edit boards']], function()
-{
-
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view boards|edit boards']], function () {
 
     // Boards
     Route::get('boards/list', [BoardsController::class, 'getList'])->name('boards.list');
@@ -226,18 +211,16 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view 
     Route::post('event/board/empty-row-pinya/{boardEvent}', [EventBoardController::class, 'postAjaxEmptyRow'])->where('boardEvent', '[0-9]+')->name('event-board.empty-row-pinya');
     Route::post('event/board/to-display', [EventBoardController::class, 'postToDisplay'])->name('event.board.to-display');
     Route::post('event/board/add-favourite', [EventBoardController::class, 'postAddFavourite'])->name('event.board.add-favourite');
-    Route::post('event/board/destroy/{boardEvent}', [EventBoardController::Class, 'postDestroyBoardEvent'])->where('boardEvent', '[0-9]+')->name('event.board.destroy');
+    Route::post('event/board/destroy/{boardEvent}', [EventBoardController::class, 'postDestroyBoardEvent'])->where('boardEvent', '[0-9]+')->name('event.board.destroy');
     Route::get('event/rondes/{event}', [EventRondesController::class, 'getList'])->where('event', '[0-9]+')->name('event.rondes');
     Route::post('event/rondes/list-ajax/{event}', [EventRondesController::class, 'postListAjax'])->where('event', '[0-9]+')->name('event.rondes.list-ajax');
     Route::post('event/rondes/add-ronda-ajax/{event}', [EventRondesController::class, 'postAddRondaAjax'])->where('event', '[0-9]+')->name('event.rondes.add-ronda-ajax');
     Route::post('event/rondes/destroy-ronda-ajax/{ronda}', [EventRondesController::class, 'postDestroyRondaAjax'])->where('ronda', '[0-9]+')->name('event.rondes.destroy-ronda-ajax');
     Route::post('event/rondes/update-ronda-ajax/{ronda}', [EventRondesController::class, 'postUpdateRondaAjax'])->where('ronda', '[0-9]+')->name('event.rondes.update-ronda-ajax');
 
-
 });
 
-Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit boards']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit boards']], function () {
     Route::post('boards/tags/add', [TagsController::class, 'postAddBoardTag'])->name('boards.tags.add');
     Route::get('boards/add-board-modal', [BoardsController::class, 'getAddBoardModalAjax'])->name('boards.add-board-modal');
     Route::post('boards/add', [BoardsController::class, 'postAddBoard'])->name('boards.add');
@@ -257,8 +240,7 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit 
 });
 
 // VIEW NOTIFICATIONS
-Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view notifications|edit notifications']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view notifications|edit notifications']], function () {
     Route::get('notifications/scheduled/list', [ScheduledNotificationsController::class, 'getList'])->name('notifications.scheduled_notifications.list');
     Route::post('notifications/scheduled/list-ajax', [ScheduledNotificationsController::class, 'postListAjax'])->name('notifications.scheduled_notifications.list-ajax');
     Route::get('notifications/register/list', [RegisterNotificationsController::class, 'getList'])->name('notifications.register.list');
@@ -272,15 +254,13 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|view 
 });
 
 // EDIT NOTIFICATIONS
-Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit notifications']], function()
-{
+Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit notifications']], function () {
     Route::get('notifications/scheduled/create', [ScheduledNotificationsController::class, 'getCreate'])->name('notifications.scheduled_notifications.create');
     Route::post('notifications/scheduled/add', [ScheduledNotificationsController::class, 'postStoreNotification'])->name('notifications.scheduled_notifications.add');
     Route::get('notifications/scheduled/edit/{scheduledNotification}', [ScheduledNotificationsController::class, 'getEditNotification'])->name('notifications.scheduled_notifications.edit');
     Route::post('notifications/scheduled/update/{scheduledNotification}', [ScheduledNotificationsController::class, 'postUpdateNotification'])->name('notifications.scheduled_notifications.update');
     Route::post('notifications/scheduled/destroy/{scheduledNotification}', [ScheduledNotificationsController::class, 'postDestroyNotification'])->name('notifications.scheduled_notifications.destroy');
 });
-
 
 Route::match(['get', 'post'], '/'.env('TELEGRAM_CALLBACK_PATH', '/telegram_callback'), 'BotManController@handle')->name('botman.handle');
 Route::match(['get', 'post'], '/'.env('TELEGRAM_CALLBACK_PATH', '/telegram_callback').'/tinker', 'BotManController@tinker');

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class TagFactory extends Factory
 {
     protected $model = Tag::class;
+
     /**
      * Define the model's default state.
      *
@@ -22,19 +23,19 @@ class TagFactory extends Factory
     }
 
     public function event()
-    {        
-        return $this->state(function (array $attributes) {            
+    {
+        return $this->state(function (array $attributes) {
             return [
-                'type' => "EVENTS",
+                'type' => 'EVENTS',
             ];
         });
     }
 
     public function casteller()
-    {        
-        return $this->state(function (array $attributes) {            
+    {
+        return $this->state(function (array $attributes) {
             return [
-                'type' => "CASTELLERS",
+                'type' => 'CASTELLERS',
             ];
         });
     }

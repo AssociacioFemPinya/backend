@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use App\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -46,7 +44,6 @@ class PermissionsSeeder extends Seeder
 
         Permission::create(['name' => 'view casteller personals']);
         Permission::create(['name' => 'edit casteller personals']);
-
 
         // create roles
 

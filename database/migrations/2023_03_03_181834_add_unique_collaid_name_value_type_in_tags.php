@@ -19,8 +19,8 @@ class AddUniqueCollaidNameValueTypeInTags extends Migration
             $table->dropForeign(['colla_id']);
             $table->dropUnique('collaid_name_value_type_unique');
             $table->foreign('colla_id')
-            ->references('id_colla')->on('colles')
-            ->onDelete('cascade');
+                ->references('id_colla')->on('colles')
+                ->onDelete('cascade');
         });
     }
 }

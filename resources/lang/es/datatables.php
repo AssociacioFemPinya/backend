@@ -1,4 +1,5 @@
 <?php
+
 return [
     'translation' => '{
 	"sProcessing":   "Procesando...",

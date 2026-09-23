@@ -13,13 +13,13 @@ return [
     |
     */
 
-    "error"   => "Ha fallado alguna cosa",
-    "400"   => "La solicitud no se puede procesar porqué contiene sintaxis erronea.",
-    "401"   => "No tiene autorización para acceder a esta página.",
-    "403"   => "No tiene permiso para acceder a esta página.",
-    "404"   => "No se ha encontrado la pàgina que busca.",
-    "419"   => "La sesión ha expirado.",
-    "500"   => "La solicitud no se puede procesar porqué contiene sintaxis erronea.",
-    "503"   => "En estos momentos el servicio no está disponible.",
+    'error' => 'Ha fallado alguna cosa',
+    '400' => 'La solicitud no se puede procesar porqué contiene sintaxis erronea.',
+    '401' => 'No tiene autorización para acceder a esta página.',
+    '403' => 'No tiene permiso para acceder a esta página.',
+    '404' => 'No se ha encontrado la pàgina que busca.',
+    '419' => 'La sesión ha expirado.',
+    '500' => 'La solicitud no se puede procesar porqué contiene sintaxis erronea.',
+    '503' => 'En estos momentos el servicio no está disponible.',
 
 ];

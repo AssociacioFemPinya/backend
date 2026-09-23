@@ -62,10 +62,16 @@
     }
     
     .casteller-item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #eee;
+        text-align: left;
         font-size: 1.8rem;
         padding: 20px;
         cursor: pointer;
-        border-bottom: 1px solid #eee;
         transition: background 0.1s;
     }
     .casteller-item:hover, .casteller-item:active {
@@ -219,7 +225,7 @@
                 emptyStateEl.className = 'text-center p-20 text-muted';
 
                 const titleEl = document.createElement('h4');
-                titleEl.textContent = '{{ __("attendance.verify_touch_no_castellers") }} "' + query + '"';
+titleEl.textContent = @json(__('attendance.verify_touch_no_castellers')) + ' "' + query + '"';
 
                 emptyStateEl.appendChild(titleEl);
                 listEl.appendChild(emptyStateEl);
@@ -229,13 +235,17 @@
             // Opcional: paginar o limitar para que no explote la memoria visual.
             // Top 40 matches is more than enough for a scroll view.
             filtered.slice(0, 40).forEach(c => {
-                const div = document.createElement('div');
+                const div = document.createElement('button');
+                div.type = 'button';
                 div.className = 'casteller-item';
                 
                 let displayName = c.alias ? c.alias : c.name;
                 let fullName = (c.name || '') + ' ' + (c.last_name || '');
+let confirmedIcon = (c.attendance_status_verified == {{ $attendanceStatusYes }})
+                    ? '<i class="fa fa-check text-success mr-5" aria-hidden="true"></i><span class="sr-only">{{ __("attendance.status_verified") }}</span> '
+                    : '';
                 
-                div.innerHTML = `<span class="casteller-alias">${displayName}</span> <span class="casteller-name">${fullName !== displayName ? fullName : ''}</span>`;
+div.innerHTML = confirmedIcon; const aliasEl = document.createElement('span'); aliasEl.className = 'casteller-alias'; aliasEl.textContent = displayName; div.appendChild(aliasEl); if (fullName !== displayName) { const nameEl = document.createElement('span'); nameEl.className = 'casteller-name'; nameEl.textContent = fullName; div.appendChild(nameEl); }
                 
                 div.addEventListener('click', function() {
                     $('#modal-casteller-name').text(displayName + (fullName !== displayName ? ' (' + fullName + ')' : ''));
@@ -271,6 +281,14 @@
                     $('#confirmModal').modal('hide');
                     btn.prop('disabled', false).html("{{ __('attendance.verify_touch_yes') }} <i class='fa fa-check'></i>");
                     
+                    // Update in-memory casteller record
+                    var verifiedCasteller = castellers.find(function(item) {
+                        return item.id_casteller == castellerId;
+                    });
+                    if (verifiedCasteller) {
+                        verifiedCasteller.attendance_status_verified = {{ $attendanceStatusYes }};
+                    }
+
                     // Reset input
                     myKeyboard.clearInput();
                     inputElement.value = "";

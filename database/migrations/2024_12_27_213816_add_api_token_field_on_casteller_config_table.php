@@ -1,10 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Faker\Factory;
-
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddApiTokenFieldOnCastellerConfigTable extends Migration
 {
@@ -17,7 +15,7 @@ class AddApiTokenFieldOnCastellerConfigTable extends Migration
     {
 
         Schema::table('casteller_config', function ($table) {
-            $table->string('api_token',32)->nullable();
+            $table->string('api_token', 32)->nullable();
             $table->boolean('api_token_enabled')->default(0);
         });
 
@@ -25,12 +23,12 @@ class AddApiTokenFieldOnCastellerConfigTable extends Migration
 
         $castellerConfigs = DB::table('casteller_config')->select('id_casteller_config')->get();
 
-        foreach($castellerConfigs as $castellerConfig){
+        foreach ($castellerConfigs as $castellerConfig) {
             DB::table('casteller_config')
                 ->where('id_casteller_config', $castellerConfig->id_casteller_config)
                 ->update([
-                "api_token" => $faker->regexify('[A-Za-z0-9]{32}')
-            ]);
+                    'api_token' => $faker->regexify('[A-Za-z0-9]{32}'),
+                ]);
         }
 
     }

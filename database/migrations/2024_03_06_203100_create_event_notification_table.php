@@ -19,11 +19,11 @@ class CreateEventNotificationTable extends Migration
             $table->bigInteger('notification_id')->unsigned();
             $table->timestamps();
             $table->foreign('event_id')
-            ->references('id_event')->on('events')
-            ->onDelete('cascade');
+                ->references('id_event')->on('events')
+                ->onDelete('cascade');
             $table->foreign('notification_id')
-            ->references('id_notification')->on('notifications')
-            ->onDelete('cascade');
+                ->references('id_notification')->on('notifications')
+                ->onDelete('cascade');
         });
     }
 

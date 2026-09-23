@@ -22,8 +22,8 @@ class CreatePeriodsTable extends Migration
             $table->timestamps();
 
             $table->foreign('colla_id')
-            ->references('id_colla')->on('colles')
-            ->onDelete('cascade');
+                ->references('id_colla')->on('colles')
+                ->onDelete('cascade');
         });
     }
 

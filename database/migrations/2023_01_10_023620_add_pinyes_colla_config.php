@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class AddPinyesCollaConfig extends Migration
@@ -13,7 +12,7 @@ class AddPinyesCollaConfig extends Migration
      */
     public function up()
     {
-        Schema::table('colla_config', function($table) {
+        Schema::table('colla_config', function ($table) {
             $table->boolean('boards_enabled')->default(1);
         });
     }
@@ -25,7 +24,7 @@ class AddPinyesCollaConfig extends Migration
      */
     public function down()
     {
-        Schema::table('colla_config', function($table) {
+        Schema::table('colla_config', function ($table) {
             $table->dropColumn('boards_enabled');
         });
     }
