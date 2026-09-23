@@ -32,7 +32,7 @@ return [
     "done_next_step" => "Fet. Pas següent...",
     "select_other_row_baix" => "Fet. Seleccioneu un altre baix.",
     "step_select_all_row_txt" => "Seleccioneu cada una de les caselles per assignar-li una posició, el nombre del cordó i a quina rengla de la base \":BASE\" pertany.",
-    "step_select_all_row_explanation" => "Cliqueu una o diverses les caselles, assigneu una posició, el nombre del cordó —si forma part del nucli, no cal— i a quina rengla pertany.",
+    "step_select_all_row_explanation" => "Cliqueu una o diverses caselles, assigneu una posició, el nombre del cordó —si forma part del nucli, no cal— i a quina rengla pertany.",
     "select_other_row" => "Fet. Seleccioneu una altra posició.",
     "remove_selection" => "Esborra la selecció",
     "remove_positions" => "Esborra les posicions",
