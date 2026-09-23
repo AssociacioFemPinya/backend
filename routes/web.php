@@ -243,7 +243,7 @@ Route::group(['middleware' => ['role_or_permission:Super-Admin|Colla-Admin|edit 
     Route::post('boards/add', [BoardsController::class, 'postAddBoard'])->name('boards.add');
     Route::post('boards/import', [BoardsController::class, 'postImportBoard'])->name('boards.import');
     Route::post('boards/import-translate', [BoardsController::class, 'postImportTranslateBoard'])->name('boards.import-translate');
-    Route::post('boards/ajax-set-public-board', [BoardsController::class, 'postSetPublicBoard'])->name('boards.setPublicBoard');
+    Route::post('boards/ajax-set-property-board', [BoardsController::class, 'postSetPropertyAjax'])->name('boards.setPropertyAjax');
     Route::post('boards/ajax-upload-svg/{board}', [BoardsController::class, 'postUploadSvg'])->where('board', '[0-9]+')->name('boards.upload-svg');
     Route::get('boards/tag-row-map/{board}/{map}', [BoardsController::class, 'getTagRowMap'])->name('boards.tag-row-map');
     Route::post('boards/ajax-delete-position/{board}/{map}', [BoardsController::class, 'postDeletePosition'])->where('board', '[0-9]+')->name('boards.delete-position');
