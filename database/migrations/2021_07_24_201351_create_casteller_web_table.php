@@ -17,7 +17,7 @@ class CreateCastellerWebTable extends Migration
             $table->increments('id_casteller_web');
             $table->integer('casteller_id')->unsigned();
             $table->integer('colla_id')->unsigned();
-            $table->string('web_token',24)->nullable();
+            $table->string('web_token', 24)->nullable();
             $table->integer('casteller_active')->nullable();
             $table->boolean('enabled')->default(0);
             $table->timestamps();

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class CollaFactory extends Factory
 {
     protected $model = Colla::class;
+
     /**
      * Define the model's default state.
      *

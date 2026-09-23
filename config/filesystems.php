@@ -67,7 +67,7 @@ return [
         'local_tmp' => [
             'driver' => 'local',
             'root' => env('APP_TMP_DIR', storage_path('app/tmp')),
-        ]
+        ],
     ],
 
 ];

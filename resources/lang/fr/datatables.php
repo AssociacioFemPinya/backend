@@ -1,4 +1,5 @@
 <?php
+
 return [
     'translation' => '{
         "sEmptyTable":     "Aucune donnée disponible dans le tableau",

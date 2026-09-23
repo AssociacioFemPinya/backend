@@ -13,10 +13,10 @@ return [
     |
     */
 
-    "reset"     => "S'ha restablert la contrasenya.",
-    "sent"      => "Us hem enviat l'enllaç per restablir la contrasenya a l'adreça electrònica.",
-    "throttled" => "Per tornar-ho a intentar heu d'esperar.",
-    "token"     => "El codi de recuperació de la contrasenya no és correcte.",
-    "user"      => "Aquesta adreça electrònica no està registrada.",
+    'reset' => "S'ha restablert la contrasenya.",
+    'sent' => "Us hem enviat l'enllaç per restablir la contrasenya a l'adreça electrònica.",
+    'throttled' => "Per tornar-ho a intentar heu d'esperar.",
+    'token' => 'El codi de recuperació de la contrasenya no és correcte.',
+    'user' => 'Aquesta adreça electrònica no està registrada.',
 
 ];

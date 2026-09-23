@@ -8,10 +8,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class CastellerFactory extends Factory
 {
     protected $model = Casteller::class;
+
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
     private function namesAndGender(): array
     {
@@ -25,8 +24,8 @@ class CastellerFactory extends Factory
         return [
             'gender' => $gender,
             'name' => $name,
-            'last_name' => $this->faker->lastName() . ' ' . $this->faker->lastName(),
-            'alias' => $name . 'n' . $this->faker->numberBetween(0, 9),
+            'last_name' => $this->faker->lastName().' '.$this->faker->lastName(),
+            'alias' => $name.'n'.$this->faker->numberBetween(0, 9),
         ];
     }
 
@@ -45,7 +44,7 @@ class CastellerFactory extends Factory
                 'emergency_phone' => $this->faker->phoneNumber(),
                 'address' => $this->faker->streetAddress(),
                 'city' => $this->faker->city(),
-                'postal_code' => '080' . $this->faker->numberBetween(10, 42),
+                'postal_code' => '080'.$this->faker->numberBetween(10, 42),
                 'province' => $this->faker->country(),
                 'comarca' => null,
                 'country' => null,

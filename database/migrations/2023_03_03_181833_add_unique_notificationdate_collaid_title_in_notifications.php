@@ -19,8 +19,8 @@ class AddUniqueNotificationdateCollaidTitleInNotifications extends Migration
             $table->dropForeign(['colla_id']);
             $table->dropUnique('notificationdate_collaid_title_unique');
             $table->foreign('colla_id')
-            ->references('id_colla')->on('colles')
-            ->onDelete('cascade');
+                ->references('id_colla')->on('colles')
+                ->onDelete('cascade');
         });
     }
 }

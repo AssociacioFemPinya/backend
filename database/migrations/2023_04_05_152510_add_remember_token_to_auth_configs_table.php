@@ -30,4 +30,3 @@ class AddRememberTokenToAuthConfigsTable extends Migration
         });
     }
 }
-

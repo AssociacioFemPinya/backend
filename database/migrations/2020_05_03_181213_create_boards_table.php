@@ -17,7 +17,7 @@ class CreateBoardsTable extends Migration
             $table->increments('id_board');
             $table->integer('colla_id')->unsigned();
             $table->string('name', 100);
-            $table->enum('type', ['PINYA','FOLRE','MANILLES','PUNTALS']);
+            $table->enum('type', ['PINYA', 'FOLRE', 'MANILLES', 'PUNTALS']);
             $table->json('data')->nullable();
             $table->json('data_code')->nullable();
             $table->text('html_pinya')->nullable();

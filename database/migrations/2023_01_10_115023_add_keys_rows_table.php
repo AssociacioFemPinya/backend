@@ -9,7 +9,7 @@ class AddKeysRowsTable extends Migration
     public function up()
     {
         Schema::table('rows', function (Blueprint $table) {
-           // $table->unique(['board_id', 'div_id', 'base'], 'div_on_board');
+            // $table->unique(['board_id', 'div_id', 'base'], 'div_on_board');
         });
     }
 

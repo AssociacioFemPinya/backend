@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         if (env('TELESCOPE_ENABLED', false)) {
-            if (!Schema::connection($this->connection)->hasTable('telescope_entries')) {
+            if (! Schema::connection($this->connection)->hasTable('telescope_entries')) {
                 $schema = Schema::connection($this->connection);
 
                 $schema->create('telescope_entries', function (Blueprint $table) {

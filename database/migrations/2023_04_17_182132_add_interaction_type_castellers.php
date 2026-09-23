@@ -15,8 +15,8 @@ class AddInteractionTypeCastellers extends Migration
     {
         Schema::table('castellers', function (Blueprint $table) {
             $table->integer('interaction_type')->nullable()->after('status');
-			$table->string('language', 2)->default('ca')->after('status');
-			});
+            $table->string('language', 2)->default('ca')->after('status');
+        });
     }
 
     /**
@@ -27,8 +27,8 @@ class AddInteractionTypeCastellers extends Migration
     public function down()
     {
         Schema::table('castellers', function (Blueprint $table) {
-			$table->dropColumn('interaction_type');
+            $table->dropColumn('interaction_type');
             $table->dropColumn('language');
-		});
+        });
     }
 }

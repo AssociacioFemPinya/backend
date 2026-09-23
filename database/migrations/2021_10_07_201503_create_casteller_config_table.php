@@ -16,7 +16,7 @@ class CreateCastellerConfigTable extends Migration
         Schema::create('casteller_config', function (Blueprint $table) {
             $table->increments('id_casteller_config');
             $table->integer('casteller_id')->unsigned();
-            $table->string('telegram_token',8)->nullable();
+            $table->string('telegram_token', 8)->nullable();
             $table->boolean('telegram_enabled')->default(1);
             $table->boolean('tecnica')->default(0);
             $table->dateTime('last_access_at')->nullable();
