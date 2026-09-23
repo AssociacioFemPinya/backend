@@ -264,12 +264,7 @@
         });
 
         $('#resultPinya').on('click', 'div', function () {
-            // Only process if cell has content or attributes
-            if ($(this).text().trim() === '' &&
-                !$(this).attr('data-position') &&
-                !$(this).attr('data-row')) {
-                return; // Ignore clicks on empty cells
-            }
+            // All rendered map cells are selectable, including cells without a position yet.
 
             let clickedId = $(this).attr('id');
 
