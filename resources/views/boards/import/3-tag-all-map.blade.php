@@ -1,6 +1,6 @@
 @extends('template.main')
 
-@section('title', trans('boards.add'))
+@section('title', trans('boards.add_template'))
 @section('css_before')
     <link rel="stylesheet" href="{!! asset('js/plugins/select2/css/select2.min.css') !!}">
 @endsection
@@ -16,6 +16,16 @@
             font-size: 11.5px;
             font-family: Helvetica, Verdana, sans-serif;
             color: white;
+        }
+
+        #result_pinya div.selected-multiple {
+            border: 4px solid #ff6600 !important;
+            line-height: 23px !important;
+        }
+
+        .multi-select-mode {
+            background-color: #ff6600 !important;
+            border-color: #ff6600 !important;
         }
     </style>
 @endsection
@@ -40,7 +50,7 @@
             <div class="col-md-12">
                 <h5 class="text-info">{!! trans('boards.step_select_all_row_txt', ['BASE' => $type_map]) !!}</h5>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-7">
                 {!! trans('boards.step_select_all_row_explanation') !!}
             </div>
             <div class="col-md-3 text-right">
@@ -81,18 +91,22 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-1" style="padding-top: 25px;">
-                <button class="btn btn-success" id="BtnNameOk">{!! trans('general.add') !!}</button>
-            </div>
-            <div class="col-md-1" style="padding-top: 25px;">
-
-                <button class="btn btn-danger" id="BtnRemoveRow"><i class="fa fa-trash-o"></i></button>
-            </div>
-            <div class="col-md-1" style="padding-top: 27px;">
-                <div class="spinner-border" role="status" id="spinnerAddName" style="display: none;"><span class="sr-only">Loading...</span></div>
-            </div>
-            <div class="col-md-1" id="divDone" style="padding-top: 30px; display: none;">
-                <i class="fa-solid fa-check fa-2x text-success"></i>
+            <div class="row mt-3 align-items-center">
+                <div class="col-auto">
+                    <button class="btn btn-success" id="BtnNameOk">{!! trans('general.add') !!}</button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-info" id="btnClearSelections">{!! trans('boards.remove_selection') !!}</button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-danger" id="BtnRemoveRow">{!! trans('boards.remove_positions') !!}</button>
+                </div>
+                <div class="col-auto">
+                    <div class="spinner-border" role="status" id="spinnerAddName" style="display: none;"><span class="sr-only">Loading...</span></div>
+                </div>
+                <div class="col-auto" id="divDone" style="display: none;">
+                    <i class="fa-solid fa-check fa-2x text-success"></i>
+                </div>
             </div>
         </div>
 
@@ -120,11 +134,10 @@
     <script src="{!! asset('js/plugins/select2/js/select2.full.min.js') !!}"></script>
     <script type="text/javascript">
         $(function () {
-            $.ajaxPrefilter(function(options, originalOptions, xhr) { // this will run before each request
-                var token = $('meta[name="csrf-token"]').attr('content'); // or _token, whichever you are using
-
+            $.ajaxPrefilter(function(options, originalOptions, xhr) {
+                let token = $('meta[name="csrf-token"]').attr('content');
                 if (token) {
-                    return xhr.setRequestHeader('X-CSRF-TOKEN', token); // adds directly to the XmlHttpRequest Object
+                    return xhr.setRequestHeader('X-CSRF-TOKEN', token);
                 }
             });
         });
@@ -134,96 +147,105 @@
 
     $(function ()
     {
-        let id_row;
+        $('.selected-multiple').removeClass('selected-multiple');
+
+        let multiSelectMode = true;
+        let selectedDivs = [];
+
+        function clearMultipleSelections() {
+            $('.selected-multiple').removeClass('selected-multiple');
+            selectedDivs = [];
+            $('#divInputs').css('visibility', 'hidden');
+        }
+
+        $('#btnClearSelections').on('click', function () {
+            clearMultipleSelections();
+        });
 
         $('#result_pinya').on('click', 'div', function ()
         {
-            if(id_row && id_row !== $(this).attr('id')) {
+            let clickedId = $(this).attr('id');
 
-                $('#'+id_row).css('border', '1px solid grey');
-                $('#divInputs').css('visibility', 'hidden');
-                id_row = null;
+            if ($(this).hasClass('selected-multiple')) {
+                $(this).removeClass('selected-multiple');
+                selectedDivs = selectedDivs.filter(id => id !== clickedId);
+            } else {
+                $(this).addClass('selected-multiple');
+                selectedDivs.push(clickedId);
             }
 
-            if(id_row === $(this).attr('id')) {
-
-                $('#divInputs').css('visibility', 'hidden');
-                id_row = null;
-                $(this).css('border', '1px solid grey');
-            }
-            else
-            {
+            if (selectedDivs.length > 0) {
                 $('#divInputs').css('visibility', 'visible');
-                id_row = $(this).attr('id');
-
-                $(this).css('border', '4px solid grey');
-                $(this).css('line-height', '23px');
+            } else {
+                $('#divInputs').css('visibility', 'hidden');
             }
-
         });
 
         $('#core').on('change', function ()
         {
             if($(this).prop('checked')) {
-
-                $('#cord').prop( "disabled", true);
+                $('#cord').prop("disabled", true);
                 $('#cord').val(0);
             } else {
-
-                $('#cord').prop( "disabled", false);
+                $('#cord').prop("disabled", false);
             }
         });
 
         $('#BtnRemoveRow').click(function ()
         {
-            let cord, side;
-            let box = $('#'+id_row);
-            let name = box.html();
+            function removePosition(rowId) {
+                let box = $('#'+rowId);
+                let name = box.html();
 
-            //row (rengla del castell)
-            let row = box.data().row;
+                //row (rengla del castell)
+                let row = box.data().row;
 
-            //side
-            if(typeof box.data().side != 'undefined') {
+                //side
+                let side = (typeof box.data().side != 'undefined') ? box.data().side : false;
 
-                side = box.data().side;
-            } else {
+                //cord
+                let cord = (typeof box.data().cord != 'undefined') ? box.data().cord : 0;
 
-                side = false;
+                if(name.search(' ') > 0) {
+                    name = name.substring(0, name.search(' '));
+                }
+
+                $.post( "{!! route('boards.delete-position', ['board' => $board, 'map' => $type_map]) !!}",
+                    {
+                        name: name,
+                        id_row: rowId,
+                        row: row,
+                        side: side,
+                        cord: cord
+                    })
+                    .done(function( response ) {
+                        if(response) {
+                            box.css('border', '1px solid grey');
+                            box.css('background-color', '');
+                            box.html('');
+
+                            if (multiSelectMode) {
+                                selectedDivs = selectedDivs.filter(id => id !== rowId);
+                                box.removeClass('selected-multiple');
+                            }
+                        }
+                    });
             }
 
-            //cord
-            if(typeof box.data().cord != 'undefined') {
+            if (selectedDivs.length > 0) {
+                let totalToProcess = selectedDivs.length;
+                let processed = 0;
 
-                cord = box.data().cord;
-            } else {
+                selectedDivs.forEach(function(rowId) {
+                    removePosition(rowId);
+                    processed++;
 
-                cord = 0;
-            }
-
-            if(name.search(' ') > 0) {
-
-                name = name.substring(0, name.search(' '));
-            }
-
-
-            $.post( "{!! route('boards.delete-position', ['board' => $board, 'map' => $type_map]) !!}",
-                {
-                    name: name,
-                    id_row: id_row,
-                    row: row,
-                    side: side,
-                    cord: cord
-                })
-                .done(function( response ) {
-                    if(response) {
-                        box.css('border', '1px solid grey');
-                        box.css('background-color', '');
-                        box.html('');
-                        id_row = null;
+                    if (processed === totalToProcess) {
+                        selectedDivs = [];
                         $('#divInputs').css('visibility', 'hidden');
                     }
                 });
+            }
         });
 
         $('#BtnNameOk').on('click', function ()
@@ -232,78 +254,83 @@
 
             let position = $('#position').val();
             position = position.split('+=+');
-            let id_pos = position[1]
-            position = position[0]
+            let id_pos = position[1];
+            position = position[0];
             let cord = $('#cord').val();
             let core = $('#core').prop('checked');
             let row = $('#row').val();
             let side = $('#side').val();
 
-            if(core) {
+            function updatePosition(rowId) {
+                let box = $('#'+rowId);
 
-                if(side === "") {
-
-                    $('#'+id_row).html(position);
+                if(core) {
+                    if(side === "") {
+                        box.html(position);
+                    } else {
+                        let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
+                        box.html(position+' '+cl_side);
+                        box.attr('data-row', row);
+                        box.attr('data-side', side);
+                    }
                 } else {
-
-                    let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
-                    $('#'+id_row).html(position+' '+cl_side);
-                    //$('#'+id_row).addClass(row);
-                    $('#'+id_row).attr('data-row', row);
-                    //$('#'+id_row).addClass(side);
-                    $('#'+id_row).attr('data-side', side);
+                    if(side === "") {
+                        box.html(position+' '+cord);
+                    } else {
+                        let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
+                        box.html(position+' '+cord+' '+cl_side);
+                        box.attr('data-row', row);
+                        box.attr('data-side', side);
+                    }
                 }
 
-            } else {
+                box.css('border', '1px solid #'+row_colors[row]);
+                box.css('background-color','#'+row_colors[row]);
+                box.css('line-height', '28px');
 
-                if(side === "") {
+                box.addClass('cord_'+cord);
+                box.attr('data-cord', cord);
+                box.attr('data-position', position);
+                box.attr('data-id_position', id_pos);
+                box.attr('data-row', row);
+                box.attr('data-side', side);
 
-                    $('#'+id_row).html(position+' '+cord);
-                } else {
-
-                    let cl_side = (side === 'left') ? "{!! trans('general.CL_left') !!}" : "{!! trans('general.CL_right') !!}";
-                    $('#'+id_row).html(position+' '+cord+' '+cl_side);
-                    //$('#'+id_row).addClass(row);
-                    $('#'+id_row).attr('data-row', row);
-                    //$('#'+id_row).addClass(side);
-                    $('#'+id_row).attr('data-side', side);
+                if (multiSelectMode) {
+                    box.removeClass('selected-multiple');
                 }
+
+                $.post( "{!! route('boards.tag-position', ['board' => $board, 'map' => $type_map]) !!}",
+                    {
+                        rowId: rowId,
+                        position: position,
+                        id_position: id_pos,
+                        cord: cord,
+                        core: core,
+                        row: row,
+                        side: side
+                    });
             }
 
-            $('#'+id_row).css('border', '1px solid #'+row_colors[row]);
-            $('#'+id_row).css('background-color','#'+row_colors[row])
-            $('#'+id_row).css('line-height', '28px');
+            if (selectedDivs.length > 0) {
+                let totalToProcess = selectedDivs.length;
+                let processed = 0;
 
-            $('#'+id_row).addClass('cord_'+cord);
-            $('#'+id_row).attr('data-cord', cord);
-            //$('#'+id_row).addClass(position);
-            $('#'+id_row).attr('data-position', position);
-            $('#'+id_row).attr('data-id_position', id_pos);
-            $('#'+id_row).attr('data-row', row);
-            $('#'+id_row).attr('data-side', side);
+                selectedDivs.forEach(function(rowId) {
+                    updatePosition(rowId);
+                    processed++;
 
-            $.post( "{!! route('boards.tag-position', ['board' => $board, 'map' => $type_map]) !!}",
-                {
-                    rowId: id_row,
-                    position: position,
-                    id_position: id_pos,
-                    cord: cord, core: core,
-                    row: row,
-                    side: side
-                })
-                .then(function(response) {
-
-                    if(response) {
+                    if (processed === totalToProcess) {
                         $('#spinnerAddName').hide();
-                        $('#divDoneAddName').show();
-                        $('#row_name').val('');
+                        $('#divDone').show();
                         setTimeout(function(){
                             $('#divDone').hide(200);
-                        }, 2000)
+                        }, 2000);
+
+                        selectedDivs = [];
+                        $('#divInputs').css('visibility', 'hidden');
                     }
-                }).fail(function(response, status){
-                    console.log(response);
-            });
+                });
+            }
         });
 
         putPositions();
@@ -314,60 +341,47 @@
         let data = {!! json_encode($boardRows) !!};
 
         $.each(data, function(i, v) {
-
             let divId = v.div_id;
             if(v.position === 'baix') {
-
                 $('#'+divId).html(v.row);
                 $('#'+divId).css('border', '4px solid #'+row_colors[v.row]);
                 $('#'+divId).css('line-height', '23px');
                 $('#'+divId).css('color','black');
             } else {
-
                 if(v.cord === 0) {
-
                     if(v.side === '') {
-
                         $('#'+divId).html(v.position);
                     } else {
-
                         let CL_side;
                         switch (v.side) {
                             case 'LEFT':
-                                CL_side = '{!! trans('general.CL_left') !!}'
+                                CL_side = '{!! trans('general.CL_left') !!}';
                                 break;
                             case 'RIGHT':
-                                CL_side = '{!! trans('general.CL_right') !!}'
+                                CL_side = '{!! trans('general.CL_right') !!}';
                                 break;
                             default:
                                 CL_side = '';
                         }
-
                         $('#'+divId).html(v.position+' '+CL_side);
                     }
-
                 } else {
-
                     if(v.side === '') {
-
                         $('#'+divId).html(v.position+' '+v.cord);
                     } else {
-
                         let CL_side = v.side === 'LEFT' ? '{!! trans('general.CL_left') !!}' : '{!! trans('general.CL_right') !!}';
                         $('#'+divId).html(v.position+' '+v.cord+' '+CL_side);
                     }
                 }
 
                 $('#'+divId).css('line-height', '28px');
-                $('#'+divId).css('background-color','#'+row_colors[v.row])
-
+                $('#'+divId).css('background-color','#'+row_colors[v.row]);
                 $('#'+divId).attr('data-row', v.row);
                 $('#'+divId).attr('data-position', v.position);
                 $('#'+divId).attr('data-cord', v.cord);
                 $('#'+divId).attr('data-side', v.side);
             }
         });
-
     }
 </script>
 @endsection

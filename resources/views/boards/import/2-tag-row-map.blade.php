@@ -1,6 +1,6 @@
 @extends('template.main')
 
-@section('title', trans('boards.add'))
+@section('title', trans('boards.add_template'))
 @section('css_before')
     <link rel="stylesheet" href="{!! asset('js/plugins/select2/css/select2.min.css') !!}">
 @endsection
@@ -41,7 +41,6 @@
             </div>
             <div class="col-md-9">
                 {!! trans('boards.step_select_row_explanation') !!}
-
             </div>
             <div class="col-md-3 text-right">
                 <a class="btn btn-success" href="{!! route('boards.tag-all-map', ['board' => $board->getId(), 'map' =>$type_map]) !!}">{!! trans('boards.done_next_step') !!} <span class="fa fa-chevron-right"></span></a>
@@ -57,7 +56,6 @@
                 <button class="btn btn-success" id="BtnNameOk">{!! trans('general.add') !!}</button>
             </div>
             <div class="col-md-1" style="padding-top: 25px;">
-
                 <button class="btn btn-danger" id="BtnRemoveRow">{!! trans('general.no') !!}</button>
             </div>
             <div class="col-md-1" style="padding-top: 27px;">
@@ -67,7 +65,6 @@
                 <span class="text-success h5">{!! trans('boards.select_other_row_baix') !!}</span>
             </div>
         </div>
-
 
         <div class="row">
             <div id="result_pinya" style="position: relative; height: 2000px;">
@@ -82,7 +79,6 @@
                 @endif
             </div>
         </div>
-
     </div>
 </div>
 
@@ -92,11 +88,10 @@
     <script src="{!! asset('js/plugins/select2/js/select2.full.min.js') !!}"></script>
     <script type="text/javascript">
         $(function () {
-            $.ajaxPrefilter(function(options, originalOptions, xhr) { // this will run before each request
-                let token = $('meta[name="csrf-token"]').attr('content'); // or _token, whichever you are using
-
+            $.ajaxPrefilter(function(options, originalOptions, xhr) {
+                let token = $('meta[name="csrf-token"]').attr('content');
                 if (token) {
-                    return xhr.setRequestHeader('X-CSRF-TOKEN', token); // adds directly to the XmlHttpRequest Object
+                    return xhr.setRequestHeader('X-CSRF-TOKEN', token);
                 }
             });
         });
@@ -105,16 +100,30 @@
     $(function ()
     {
         let id_row;
+        let currentSelected = null;
+
         $('#result_pinya').on('click', 'div', function ()
         {
-            $('#divName').css('visibility', 'visible');
+            if (currentSelected && currentSelected !== $(this).attr('id')) {
+                $('#' + currentSelected).css('border', '1px solid grey');
+                $('#' + currentSelected).css('line-height', '28px');
+            }
+
             id_row = $(this).attr('id');
 
+            if (currentSelected === id_row) {
+                return;
+            }
+
+            currentSelected = id_row;
+
+            $('#divName').css('visibility', 'visible');
             $(this).css('border', '4px solid grey');
             $(this).css('line-height', '23px');
         });
 
         $('#BtnRemoveRow').click(function (){
+            if (!id_row) return;
 
             let name = $('#'+id_row).html();
 
@@ -122,16 +131,19 @@
                 .done(function( response ) {
                     if(response) {
                         $('#'+id_row).css('border', '1px solid grey');
+                        $('#'+id_row).css('line-height', '28px');
                         $('#'+id_row).html('');
+                        currentSelected = null;
                         id_row = null;
                         $('#divName').css('visibility', 'hidden');
                     }
                 });
         });
 
-
         $('#BtnNameOk').on('click', function ()
         {
+            if (!id_row) return;
+
             $('#spinnerAddName').show();
 
             let name = $('#row_name').val();
@@ -139,7 +151,6 @@
 
             $.post( "{{ route('boards.tag-baix-position', ['board' => $board]) }}", { name: name, rowId: id_row, base: '{{$type_map}}' })
                 .then(function(result) {
-
                     if(result) {
                         $('#spinnerAddName').hide();
                         $('#divDoneAddName').show();
@@ -147,11 +158,10 @@
                         setTimeout(function(){
                             $('#divDoneAddName').hide(200);
                         }, 2500)
-
                     }
                 }).fail(function(result){
-                console.log(result);
-            });
+                    console.log(result);
+                });
         });
 
         putNames();
@@ -167,7 +177,6 @@
             let structure = data[type_map].structure;
 
             $.each(structure, function(i, v) {
-
                 $('#'+v.baix).css('border', '4px solid grey');
                 $('#'+v.baix).css('line-height', '23px');
                 $('#'+v.baix).html(i);

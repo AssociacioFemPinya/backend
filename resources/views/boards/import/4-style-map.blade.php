@@ -1,6 +1,6 @@
 @extends('template.main')
 
-@section('title', trans('boards.add'))
+@section('title', trans('boards.add_template'))
 @section('css_before')
     <link rel="stylesheet" href="{!! asset('js/plugins/select2/css/select2.min.css') !!}">
 @endsection
@@ -17,6 +17,24 @@
             height: 31.6px;
             font-family: Helvetica, Verdana, sans-serif;
             color: black;
+        }
+
+        #resultPinya div.selected-multiple {
+            border: 4px solid #ff6600 !important;
+            line-height: 23px !important;
+        }
+
+        .multi-select-mode {
+            background-color: #ff6600 !important;
+            border-color: #ff6600 !important;
+        }
+
+        /* Estilo para resaltar elementos seleccionados */
+        .style-selected {
+            box-shadow: 0 0 0 3px #ff6600 !important;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+            z-index: 10;
         }
 
         .radius_1 {border-radius: 5px;}
@@ -56,8 +74,6 @@
         .shadow_1 {box-shadow: 2px 2px 2px gray; }
         .shadow_2 {box-shadow:  4px 4px 4px gray; }
         .shadow_3 {box-shadow:  6px 6px 6px gray; }
-
-
     </style>
 @endsection
 
@@ -81,7 +97,7 @@
             <div class="col-md-12">
                 <h5 class="text-info">{!! trans('boards.step_style map_txt', ['BASE' => $type_map]) !!}</h5>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-7">
                 {!! trans('boards.step_style_map_explanation') !!}
             </div>
             <div class="col-md-3 text-right">
@@ -91,9 +107,7 @@
 
         <div class="row form-group">
             <div class="col-md-1">
-
                <label class="control-label">{!! trans('boards.borders') !!}</label>
-
                    <div class="row" style="padding-left: 15px;">
                         <div id="border_1" class="border_1 div-class" style="width: 25px; height: 25px; margin-top: 6px;"></div>
                         <div id="border_2" class="border_2 div-class" style="width: 25px; height: 25px; margin-top: 6px;"></div>
@@ -112,7 +126,6 @@
                         <div id="border_11" class="border_11 div-class" style="width: 25px; height: 25px; margin-top: 6px;"></div>
                         <div id="border_12" class="border_12 div-class" style="width: 25px; height: 25px; margin-top: 6px;"></div>
                     </div>
-
             </div>
 
             <div class="col-md-1">
@@ -142,9 +155,9 @@
                     <div id="bg_color_12" class="text-center bg_color_12 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">12</div>
                 </div>
                 <div class="row" style="padding-left: 15px;">
-                    <div id="bg_color_13" class="text-center bg_color_13 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">10</div>
-                    <div id="bg_color_14" class="text-center bg_color_14 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">11</div>
-                    <div id="bg_color_15" class="text-center bg_color_15 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">12</div>
+                    <div id="bg_color_13" class="text-center bg_color_13 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">13</div>
+                    <div id="bg_color_14" class="text-center bg_color_14 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">14</div>
+                    <div id="bg_color_15" class="text-center bg_color_15 div-class" style="width: 25px; height: 25px; border: 1px solid grey; margin-top: 6px;">15</div>
                 </div>
             </div>
 
@@ -162,24 +175,36 @@
 
             <div class="col-md-1" style="padding-left: 15px;">
                 <label class="control-label">{!! trans('boards.corner') !!}</label>
-
                 <div class="row"  style="padding-left: 15px;">
                     <div id="radius" class="radius div-class" style="width: 65px; height: 25px; border: 1px solid grey;"></div>
                     <div id="radius_1" class="radius_1 div-class" style="width: 65px; height: 25px; border: 1px solid grey; margin-top: 6px;"></div>
                     <div id="radius_2" class="radius_2 div-class" style="width: 65px; height: 25px; border: 1px solid grey; margin-top: 6px;"></div>
                     <div id="radius_3" class="radius_3 div-class" style="width: 65px; height: 25px; border: 1px solid grey; margin-top: 6px;"></div>
-                    </div>
                 </div>
+            </div>
 
-            <div class="col-md-1" style="padding-top: 25px;">
+
+
+
+
+
+
+
+
+            <div class="col-auto">
                 <button class="btn btn-success" id="BtnNameOk">{!! trans('general.add') !!}</button>
             </div>
-            <div class="col-md-1" style="padding-top: 25px;">
-                <button class="btn btn-danger" id="BtnRemoveRow">{!! trans('general.no') !!}</button>
+            <div class="col-auto">
+                <button class="btn btn-info" id="btnClearSelections">{!! trans('boards.remove_selection') !!}</button>
             </div>
-            <div class="col-md-1" style="padding-top: 27px;">
+            <div class="col-auto">
+                <button class="btn btn-danger" id="BtnRemoveRow">{!! trans('boards.remove_styles') !!}</button>
+            </div>
+            <div class="col-auto">
                 <div class="spinner-border" role="status" id="spinnerAddClass" style="display: none;"><span class="sr-only">Loading...</span></div>
-                <i class="fa-solid fa-check fa-2x text-success" id="divDone" style="display: none;"></i>
+            </div>
+            <div class="col-auto" id="divDone" style="display: none;">
+                <i class="fa-solid fa-check fa-2x text-success"></i>
             </div>
         </div>
 
@@ -196,14 +221,12 @@
                 @endif
             </div>
         </div>
-
     </div>
 </div>
 
 <!-- START - MODAL FINAL STEP -->
 <div class="modal fade" id="modalFinalStep" tabindex="-1" role="dialog" aria-labelledby="modal-popin" aria-hidden="true">
     <div class="modal-dialog modal-dialog-popin" role="document" id="modalFinalStepContent">
-
     </div><!-- /.modal-dialog -->
 </div>
 <!--/ END - MODAL FINAL STEP-->
@@ -214,11 +237,10 @@
     <script src="{!! asset('js/plugins/select2/js/select2.full.min.js') !!}"></script>
     <script type="text/javascript">
         $(function () {
-            $.ajaxPrefilter(function(options, originalOptions, xhr) { // this will run before each request
-                var token = $('meta[name="csrf-token"]').attr('content'); // or _token, whichever you are using
-
+            $.ajaxPrefilter(function(options, originalOptions, xhr) {
+                const token = $('meta[name="csrf-token"]').attr('content');
                 if (token) {
-                    return xhr.setRequestHeader('X-CSRF-TOKEN', token); // adds directly to the XmlHttpRequest Object
+                    return xhr.setRequestHeader('X-CSRF-TOKEN', token);
                 }
             });
         });
@@ -226,156 +248,148 @@
 <script>
     $(function ()
     {
-        let id_row;
-        let addClasses = {border: null, background: null, radius: null};
+        $('.selected-multiple').removeClass('selected-multiple');
 
-        $('#resultPinya').on('click', 'div', function () {
+        let addClasses = {border: null, background: null, radius: null, shadow: null};
+        let multiSelectMode = true; // Always in multi-select mode
+        let selectedDivs = [];
 
-            id_row = null;
-            id_row = $(this).attr('id');
+        function clearMultipleSelections() {
+            $('.selected-multiple').removeClass('selected-multiple');
+            selectedDivs = [];
+        }
 
-            $.each( addClasses, function(key, value) {
-
-                if(value !== null) {
-                    $('#'+id_row).addClass(value);
-                }
-            });
-
+        $('#btnClearSelections').on('click', function() {
+            clearMultipleSelections();
         });
 
+        $('#resultPinya').on('click', 'div', function () {
+            // Only process if cell has content or attributes
+            if ($(this).text().trim() === '' &&
+                !$(this).attr('data-position') &&
+                !$(this).attr('data-row')) {
+                return; // Ignore clicks on empty cells
+            }
+
+            let clickedId = $(this).attr('id');
+
+            if ($(this).hasClass('selected-multiple')) {
+                $(this).removeClass('selected-multiple');
+                selectedDivs = selectedDivs.filter(id => id !== clickedId);
+            } else {
+                $(this).addClass('selected-multiple');
+                selectedDivs.push(clickedId);
+            }
+        });
 
         $('.div-class').on('click', function () {
+            // Remove highlighting from all style elements
+            $('.div-class').removeClass('style-selected');
+            // Add highlight to selected element
+            $(this).addClass('style-selected');
 
             if($(this).hasClass('border_1') ||$(this).hasClass('border_2') || $(this).hasClass('border_3') || $(this).hasClass('border_4')
             ||$(this).hasClass('border_5')  || $(this).hasClass('border_6') || $(this).hasClass('border_7') || $(this).hasClass('border_8')
             ||$(this).hasClass('border_9') || $(this).hasClass('border_10') || $(this).hasClass('border_11') || $(this).hasClass('border_12')
             ) {
+                // Remove highlighting from other border elements previously selected
+                $('.border_1, .border_2, .border_3, .border_4, .border_5, .border_6, .border_7, .border_8, .border_9, .border_10, .border_11, .border_12').not(this).removeClass('style-selected');
 
-                addClasses.border =  $(this).attr('id');
-                $('#'+id_row).css('border', '');
+                addClasses.border = $(this).attr('id');
 
-                $('#'+id_row).removeClass('border_1');
-                $('#'+id_row).removeClass('border_2');
-                $('#'+id_row).removeClass('border_3');
-                $('#'+id_row).removeClass('border_4');
-                $('#'+id_row).removeClass('border_5');
-                $('#'+id_row).removeClass('border_6');
-                $('#'+id_row).removeClass('border_7');
-                $('#'+id_row).removeClass('border_8');
-                $('#'+id_row).removeClass('border_9');
-                $('#'+id_row).removeClass('border_10');
-                $('#'+id_row).removeClass('border_11');
-                $('#'+id_row).removeClass('border_12');
-
-            }
-            if($(this).hasClass('shadow') || $(this).hasClass('shadow_1') || $(this).hasClass('shadow_2') || $(this).hasClass('shadow_3')) {
-                if($(this).hasClass('shadow')) {
-
-                    addClasses.shadow =  null;
-                    } else {
-
-                    addClasses.shadow =  $(this).attr('id');
-                    }
-
-                    $('#'+id_row).removeClass('shadow_1');
-                    $('#'+id_row).removeClass('shadow_2');
-                    $('#'+id_row).removeClass('shadow_3');
+                if (selectedDivs.length > 0) {
+                    selectedDivs.forEach(function(divId) {
+                        $('#'+divId).css('border', '');
+                        $('#'+divId).removeClass('border_1 border_2 border_3 border_4 border_5 border_6 border_7 border_8 border_9 border_10 border_11 border_12');
+                        $('#'+divId).addClass(addClasses.border);
+                    });
                 }
+            }
+
+            if($(this).hasClass('shadow') || $(this).hasClass('shadow_1') || $(this).hasClass('shadow_2') || $(this).hasClass('shadow_3')) {
+                // Remove highlighting from other shadow elements previously selected
+                $('.shadow, .shadow_1, .shadow_2, .shadow_3').not(this).removeClass('style-selected');
+
+                if($(this).hasClass('shadow')) {
+                    addClasses.shadow = null;
+                } else {
+                    addClasses.shadow = $(this).attr('id');
+                }
+
+                if (selectedDivs.length > 0) {
+                    selectedDivs.forEach(function(divId) {
+                        $('#'+divId).removeClass('shadow_1 shadow_2 shadow_3');
+                        if (addClasses.shadow) {
+                            $('#'+divId).addClass(addClasses.shadow);
+                        }
+                    });
+                }
+            }
 
             if($(this).hasClass('radius') || $(this).hasClass('radius_1') || $(this).hasClass('radius_2') || $(this).hasClass('radius_3')) {
+                // Remove highlighting from other radius elements previously selected
+                $('.radius, .radius_1, .radius_2, .radius_3').not(this).removeClass('style-selected');
 
                 if($(this).hasClass('radius')) {
-
-                    addClasses.radius =  null;
+                    addClasses.radius = null;
                 } else {
-
-                    addClasses.radius =  $(this).attr('id');
+                    addClasses.radius = $(this).attr('id');
                 }
 
-                $('#'+id_row).removeClass('radius_1');
-                $('#'+id_row).removeClass('radius_2');
-                $('#'+id_row).removeClass('radius_3');
+                if (selectedDivs.length > 0) {
+                    selectedDivs.forEach(function(divId) {
+                        $('#'+divId).removeClass('radius_1 radius_2 radius_3');
+                        if (addClasses.radius) {
+                            $('#'+divId).addClass(addClasses.radius);
+                        }
+                    });
+                }
             }
 
             if($(this).hasClass('bg_color') || $(this).hasClass('bg_color_1') || $(this).hasClass('bg_color_2') || $(this).hasClass('bg_color_3')
             || $(this).hasClass('bg_color_4') || $(this).hasClass('bg_color_5') || $(this).hasClass('bg_color_6') || $(this).hasClass('bg_color_7')
             || $(this).hasClass('bg_color_8') || $(this).hasClass('bg_color_9') || $(this).hasClass('bg_color_10') || $(this).hasClass('bg_color_11')
             || $(this).hasClass('bg_color_12') || $(this).hasClass('bg_color_13') || $(this).hasClass('bg_color_14') || $(this).hasClass('bg_color_15') ) {
+                // Remove highlighting from other background colors previously selected
+                $('.bg_color, [class*="bg_color_"]').not(this).removeClass('style-selected');
 
                 if($(this).hasClass('bg_color')) {
-
-                    addClasses.background =  null;
-
+                    addClasses.background = null;
                 } else {
-                    addClasses.background =  $(this).attr('id');
+                    addClasses.background = $(this).attr('id');
                 }
 
-                $('#'+id_row).removeClass('bg_color_1');
-                $('#'+id_row).removeClass('bg_color_2');
-                $('#'+id_row).removeClass('bg_color_3');
-                $('#'+id_row).removeClass('bg_color_4');
-                $('#'+id_row).removeClass('bg_color_5');
-                $('#'+id_row).removeClass('bg_color_6');
-                $('#'+id_row).removeClass('bg_color_7');
-                $('#'+id_row).removeClass('bg_color_8');
-                $('#'+id_row).removeClass('bg_color_9');
-                $('#'+id_row).removeClass('bg_color_10');
-                $('#'+id_row).removeClass('bg_color_11');
-                $('#'+id_row).removeClass('bg_color_12');
-                $('#'+id_row).removeClass('bg_color_13');
-                $('#'+id_row).removeClass('bg_color_14');
-                $('#'+id_row).removeClass('bg_color_15');
+                if (selectedDivs.length > 0) {
+                    selectedDivs.forEach(function(divId) {
+                        $('#'+divId).removeClass('bg_color_1 bg_color_2 bg_color_3 bg_color_4 bg_color_5 bg_color_6 bg_color_7 bg_color_8 bg_color_9 bg_color_10 bg_color_11 bg_color_12 bg_color_13 bg_color_14 bg_color_15');
+                        if (addClasses.background) {
+                            $('#'+divId).addClass(addClasses.background);
+                        }
+                    });
+                }
             }
-
-            $.each( addClasses, function(key, value) {
-
-                if(value!=null) {
-                    $('#'+id_row).addClass(value);
-                }
-            });
         });
 
         $('#BtnRemoveRow').on('click', function () {
+            if (selectedDivs.length > 0) {
+                selectedDivs.forEach(function(divId) {
+                    resetStyles(divId);
+                });
+                selectedDivs = [];
+                $('.selected-multiple').removeClass('selected-multiple');
+            }
 
-            $('#'+id_row).addClass('border_1');
-
-            $('#'+id_row).removeClass('bg_color_1');
-            $('#'+id_row).removeClass('bg_color_2');
-            $('#'+id_row).removeClass('bg_color_3');
-            $('#'+id_row).removeClass('bg_color_4');
-            $('#'+id_row).removeClass('bg_color_5');
-            $('#'+id_row).removeClass('bg_color_6');
-            $('#'+id_row).removeClass('bg_color_7');
-            $('#'+id_row).removeClass('bg_color_8');
-            $('#'+id_row).removeClass('bg_color_9');
-            $('#'+id_row).removeClass('bg_color_10');
-            $('#'+id_row).removeClass('bg_color_11');
-            $('#'+id_row).removeClass('bg_color_12');
-            $('#'+id_row).removeClass('bg_color_13');
-            $('#'+id_row).removeClass('bg_color_14');
-            $('#'+id_row).removeClass('bg_color_15');
-
-            $('#'+id_row).removeClass('radius_1');
-            $('#'+id_row).removeClass('radius_2');
-            $('#'+id_row).removeClass('radius_3');
-
-            $('#'+id_row).removeClass('border_1');
-            $('#'+id_row).removeClass('border_2');
-            $('#'+id_row).removeClass('border_3');
-            $('#'+id_row).removeClass('border_4');
-            $('#'+id_row).removeClass('border_5');
-            $('#'+id_row).removeClass('border_6');
-            $('#'+id_row).removeClass('border_7');
-            $('#'+id_row).removeClass('border_8');
-            $('#'+id_row).removeClass('border_9');
-            $('#'+id_row).removeClass('border_10');
-            $('#'+id_row).removeClass('border_11');
-            $('#'+id_row).removeClass('border_12');
-
-
-            id_row = null;
-            addClasses = {border: null, background: null, radius: null};
+            addClasses = {border: null, background: null, radius: null, shadow: null};
         });
+
+        function resetStyles(divId) {
+            $('#'+divId).addClass('border_1');
+            $('#'+divId).removeClass('bg_color_1 bg_color_2 bg_color_3 bg_color_4 bg_color_5 bg_color_6 bg_color_7 bg_color_8 bg_color_9 bg_color_10 bg_color_11 bg_color_12 bg_color_13 bg_color_14 bg_color_15');
+            $('#'+divId).removeClass('radius_1 radius_2 radius_3');
+            $('#'+divId).removeClass('shadow_1 shadow_2 shadow_3');
+            $('#'+divId).removeClass('border_1 border_2 border_3 border_4 border_5 border_6 border_7 border_8 border_9 border_10 border_11 border_12');
+            $('#'+divId).addClass('border_1');
+        }
 
         $('#BtnNameOk').on('click', function ()
         {
@@ -387,13 +401,15 @@
                 { html: html })
                 .done(function(result) {
                     if(result) {
-
                         $('#spinnerAddClass').hide();
-                        $('#divDoneAddName').show();
-                        $('#row_name').val('');
+                        $('#divDone').show();
                         setTimeout(function(){
                             $('#divDone').hide(200);
-                        }, 2000)
+                        }, 2000);
+
+                        // Clear selection if we're in multi-select mode
+                        $('.selected-multiple').removeClass('selected-multiple');
+                        selectedDivs = [];
                     }
                 });
         });
@@ -416,34 +432,24 @@
         let data = {!! json_encode($boardRows) !!};
 
         $.each(data, function(i, v) {
-
             let divId = v.div_id;
             if(v.position === 'baix') {
-
                 $('#'+divId).html(v.row);
                 $('#'+divId).css('border', '4px solid gray');
                 $('#'+divId).css('line-height', '23px');
                 $('#'+divId).css('color','black');
             } else {
-
                 if(v.cord === 0) {
-
                     if(v.side === '') {
-
                         $('#'+divId).html(v.position);
                     } else {
-
                         let CL_side = v.side === 'LEFT' ? '{!! trans('general.CL_left') !!}' : '{!! trans('general.CL_right') !!}';
                         $('#'+divId).html(v.position+' '+CL_side);
-
                     }
                 } else {
-
                     if(v.side === '') {
-
                         $('#'+divId).html(v.position+' '+v.cord);
                     } else {
-
                         let CL_side = v.side === 'LEFT' ? '{!! trans('general.CL_left') !!}' : '{!! trans('general.CL_right') !!}';
                         $('#'+divId).html(v.position+' '+v.cord+' '+CL_side);
                     }
@@ -458,7 +464,6 @@
                 $('#'+divId).attr('data-side', v.side);
             }
         });
-
     }
 </script>
 @endsection

@@ -110,36 +110,30 @@
             let file = document.getElementById('svg_file').files[0];				
 			
 			let FR = new FileReader();
-            let svg;
             FR.readAsText(file);
             FR.onload = function(data)
             {
                 xml = data.target.result;
                 xml = $.parseXML(xml);
 				
-				/* Aquesta prova torna el primer text que apareix
-				let data_text = xml.getElementsByTagName('text')[0].textContent;
-			    console.log(data_text);*/
-                				
                 svg = $(xml).find('rect'); /*funcions formes rect*/
 				txt = $(xml).find('tspan'); /*funcions text*/
 								
-				/*Obtenim la mida de la imatge del SVG importat fent servir l'atribut ViewBox  */				
+				/*Obtenim la mida de la imatge del SVG importat fent servir l'atribut ViewBox*/				
 				data_viewBox = $(xml).find('svg');				
 				let size_viewBox = data_viewBox[0].attributes.viewBox.nodeValue;
 				size_viewBox = size_viewBox.split(' ');
-				console.log('Mida SVG:', +size_viewBox);
+				
 				if (+size_viewBox[2] > +size_viewBox[3]) {
 					svg_max_size = +size_viewBox[2];
 				}
-				else { svg_max_size = +size_viewBox[3]
-					console.log(svg_max_size);
+				else { 
+                    svg_max_size = +size_viewBox[3];
 				}
+                
 				/*determinem l'escala òptima segons la informació del SVG i la mida del CSS*/				
-				CSS_XY_SIZE = 1000
+				CSS_XY_SIZE = 1000;
 				factor_escala = CSS_XY_SIZE / svg_max_size;
-				//factor_escala = 1;
-				console.log('Factor escala:', +factor_escala);
 								
                 			
 				txt.each(function ()
@@ -149,23 +143,18 @@
 					let x = item.attributes.x.nodeValue * factor_escala;					
 					let y = item.attributes.y.nodeValue * factor_escala-30;					
 					let data_text = item.textContent;
-					font_size = 8 * factor_escala; /* faltaria llegir la mida de la font del svg, però està en un nivell superior <text ... > <tspan...>text</tspan></text> */
-					//let data_style = item.attributes.style.nodeValue;					
-					let div = $('<div></div>');	 /*div = return document.getElementById('<div></div>');*/					
-					//$(div).attr('style', 'border:0px;text-align: left;font-size: ',font_size,'px;');				
+					
+					let div = $('<div></div>');					
 					$(div).attr('style', 'border:0px;text-align: left;font-size: 1em;'); /*1em és la font per defecte del navegador, que és 16 px */
 					$(div).attr('id', id);				
 					$(div).css('position', 'absolute');
 					$(div).css('top', y + 'px');
 					$(div).css('left', x + 'px');
-					//$(div).css('width', width + 'px');
-					//$(div).css('height', height + 'px');		
 					$(div).css('width', 200 + 'px');
 					$(div).css('height', 30 + 'px');		
 					$(div).text(data_text);
-					//$(div).css('text', data_text);
 					$('#result_pinya').append(div);	
-					});
+				});
 				
 				let id = 1;
                 svg.each(function ()
@@ -183,17 +172,14 @@
                         svg_function = transform.split('(')[0];						
 						if (svg_function == 'matrix') {
 							/* tracta funció matrix */
-							/*transform.replace(/,/g, ' '); /*si hi ha comes posem espais perquè ho entengui el CSS NOOOO EL CSS NECESSITA COMES!!!!!*/
 							transform = transform.replaceAll(' ', ','); /*si hi ha espais posem comes perquè ho entengui el CSS*/
-							/*var_matrix = transform.split(',');*/							
 							let var_matrix = transform.match(/\(([^()]*)\)/)[1]; /*tot el que hi ha entre parèntesi, queda separat per comes */
 							var_matrix = var_matrix.split(',');														
 							var_matrix[4] = +(var_matrix[4]) * factor_escala;
 							var_matrix[5] = +(var_matrix[5]) * factor_escala;							
 							var_matrix = var_matrix.toString();
 							transform = '';
-							transform = transform.concat('matrix(',var_matrix,')');							
-							console.log(id, 'tipus ' + transform); 													
+							transform = transform.concat('matrix(',var_matrix,')');													
 							$(div).css('top', y + 'px');
 							$(div).css('left', x + 'px');
 							$(div).css('width', width + 'px');
@@ -210,8 +196,7 @@
 							$(div).css('height', height + 'px');																			
 							$(div).css('transform-origin', -x + 'px ' + -y +'px');
 							transform = transform.split(')')[0];							
-							transform = transform.toString() + 'deg)';					
-							console.log(id, 'tipus ' + transform); 													
+							transform = transform.toString() + 'deg)';													
 							$(div).css('transform', transform);
 						} else
 						if (svg_function == 'translate') {
@@ -240,7 +225,7 @@
 							else {
 								y = (y) * var_scale[1];							
 							}
-							console.log(id, ' tipus scale: xf:', +x, ' yf:', +y);							
+							
 							$(div).css('top', y + 'px');
                             $(div).css('left', x + 'px');
 							$(div).css('width', width + 'px');
@@ -250,9 +235,7 @@
 							/* tracta funció skew - pendent */
 						} 
 					}	else {
-							/*$(div).css('position', 'absolute');	*/
-                            console.log(id, ' tipus rectangle directe');							
-							$(div).css('top', y + 'px');
+                            $(div).css('top', y + 'px');
                             $(div).css('left', x + 'px');
 							$(div).css('width', width + 'px');
 							$(div).css('height', height + 'px');					
@@ -260,10 +243,7 @@
 					$(div).attr('id', id);					
 					id++;
 					$('#result_pinya').append(div);
-	
-					
                 });
-				
             }
             $('#spinnerLoadSVGFile').hide();
             $('#divUploadSVG').show();
