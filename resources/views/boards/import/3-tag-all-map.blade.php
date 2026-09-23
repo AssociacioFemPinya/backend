@@ -194,8 +194,11 @@
         $('#BtnRemoveRow').click(function ()
         {
             function removePosition(rowId) {
-                let box = $('#'+rowId);
-                let name = box.html();
+let box = $('#'+rowId);
+if (!box.attr('data-position')) {
+    return;
+}
+let name = box.html();
 
                 //row (rengla del castell)
                 let row = box.data().row;
