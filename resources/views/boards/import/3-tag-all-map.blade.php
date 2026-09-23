@@ -191,14 +191,24 @@
             }
         });
 
-        $('#BtnRemoveRow').click(function ()
+        $('#BtnRemoveRow').click(async function ()
         {
+            if (selectedDivs.length === 0) return;
+
+            $('#spinnerAddName').show();
+            $('#BtnRemoveRow, #BtnNameOk, #btnClearSelections').prop('disabled', true);
+
             function removePosition(rowId) {
-let box = $('#'+rowId);
-if (!box.attr('data-position')) {
-    return;
-}
-let name = box.html();
+                let box = $('#'+rowId);
+                if (!box.attr('data-position')) {
+                    if (multiSelectMode) {
+                        selectedDivs = selectedDivs.filter(id => id !== rowId);
+                        box.removeClass('selected-multiple');
+                    }
+                    return Promise.resolve();
+                }
+
+                let name = box.html();
 
                 //row (rengla del castell)
                 let row = box.data().row;
@@ -213,7 +223,7 @@ let name = box.html();
                     name = name.substring(0, name.search(' '));
                 }
 
-                $.post( "{!! route('boards.delete-position', ['board' => $board, 'map' => $type_map]) !!}",
+                return $.post( "{!! route('boards.delete-position', ['board' => $board, 'map' => $type_map]) !!}",
                     {
                         name: name,
                         id_row: rowId,
@@ -226,6 +236,11 @@ let name = box.html();
                             box.css('border', '1px solid grey');
                             box.css('background-color', '');
                             box.html('');
+                            box.removeAttr('data-position');
+                            box.removeAttr('data-cord');
+                            box.removeAttr('data-id_position');
+                            box.removeAttr('data-row');
+                            box.removeAttr('data-side');
 
                             if (multiSelectMode) {
                                 selectedDivs = selectedDivs.filter(id => id !== rowId);
@@ -235,19 +250,26 @@ let name = box.html();
                     });
             }
 
-            if (selectedDivs.length > 0) {
-                let totalToProcess = selectedDivs.length;
-                let processed = 0;
-
-                selectedDivs.forEach(function(rowId) {
-                    removePosition(rowId);
-                    processed++;
-
-                    if (processed === totalToProcess) {
-                        selectedDivs = [];
-                        $('#divInputs').css('visibility', 'hidden');
+            try {
+                const toProcess = [...selectedDivs];
+                for (const rowId of toProcess) {
+                    try {
+                        await removePosition(rowId);
+                    } catch (e) {
+                        console.error('Error deleting position for rowId: ' + rowId, e);
                     }
-                });
+                }
+            } finally {
+                $('#spinnerAddName').hide();
+                $('#BtnRemoveRow, #BtnNameOk, #btnClearSelections').prop('disabled', false);
+
+                if (selectedDivs.length === 0) {
+                    $('#divInputs').css('visibility', 'hidden');
+                    $('#divDone').show();
+                    setTimeout(function(){
+                        $('#divDone').hide(200);
+                    }, 2000);
+                }
             }
         });
 
